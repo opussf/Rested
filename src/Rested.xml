@@ -1,0 +1,442 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Script file="Rested.lua"/>
+	<!-- Version 2.0 -->
+	<StatusBar name="Rested_RestedBarTemplate" inherits="TextStatusBar" virtual="true">
+		<Size x="300" y="12" />
+		<BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
+		<BarColor r="0.0" g="0.3" b="0.9" />
+		<Scripts>
+			<OnMouseUp>
+				Rested.BarClick(self, button);
+			</OnMouseUp>
+		</Scripts>
+	</StatusBar>
+	
+	<CheckButton name="Rested_MenuButtonTemplate" inherits="UIRadioButtonTemplate" virtual="true">
+		<Scripts>
+			<PostClick></PostClick>
+		</Scripts>
+	</CheckButton>
+	
+	<FontString name="Rested_RestedBarTextTemplate" inherits="GameFontNormalSmall" wraponspaces="false" virtual="true">
+		<Color r="1" g="1" b="1" />
+	</FontString>
+	
+	<Frame name="RestedReminderFrame" frameStrata="BACKGROUND" toplevel="false" parent="UIParent">
+		<Scripts>
+			<OnUpdate>
+				Rested.ReminderOnUpdate()
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="RestedFrame" frameStrata="BACKGROUND" toplevel="false" parent="UIParent" enableMouse="true" movable="true">
+		<Size x="316" y="125" />
+		<Anchors>
+			<Anchor point="LEFT"/>
+		</Anchors>
+		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="0" right="0" top="0" bottom="0"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0.0" g="0.0" b="0.0"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<!-- Frame Title -->
+				<FontString name="$parent_TitleText" frameStrata="ARTWORK" inherits="GameFontHighlight" text="Rested">
+					<Size>
+						<AbsDimension x="250" y="14"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOP" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-4"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parent_Close" inherits="UIPanelCloseButton" parent="RestedFrame" frameStrata="OVERLAY">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="4" y="4"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<ScrollFrame name="RestedScrollFrame">
+				<Size>
+					<AbsDimension x="316" y="82"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativePoint="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-18"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+				</Backdrop>
+				<ScrollChild>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-160"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Frame name="RestedScrollContents">
+						<Size x="300" y="84" />
+						<!--
+						<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+						</Backdrop>
+						-->
+					</Frame>
+				</ScrollChild>
+			</ScrollFrame>
+			<Slider name="RestedScrollFrame_VSlider" orientation="VERTICAL" minValue="0" maxValue="100"
+					defaultValue="0" valueStep="1">
+				<Size x="12" y="82"/>
+				<Anchors>
+					<Anchor point="Right" relativePoint="RIGHT" relativeTo="RestedScrollFrame"/>
+				</Anchors>
+				<Backdrop edgeFile="Interface\Buttons\UI-SliderBar-Border"
+						bgFile="Interface\Buttons\UI-SliderBar-Background"
+						tile="true">
+					<EdgeSize>
+						<AbsValue val="8"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="8"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="6" bottom="6"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self:SetValue(0);
+					</OnLoad>
+					<OnValueChanged>
+						Rested.UpdateFrame();
+					</OnValueChanged>
+				</Scripts>
+				<ThumbTexture name="$parentThumbTexture"
+						file="Interface\Buttons\UI-ScrollBar-Knob">
+					<Size x="12" y="25"/>
+				</ThumbTexture>
+			</Slider>
+			<EditBox name="RestedEditBox" inherits="InputBoxTemplate">
+				<Size x="155" y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="RestedScrollFrame">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:SetAutoFocus(false)
+					</OnLoad>
+					<OnTextChanged>
+						Rested.updateFilter()
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+			<Frame name="$parent_DropDownMenu" inherits="UIDropDownMenuTemplate" parentKey="DropDownMenu">
+				<Size x="50" y="16" />
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="RestedEditBox">
+						<Offset>
+							<AbsDimension x="0" y="-2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						Rested.DropDownOnLoad(self)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Rested.OnLoad();
+				self:Hide();
+			</OnLoad>
+			<OnEvent>
+				Rested.OnEvent(event, arg1, arg2, arg3, ...);
+			</OnEvent>
+			<OnUpdate>
+				Rested.OnUpdate()
+			</OnUpdate>
+			<OnMouseDown>
+				Rested.OnDragStart();
+			</OnMouseDown>
+			<OnMouseUp>
+				Rested.OnDragStop();
+			</OnMouseUp>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="Rested_BarMenuFrame" frameStrata="DIALOG" toplevel="false" parent="UIParent" enableMouse="true" movable="false">
+		<Size x="100" y="80" />
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="RestedFrame" relativePoint="RIGHT"/>
+		</Anchors>
+		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<!--
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5"/>
+			</BackgroundInsets>
+			-->
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0.0" g="0.0" b="0.0"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<CheckButton name="$parent_Option1" inherits="Rested_MenuButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="8" y="-8"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText("Ignore");
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_Option2" inherits="Rested_MenuButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Option1" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText("Remove");
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_Option3" inherits="Rested_MenuButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Option2" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText("Cancel");
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+		</Frames>
+		<Scripts>
+			<OnLeave>
+				self:Hide();
+			</OnLeave>
+			<OnLoad>
+				self:Hide();
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="RestedOptionsFrame">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormalLarge">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset><AbsDimension x="16" y="-16"/></Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+			</Layer>
+		</Layers>
+		<Frames>
+			<Slider name="$parent_NagTimeSlider" inherits="OptionsSliderTemplate" minValue="1" maxValue="10" valueStep="1">
+				<Size x="220" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT">
+						<Offset><AbsDimension x="16" y="-40"/></Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText("NagTime ()");
+						getglobal(self:GetName().."High"):SetText("Off");
+						getglobal(self:GetName().."Low"):SetText("1 Day");
+					</OnLoad>
+					<OnValueChanged>
+						if not Rested.oldVal then Rested.oldVal = Rested_options.maxCutOff; end
+						v = (self:GetValue()==10 and "Off") or self:GetValue();
+						getglobal(self:GetName().."Text"):SetText("NagTime ("..v..")");
+						Rested_options.maxCutOff = self:GetValue();
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+			<Slider name="$parent_ScaleSlider" inherits="OptionsSliderTemplate" minValue="0.5" maxValue="3" valueStep="0.1">
+				<Size x="220" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_NagTimeSlider" relativePoint="BOTTOMLEFT">
+						<Offset><AbsDimension x="0" y="-20"/></Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText("Scale");
+						getglobal(self:GetName().."High"):SetText("3");
+						getglobal(self:GetName().."Low"):SetText("0.5");
+						self:SetValue(RestedFrame:GetScale());
+					</OnLoad>
+					<OnValueChanged>
+						RestedFrame:SetScale(self:GetValue());
+						getglobal(self:GetName().."Text"):SetText("Scale x"..string.format("%0.1f",self:GetValue()));
+						<!--
+						if not Rested.oldVal then Rested.oldVal = Rested_options.maxCutOff; end
+						v = (self:GetValue()==10 and "Off") or self:GetValue();
+						getglobal(self:GetName().."Text"):SetText("NagTime ("..v..")");
+						Rested_options.maxCutOff = self:GetValue();
+						-->
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+			
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Rested.OptionsPanel_OnLoad(self)
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<Frame name="RestediLvlFrame" frameStrata="BACKGROUND" toplevel="false" parent="UIParent">
+		<Size>
+			<AbsDimension x="300" y="10"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="ChatFrame1" relativePoint="BOTTOMLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-5"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0.5" g="0.0" b="0.0" a="1" />
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="RestediLvl_String" inherits="GameFontWhiteSmall">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-10"></AbsDimension>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="10"/>
+					</FontHeight>
+					<Script>
+						<OnLoad>
+							self:SetFrameLevel( 3 );
+						</OnLoad>
+					</Script>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<StatusBar name="RestediLvl_PositiveSD" inherits="TextStatusBar">
+				<Size>
+					<AbsDimension x="300" y="10"/>
+				</Size>
+				<Anchors>
+						<Anchor point="TOPLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						RestediLvlFrame:SetFrameLevel( 0 );
+					</OnLoad>
+				</Scripts>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0" g="1" b="0"/>  <!-- yellow -->
+			</StatusBar>
+			<StatusBar name="RestediLvl_Ave" inherits="TextStatusBar">
+				<Size>
+					<AbsDimension x="300" y="10"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						RestediLvlFrame:SetFrameLevel( 1 );
+					</OnLoad>
+				</Scripts>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0" g="0.5" b="0"/>  <!-- orange -->
+			</StatusBar>
+			<StatusBar name="RestediLvl_NegativeSD" inherits="TextStatusBar">
+				<Size>
+					<AbsDimension x="300" y="10"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						RestediLvlFrame:SetFrameLevel( 2 );
+					</OnLoad>
+				</Scripts>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0.5" g="0.0" b="0"/>  <!-- red -->
+			</StatusBar>
+		</Frames>
+		<Scripts>
+			<OnLoad>self:Hide()</OnLoad>
+		</Scripts>
+	</Frame>
+
+</Ui>
+

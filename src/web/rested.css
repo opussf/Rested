@@ -1,0 +1,64 @@
+body {
+	background-image: url(bg/parchment.jpg);
+}
+
+div.restedtop {
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.main {
+	display: inline-block;
+	width: 1000px;
+}
+
+div.char {
+	background-color: #fff;
+	width: 490px;
+	margin-bottom: 2px;
+}
+
+div.max {
+	float: left;
+}
+
+div.leveling {
+	float: right;
+}
+
+.meter-wrap {
+	position: relative;
+	border-bottom: solid #000;
+}
+
+.meter-wrap .meter-value .meter-text {
+	width: 490px;
+	height: 17px;
+}
+
+.meter-wrap .meter-value {
+	/* background: #bdbdbd url(meter-outline.png) top left no-repeat; */
+	background: #bdbdbd;
+	background-size: 490px 34px;
+}
+
+.meter-text {
+	height: 17px;
+	color: #000;
+	text-align: center;
+	width: 100%;
+}
+
+div.charfloat {
+	background-color: #303030;
+	color: #fff;
+	border: 2px solid;
+	padding: 5px;
+}
+
+div.statsbox {
+/*	background-color: #fff; */
+	vertical-align: top;
+	display: inline-block;
+}

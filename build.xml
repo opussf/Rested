@@ -1,0 +1,84 @@
+<project name="Rested" default="package">
+
+	<property name="build.base.dir" location="build"/>
+	<property name="build.dir" location="${build.base.dir}/${ant.project.name}"/>
+	<property name="target.dir" location="target"/>
+
+	<target name="init">
+		<tstamp/>
+		<property environment="env"/>
+		<property name="build.number" value="${env.BUILD_NUMBER}"/>
+		<property file="build.properties"/>
+		<property name="version.number" value="${Rested.version}.${build.number}" />
+		<property name="project.zip" value="${ant.project.name}_${version.number}.zip"/>
+	</target>
+
+	<target name="clean" description="Cleans old builds">
+		<delete dir="${build.dir}"/>
+		<delete dir="${target.dir}"/>
+	</target>
+
+	<target name="package" depends="init, test">
+		<mkdir	dir="${build.dir}"/>
+		<mkdir	dir="${target.dir}"/>
+
+		<copy 	todir="${build.dir}">
+			<fileset dir="src">
+				<include name="*.lua"/>
+				<include name="*.toc"/>
+				<include name="${ant.project.name}.xml"/>
+				<include name="Readme.txt"/>
+			</fileset>
+			<filterset>
+				<filter token="VERSION" value="${version.number}"/>
+			</filterset>
+		</copy>
+		<zip 	destfile="${target.dir}/${project.zip}"
+				basedir="${build.base.dir}"
+				includes="${ant.project.name}/**"/>
+		<delete dir="${build.base.dir}" verbose="true"/>
+		<checksum file="${target.dir}/${project.zip}"
+				property="zip.md5" />
+		<echo message="${zip.md5}" />
+		<echo file="${target.dir}/${project.zip}.md5"
+				message="${zip.md5}"/>
+	</target>
+
+	<target name="wow" description="copy files to currnet wow install">
+		<property name="addon.dir" location="/Applications/World of Warcraft/Interface/Addons/${ant.project.name}"/>
+		<mkdir dir="${addon.dir}"/>
+		<copy todir="${addon.dir}">
+			<fileset dir="src">
+				<include name="*.lua"/>
+				<include name="*.toc"/>
+				<include name="Rested.xml"/>
+				<include name="Readme.txt"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="test" description="run unit tests">
+		<mkdir dir="${target.dir}"/>
+		<exec executable="lua" dir="test">
+			<arg value="test.lua"/>
+		</exec>
+	</target>
+	
+	<target name="deploy" depends="deploy.check" description="deploys the file" if="deploy.run">
+		<copy todir="${deploy.dir}">
+			<fileset dir="${deploy.from}">
+				<include name="*.zip"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy.check">
+		<condition property="deploy.run">
+			<and>
+				<available file="${deploy.from}" type="dir"/>
+				<available file="${deploy.dir}" type="dir"/>
+			</and>
+		</condition>
+	</target>
+
+</project>

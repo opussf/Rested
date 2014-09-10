@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Rested Users about page</title>
+	<link type='text/css' rel='stylesheet' href='rested.css'/>
+</head>
+<body>
+	<div class='restedtop'>
+	<div class='header'>
+		<span>This page tells how the rested chars page is created</span>
+	</div> <!-- header    -->
+	<div class='main'>
+		<h2>Background</h2>
+		<p>This project started as a World of Warcraft addon to track a multitude of characters.
+		I use Altaholic, and I like it, but the only warning it gives is if mail is about to expire for a character.
+		Altaholic is also difficult to see some time stats on a character.
+		<a href='http://xh.zz9-za.com/rested'>Rested</a> was the result.</p>
+		<p>Rested tracks all of the characters that it has seen, keeps track of their last rested percentage, when they were last seen, and a few other stats.
+		It then, in game, lets you know who is fully rested, or what character has not been played in a long time.
+		At some point, someone suggested to put the stats on the character selection screen, this is not available to UI modifications, so the next best idea was to be able to see the stats outside of the game.</p>
+
+		<h2>Solution</h2>
+		<p>With any problem, there are a multitude of solutions.
+		With this one, I choose XML, XSLT and a web server I have.
+		The XML is a data store, and the XSLTs transform that data into presentable formats including <a href='http://www.zz9-za.com/~opus/chars'>HTML</a>, <a href='http://www.zz9-za.com/~opus/chars/rss'>RSS</a> and even <a href='http://www.zz9-za.com/~opus/chars/atom'>ATOM</a>.</p>
+
+		<h3>Data acquisition</h3>
+		<p>While WoW has an awesome <a href='https://github.com/Blizzard/api-wow-docs/'>online API</a> for character data, it has some limits.
+		It does not provide the rested status of characters, nor does it give an exact date for when the character was last played.
+		I wrote <a href='http://xh.zz9-za.com/rested'>Rested</a> to capture the rested state of each of my characters.
+		The addon approach also allows the data to presented to the user in game.
+
+		<h3>Data conversion</h3>
+		<p>The first problem was to get the data from the game to a web server.
+		Addon data is stored as LUA data structures.
+		Many languages do not support other language syntax directly, Python has a module to handle LUA data files, but it is not super stable.
+		As a part of the addon, a LUA script that reads the data file and generates an <a href='rested.xml'>XML</a> file was created.
+		The XML file is then rsynced to this server.</p>
+
+		<h3>Data Elements</h3>
+		<p>The <a href='rested.xml'>XML</a> file is mostly a collection of &lt;c&gt; elements with character attributes such as 'isResting', 'updated' and 'restedPC'.</p>
+		
+		<h3>Data presentation</h3>
+		<p>Presentation of the XML data is done with a server side <a href='rested.html.xsl'>HTML XSLT</a> and <a href='rested.rss.xsl'>RSS XSLT</a> files (save as, or view source for proper viewing).
+		This allows the same data file to generate any number of presentations.
+		XSLT does have some issues on what can be generated, and XSLT 1.0 requires some interesting contortions for what would be simple to do in some other language.</p>
+		<p>The progress bars are done with some tricky use of the &lt;div&gt; tags and <a href='rested.css'>css</a>.
+		I found the css info online, and lightly adapted it to work here.</p>
+		<p>A div.char starts the stack by setting a background color, a width and a margin.
+		<div class='char'>.char</div>
+		There is a base div.meter-wrap that sets a border.
+		<div class='char'><div class='meter-wrap'>.meter-wrap</div></div>
+		A contained div.meter-value is given a different background color and a calculated percentage width, this is the progress bar.
+		<div class='char'><div class='meter-wrap'><div class='meter-value' style='background-color: #999; width: 75%'>with .meter-value and width set to 75%</div></div></div>
+		Another contained div.meter-text has the text for the bar, and has a width set to 100%.
+		<div class='char'><div class='meter-wrap'><div class='meter-value' style='background-color: #999; width: 75%'><div class='meter-text'>.meter-text centers the text</div></div></div></div>
+		</p>
+
+		<h3>Server Side</h3>
+		<p>Server side, this is done with a PHP index file that takes a paremter that controls which XSLT file to use.
+		An .htaccess file is used to perform rewrite rules to convert /rss to index.php?format=rss.
+		The index.php script uses the paramter to determine which XSLT file to load and use to transform the data, html is the default here.</p>
+
+		<h3>Future Expansion</h3>
+		<p>This design allows for fairly quick expansion of delivered output formats, and it also allows a consumer to get access to the original data if so desired.
+		The process of creating an ATOM feed for this would be to:
+		<ul>
+		<li>Create the XSLT transform to generate valid ATOM content.</li>
+		<li>Modify the .htaccess file to accept /atom and pass submit the proper format parameter to index.php</li>
+		<li>Modify the rested.html.xsl file to include a reference link to the atom feed</li>
+		</ul>
+	
+		
+
+	</div> <!-- main      -->
+	</div> <!-- restedtop -->
+</body>
+</html>

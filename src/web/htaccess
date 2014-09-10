@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteRule ^html$ /~opus/chars/index.php?format=html [L]
+RewriteRule ^rss$ /~opus/chars/index.php?format=rss [L]
+RewriteRule ^atom$ /~opus/chars/index.php?format=atom [L]

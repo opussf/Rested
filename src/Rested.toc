@@ -1,0 +1,10 @@
+## Interface: 50300
+## Title: Rested Reporter
+## Notes: Rested Tracker for alts
+## Author: sistersally of hyjal
+## Version: @VERSION@
+## Description: Slash command function to output rested status of alts
+## SavedVariables: Rested_restedState Rested_options
+Rested.lua
+Rested.xml
+

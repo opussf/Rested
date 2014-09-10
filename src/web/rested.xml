@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<restedToons>
+	<resting>0.00017361111111111</resting>
+	<notresting>4.3402777777778e-05</notresting>
+	<maxLevel>90</maxLevel>
+	<c rn="Moon Guard" cn="Até" isResting="1" class="Hunter" initAt="1345090659" updated="1345090676" race="Draenei" xpNow="206803" xpMax="386000" restedPC="150" lvlNow="63" faction="Alliance" iLvl="0" gender="Female"/>
+	<c rn="Moon Guard" cn="Nava" isResting="0" class="Warlock" initAt="1343540207" updated="1346134332" race="Goblin" xpNow="807945" xpMax="1686300" restedPC="89.29170373006" lvlNow="80" faction="Horde" iLvl="176" gender="Female"/>
+	<c rn="Moon Guard" cn="Levana" isResting="1" class="Shaman" initAt="1343540259" updated="1344735167" race="Goblin" xpNow="4486" xpMax="12267000" restedPC="0" lvlNow="85" faction="Horde" iLvl="343" gender="Female"/>
+	<c rn="Moon Guard" cn="Prilicit" isResting="1" class="Priest" initAt="1343539840" updated="1345792251" race="Worgen" xpNow="76729" xpMax="126100" restedPC="49.579698651864" lvlNow="51" faction="Alliance" iLvl="42" gender="Female"/>
+	<c rn="Moon Guard" cn="Pallyhedron" isResting="1" class="Paladin" initAt="1343539983" updated="1343540004" race="Draenei" xpNow="512188" xpMax="648000" restedPC="150" lvlNow="68" faction="Alliance" iLvl="76" gender="Female"/>
+	<c rn="Sen'jin" cn="Aijaruc" isResting="1" class="Paladin" initAt="1343538747" updated="1345175523" race="Blood Elf" xpNow="13036" xpMax="648000" restedPC="150" lvlNow="68" faction="Horde" iLvl="84" gender="Female"/>
+	<c rn="Dunemaul" cn="Ate" isResting="1" class="Warlock" initAt="1343541193" updated="1343541201" race="Orc" xpNow="568" xpMax="12267000" restedPC="0" lvlNow="85" faction="Horde" iLvl="338" gender="Female"/>
+	<c rn="Dunemaul" cn="Fatherjoe" isResting="1" class="Priest" initAt="1343540630" updated="1344489385" race="Troll" xpNow="179552" xpMax="386000" restedPC="150" lvlNow="63" faction="Horde" iLvl="69" gender="Male"/>
+	<c rn="Dunemaul" cn="Moranagna" isResting="1" class="Shaman" initAt="1343540685" updated="1343540695" race="Orc" xpNow="75112" xpMax="821000" restedPC="150" lvlNow="71" faction="Horde" iLvl="116" gender="Female"/>
+	<c rn="Dunemaul" cn="Béiber" isResting="1" class="Paladin" initAt="1343540408" updated="1343540613" race="Blood Elf" xpNow="84894" xpMax="475000" restedPC="150" lvlNow="65" faction="Horde" iLvl="0" gender="Male"/>
+	<c rn="Dunemaul" cn="Deadra" isResting="1" class="Mage" initAt="1343541226" updated="1343541235" race="Undead" xpNow="4140" xpMax="12267000" restedPC="0" lvlNow="85" faction="Horde" iLvl="328" gender="Female"/>
+	<c rn="Dunemaul" cn="Orcra" isResting="1" class="Warrior" initAt="1343541155" updated="1343541164" race="Orc" xpNow="4840" xpMax="12267000" restedPC="0" lvlNow="85" faction="Horde" iLvl="325" gender="Female"/>
+	<c rn="Dunemaul" cn="Dotmatrix" isResting="1" class="Hunter" initAt="1343541079" updated="1344576237" race="Troll" xpNow="31581" xpMax="855000" restedPC="150" lvlNow="75" faction="Horde" iLvl="139" gender="Female"/>
+	<c rn="Dunemaul" cn="Ahahah" isResting="1" class="Shaman" initAt="1343540852" updated="1345419124" race="Orc" xpNow="15" xpMax="900" restedPC="150" lvlNow="2" faction="Horde" iLvl="2" gender="Female"/>
+	<c rn="Medivh" cn="Pazzally" isResting="1" class="Paladin" initAt="1343538884" updated="1343538899" race="Draenei" xpNow="22805" xpMax="349000" restedPC="150" lvlNow="62" faction="Alliance" iLvl="64" gender="Male"/>
+	<c rn="Bronzebeard" cn="Applejackson" isResting="1" class="Hunter" initAt="1343537205" updated="1345615436" race="Draenei" xpNow="124908" xpMax="159900" restedPC="125.74734208881" lvlNow="57" faction="Alliance" iLvl="48" gender="Female"/>
+	<c rn="Ner'zhul" cn="Fayevalentin" isResting="1" class="Priest" initAt="1343538990" updated="1343539013" race="Draenei" xpNow="20292" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="332" gender="Female"/>
+	<c rn="Ner'zhul" cn="Cyrine" isResting="1" class="Warlock" initAt="1343539064" updated="1344193382" race="Worgen" xpNow="231062" xpMax="855000" restedPC="43.665263157895" lvlNow="75" faction="Alliance" iLvl="149" gender="Female"/>
+	<c rn="Earthen Ring" cn="Ratih" isResting="1" class="Warlock" initAt="1343539265" updated="1343539283" race="Blood Elf" xpNow="118110" xpMax="165800" restedPC="150" lvlNow="58" faction="Horde" iLvl="51" gender="Female"/>
+	<c rn="Earthen Ring" cn="Jehannedarc" isResting="1" class="Paladin" initAt="1343539199" updated="1343539215" race="Blood Elf" xpNow="200731" xpMax="2121500" restedPC="150" lvlNow="81" faction="Horde" iLvl="210" gender="Female"/>
+	<c rn="Hyjal" cn="Bankept" isResting="1" class="Warrior" initAt="1343541564" updated="1345420967" race="Human" xpNow="2029" xpMax="1686300" restedPC="150" lvlNow="80" faction="Alliance" iLvl="78" gender="Male"/>
+	<c rn="Hyjal" cn="Bluebig" isResting="1" class="Mage" initAt="1343541758" updated="1346032802" race="Draenei" xpNow="2314" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="332" gender="Female"/>
+	<c rn="Hyjal" cn="Kasely" isResting="1" class="Hunter" initAt="1343541713" updated="1343541725" race="Draenei" xpNow="21750" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="329" gender="Female"/>
+	<c rn="Hyjal" cn="Igotha" isResting="1" class="Paladin" initAt="1343542060" updated="1344735234" race="Human" xpNow="2650" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="346" gender="Female"/>
+	<c rn="Hyjal" cn="Zildimea" isResting="1" class="Shaman" initAt="1343541810" updated="1343541818" race="Draenei" xpNow="2898" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="330" gender="Female"/>
+	<c rn="Hyjal" cn="Luighsearch" isResting="1" class="Druid" initAt="1343541658" updated="1343541665" race="Night Elf" xpNow="4799" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="329" gender="Female"/>
+	<c rn="Hyjal" cn="Sistersally" isResting="1" class="Warlock" initAt="1343542247" updated="1344735287" race="Human" xpNow="44364" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="378" gender="Female"/>
+	<c rn="Hyjal" cn="Yanghigh" isResting="1" class="Death Knight" initAt="1345090211" updated="1345174542" race="Gnome" xpNow="815" xpMax="148200" restedPC="14.63697705803" lvlNow="55" faction="Alliance" iLvl="42" gender="Female"/>
+	<c rn="Hyjal" cn="Washu" isResting="1" class="Priest" initAt="1343543621" updated="1343543655" race="Night Elf" xpNow="7726" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="338" gender="Female"/>
+	<c rn="Hyjal" cn="Airwin" isResting="1" class="Rogue" initAt="1343541983" updated="1344489165" race="Night Elf" xpNow="1948" xpMax="12267000" restedPC="0" lvlNow="85" faction="Alliance" iLvl="329" gender="Female"/>
+	<c rn="Zuluhed" cn="Fozenvalor" isResting="1" class="Mage" initAt="1343539726" updated="1345694037" race="Goblin" xpNow="729483" xpMax="1686300" restedPC="54.520310739489" lvlNow="80" faction="Horde" iLvl="174" gender="Female"/>
+	<c rn="Zuluhed" cn="Yinglow" isResting="1" class="Rogue" initAt="1343539445" updated="1345090609" race="Goblin" xpNow="786" xpMax="5400" restedPC="150" lvlNow="8" faction="Horde" iLvl="3" gender="Female"/>
+	<c rn="Zuluhed" cn="Bulladin" isResting="1" class="Paladin" initAt="1343539519" updated="1345406897" race="Tauren" xpNow="19748" xpMax="47000" restedPC="102.65957446809" lvlNow="36" faction="Horde" iLvl="24" gender="Male"/>
+	<c rn="Zuluhed" cn="Melanippe" isResting="1" class="Druid" initAt="1343539674" updated="1345360070" race="Troll" xpNow="7629" xpMax="12267000" restedPC="0" lvlNow="85" faction="Horde" iLvl="350" gender="Female"/>
+	<c rn="Kael'thas" cn="Felajackson" isResting="1" class="Warrior" initAt="1343538625" updated="1343538689" race="Draenei" xpNow="34575" xpMax="126100" restedPC="150" lvlNow="51" faction="Alliance" iLvl="45" gender="Female"/>
+</restedToons>
