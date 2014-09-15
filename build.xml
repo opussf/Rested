@@ -18,7 +18,7 @@
 		<delete dir="${target.dir}"/>
 	</target>
 
-	<target name="package" depends="init, test">
+	<target name="package" depends="test">
 		<mkdir	dir="${build.dir}"/>
 		<mkdir	dir="${target.dir}"/>
 
@@ -44,7 +44,7 @@
 				message="${zip.md5}"/>
 	</target>
 
-	<target name="wow" description="copy files to currnet wow install">
+	<target name="wow" depends="test" description="copy files to currnet wow install">
 		<property name="addon.dir" location="/Applications/World of Warcraft/Interface/Addons/${ant.project.name}"/>
 		<mkdir dir="${addon.dir}"/>
 		<copy todir="${addon.dir}">
@@ -57,13 +57,13 @@
 		</copy>
 	</target>
 
-	<target name="test" description="run unit tests">
+	<target name="test" depends="init" description="run unit tests">
 		<mkdir dir="${target.dir}"/>
 		<exec executable="lua" dir="test">
 			<arg value="test.lua"/>
 		</exec>
 	</target>
-	
+
 	<target name="deploy" depends="deploy.check" description="deploys the file" if="deploy.run">
 		<copy todir="${deploy.dir}">
 			<fileset dir="${deploy.from}">
