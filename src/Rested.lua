@@ -20,7 +20,7 @@ MAX_PLAYER_LEVEL_TABLE={
 	[3]=85,
 	[4]=(time()>1348531200 and 90 or 85),   -- Mists
 	[5]=(time()>1415750400 and 100 or 90),
-} 
+}
 
 -- Saved Variables
 Rested_restedState = {};
@@ -56,7 +56,7 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("UNIT_INVENTORY_CHANGED");
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
-	
+
 	--register slash commands
 	SLASH_RESTED1 = "/rested";
 	SlashCmdList["RESTED"] = function(msg) Rested.Command(msg); end
@@ -109,22 +109,22 @@ function Rested.ADDON_LOADED()
 	Rested_restedState[Rested.realm][Rested.name].gender = Rested.genders[(UnitSex("player") or 0)];
 
 	Rested_restedState[Rested.realm][Rested.name].updated = time();
-	
+
 	if not Rested.bars then
 		Rested.BuildBars();
 		--Rested.Print("Built Bars");
 	end
-	
+
 	if not Rested_restedState[Rested.realm][Rested.name].race then  -- added these 3 at the same time
 		Rested_restedState[Rested.realm][Rested.name].class = UnitClass("player");
 		Rested_restedState[Rested.realm][Rested.name].faction = select(2, UnitFactionGroup("player"));  -- localized string
 		Rested_restedState[Rested.realm][Rested.name].race = UnitRace("player");
 	end
-	
+
 	Rested.MakeReminderSchedule();
 	Rested.OptionsPanel_Reset();
 	RestedFrame:UnregisterEvent("ADDON_LOADED");
-	
+
 	--Rested.Print("Addon_Loaded End");
 end
 function Rested.Print( msg, showName)
@@ -170,7 +170,7 @@ function Rested.OnEvent(event, ...)
 	elseif (event == "PLAYER_ENTERING_WORLD") then
 		--Rested.Print(date("%x %X")..":"..event);
 		Rested.SaveRestedState();
-		
+
 		if Rested.ForAllAlts( Rested.NagCharacters ) > 0 then
 			Rested.commandList.nag();
 		end
@@ -194,9 +194,9 @@ end
 Rested.commandList = {
 	["help"] = function() Rested.PrintHelp(); end,
 	["status"] = function() Rested.PrintStatus(); end,
-	["max"] = function() 
-			Rested.reportName = "Level "..Rested.maxLevel;	
-			Rested.ShowReport( Rested.MaxCharacters ); 
+	["max"] = function()
+			Rested.reportName = "Level "..Rested.maxLevel;
+			Rested.ShowReport( Rested.MaxCharacters );
 		end,
 	["nag"] = function()
 			Rested.reportName = "Nag";
@@ -253,10 +253,10 @@ function Rested.ScanInv()
 						itemLevel = (ul <= 57) and ul*1.1 or ((ul <= 80) and ul*(187/80) or 187)
 					end
 					itemLevelSum = itemLevelSum + itemLevel;
-					if (itemEquipLoc == "INVTYPE_2HWEAPON" or 
+					if (itemEquipLoc == "INVTYPE_2HWEAPON" or
 							((itemEquipLoc == "INVTYPE_RANGEDRIGHT" or itemEquipLoc == "INVTYPE_RANGED")
-								and itemSubType ~= "Wands")) then 
-						slots = 15; 
+								and itemSubType ~= "Wands")) then
+						slots = 15;
 					end
 					--Rested.Print("...."..itemLevel.." slots: "..slots);
 				end
@@ -379,7 +379,7 @@ function Rested.Command_old(msg)
 	--cmd will be nothing
 	local cmd, param = Rested.ParseCmd(msg);
 	cmd = string.lower(cmd);
-	
+
 	if (cmd == "skills") then
 		Rested.PrintSkills();
 	elseif (cmd == "friend") then
@@ -416,7 +416,7 @@ function Rested.SaveRestedState()
 		Rested_restedState[Rested.realm][Rested.name].xpNow = UnitXP("player");
 		Rested_restedState[Rested.realm][Rested.name].isResting = IsResting();
 		Rested_restedState[Rested.realm][Rested.name].deaths = tonumber(GetStatistic(60) or 0);
-		Rested_options["maxDeaths"] = math.max(Rested_options["maxDeaths"] or 0, 
+		Rested_options["maxDeaths"] = math.max(Rested_options["maxDeaths"] or 0,
 													Rested_restedState[Rested.realm][Rested.name].deaths or 0);
 	else
 		Rested.Print("Realm and name not known");
@@ -433,7 +433,7 @@ function Rested.FormatRested(charStruct)
 		Rested.formatRestedStruct.restRate = (5/(8*3600));  -- 5% every 8 hours (5 seems a tad too much)
 		Rested.formatRestedStruct.code = "+";
 	end
-	
+
 	Rested.formatRestedStruct.restAdded = Rested.formatRestedStruct.restRate * Rested.formatRestedStruct.timeSince;
 	Rested.formatRestedStruct.restedVal = charStruct.restedPC + Rested.formatRestedStruct.restAdded;
 	Rested.formatRestedStruct.restedOutStr = string.format("%0.1f%%", Rested.formatRestedStruct.restedVal);
@@ -451,10 +451,10 @@ function Rested.FormatRested(charStruct)
 				Rested.formatRestedStruct.restedOutStr = COLOR_GREEN.. Rested.formatRestedStruct.restedOutStr ..COLOR_END;
 			end
 		end
-		Rested.formatRestedStruct.timeTillRested = 
+		Rested.formatRestedStruct.timeTillRested =
 			(150-Rested.formatRestedStruct.restedVal) / Rested.formatRestedStruct.restRate;
 	end
-	return Rested.formatRestedStruct.restedOutStr, Rested.formatRestedStruct.restedVal, 
+	return Rested.formatRestedStruct.restedOutStr, Rested.formatRestedStruct.restedVal,
 		Rested.formatRestedStruct.code, Rested.formatRestedStruct.timeTillRested;
 end
 function Rested.ForAllAlts( action, processIgnored )
@@ -470,7 +470,7 @@ function Rested.ForAllAlts( action, processIgnored )
 					count = count + action( realm, name, vals );
 				end
 			elseif (Rested.filter) then -- there is a filter value
-				
+
 				if (string.find(string.upper(realm), Rested.filter)  or        -- match realm
 					string.find(string.upper(name), Rested.filter)) then      -- match name
 					count = count + action( realm, name, vals );
@@ -503,7 +503,7 @@ function Rested.RestingCharacters( realm, name, charStruct )
 		if timeTillRested then
 			Rested.strOut = Rested.strOut.." "..SecondsToTime(timeTillRested);
 		end
-		
+
 		rn = realm..":"..name;
 		if (realm == Rested.realm and name == Rested.name) then
 			rn = COLOR_GREEN..rn..COLOR_END;
@@ -521,7 +521,7 @@ function Rested.StaleCharacters( realm, name, charStruct )
 	-- returns 1 on success, 0 on fail
 	local stale = Rested_options.maxStale * 86400;
 	timeSince = time() - charStruct.updated;
-	if (timeSince > stale) then 
+	if (timeSince > stale) then
 		Rested.strOut = format("%d :: %s : %s:%s", charStruct.lvlNow, SecondsToTime(timeSince), realm, name);
 		table.insert(Rested.charList, {timeSince, Rested.strOut});
 		return 1;
@@ -576,8 +576,8 @@ function Rested.AllCharacters( realm, name, charStruct )
 		rn = COLOR_GREEN..rn..COLOR_END;
 	end
 	Rested.strOut = string.format("%d (%s): %s",
-		charStruct.lvlNow, 
-		--(charStruct.xpNow / charStruct.xpMax) * 100, 
+		charStruct.lvlNow,
+		--(charStruct.xpNow / charStruct.xpMax) * 100,
 		select(1,Rested.FormatRested(charStruct)),
 		rn);
 	table.insert( Rested.charList, {(charStruct.lvlNow / Rested.maxLevel) * 150, Rested.strOut} );
@@ -726,7 +726,7 @@ function Rested.UpdateFrame()
 		count = Rested.ForAllAlts( Rested.reportFunction, (Rested.reportName == "Ignored") );
 		RestedFrame_TitleText:SetText("Rested - "..Rested.reportName.." - "..count);
 		if count > 0 then
-			table.sort( Rested.charList, function( a,b ) return a[1] > b[1] end );			
+			table.sort( Rested.charList, function( a,b ) return a[1] > b[1] end );
 			offset = math.floor(RestedScrollFrame_VSlider:GetValue());
 			for i = 1, Rested.showNumBars do
 				idx = i+offset;
@@ -831,7 +831,7 @@ function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
 	for realm in pairs(Rested_restedState) do
 		for name, charStruct in pairs(Rested_restedState[realm]) do
-			if (charStruct.ignore) or 
+			if (charStruct.ignore) or
 				(realm == Rested.realm and name == Rested.name) or
 				(charStruct.lvlNow == Rested.maxLevel) then
 				-- skip ignored, this char, or maxLvl chars.
@@ -856,7 +856,7 @@ function Rested.MakeReminderSchedule()
 							Rested.reminders[reminderTime] = {};
 						end
 						table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, realm, name)});
---						Rested.Print(string.format("Rested %s:%s at %s", 
+--						Rested.Print(string.format("Rested %s:%s at %s",
 --							realm, name, date("%x %X",reminderTime)));
 
 					end
@@ -870,7 +870,7 @@ function Rested.MakeReminderSchedule()
 						end
 						table.insert( Rested.reminders[lvlRestedAt],
 								{["msg"]=string.format("%s:%s is rested to end of level.", realm, name)});
-						Rested.Print(string.format("Level %s:%s at %s", 
+						Rested.Print(string.format("Level %s:%s at %s",
 								realm, name, date("%x %X",lvlRestedAt)));
 					end
 				end
@@ -905,7 +905,7 @@ end
 function Rested.OptionsPanel_Reset()
 	RestedOptionsFrame_NagTimeSliderText:SetText("NagTime ("..Rested_options.maxCutOff..")");
 	RestedOptionsFrame_NagTimeSlider:SetValue(Rested_options.maxCutOff);
-	
+
 end
 function Rested.OptionsPanel_OKAY()
 	Rested_options.maxCutOff = RestedOptionsFrame_NagTimeSlider:GetValue();
@@ -926,7 +926,7 @@ function Rested.BarClick(bar, button)
 		Rested.Print("Showing");
 		Rested_BarMenuFrame:Show();
 	end
-endt
+end
 Rested.dropDownMenuTable["Full"] = "full";
 Rested.commandList["full"] = function()
 		Rested.reportName = "Fully Rested";
