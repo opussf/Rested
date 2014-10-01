@@ -6,7 +6,7 @@ require "wowTest"
 package.path = "../src/?.lua;'" .. package.path
 require "Rested"
 
-test.outFileName = "../target/testOut.xml"
+test.outFileName = "testOut.xml"
 
 -- Figure out how to parse the XML here, until then....
 RestedOptionsFrame_NagTimeSliderText = CreateFontString()
