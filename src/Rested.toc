@@ -3,7 +3,7 @@
 ## Notes: Rested Tracker for alts
 ## Author: sistersally of hyjal
 ## Version: @VERSION@
-## Description: Slash command function to output rested status of alts
+## Description: Slash command function to output rested status of alts. @VERSION@
 ## SavedVariables: Rested_restedState Rested_options
 Rested.lua
 Rested.xml
