@@ -1,4 +1,4 @@
-## Interface: 50300
+## Interface: @INTERFACE@
 ## Title: Rested Reporter
 ## Notes: Rested Tracker for alts
 ## Author: sistersally of hyjal
