@@ -22,7 +22,7 @@ for realm, chars in pairs(Rested_restedState) do
 
 			strOut = strOut .. "\t\t{\"rn\": \"" .. realm .. "\", ";
 			strOut = strOut .. "\"cn\": \"" .. name .. "\", ";
-			strOut = strOut .. "\"isResting\": " .. (c.isResting or 0) .. ", ";
+			strOut = strOut .. "\"isResting\": " .. (c.isResting and "1" or "0") .. ", ";
 			strOut = strOut .. "\"class\": \"" .. c.class .. "\", ";
 			strOut = strOut .. "\"initAt\": " .. c.initAt .. ", ";
 			strOut = strOut .. "\"updated\": " .. c.updated .. ", ";
@@ -34,7 +34,7 @@ for realm, chars in pairs(Rested_restedState) do
 			strOut = strOut .. "\"faction\": \"" .. c.faction .. "\", ";
 			strOut = strOut .. "\"iLvl\": " .. (c.iLvl or 0) .. ", ";
 			strOut = strOut .. "\"gender\": \"" .. c.gender .. "\"}";
-			
+
 			pastFirst = true;
 
 		end
