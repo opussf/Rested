@@ -325,9 +325,10 @@ function Rested.ScanInv()
 				--Rested.scanCount,
 				currValCount,
 				count, delcount,
-				SecondsToTime(minTS-timeCutOff),
+				date("%H:%M", time()+(minTS-timeCutOff) ),
 				(currValCount/count)*100 );
 		RestediLvl_String:SetText( strOut )
+		--Rested.Print(time().." + ("..minTS.." - "..timeCutOff..") = "..(time()+(minTS-timeCutOff)))
 		--Rested.Print( strOut, false )
 	end
 end
