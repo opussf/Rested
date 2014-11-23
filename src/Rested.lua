@@ -324,7 +324,9 @@ function Rested.ScanInv()
 				sdColor,sd,COLOR_END,
 				--Rested.scanCount,
 				currValCount,
-				count, delcount, SecondsToTime(minTS-timeCutOff), (currValCount/count)*100 );
+				count, delcount,
+				SecondsToTime(minTS-timeCutOff),
+				(currValCount/count)*100 );
 		RestediLvl_String:SetText( strOut )
 		--Rested.Print( strOut, false )
 	end
