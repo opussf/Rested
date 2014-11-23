@@ -145,6 +145,8 @@ function CreateStatusBar(name,...)
 	end
 	StatusBar.name=name
 
+	StatusBar["SetMinMaxValues"] = function() end;
+
 	return StatusBar
 end
 

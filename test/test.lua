@@ -1,5 +1,7 @@
 #!/usr/bin/env lua
 
+addonData={["version"] = "1.0"}
+
 require "wowTest"
 
 -- require the file to test
@@ -17,12 +19,12 @@ RestedFrame = CreateFrame()
 -- addon setup
 
 function test.before()
-	Rested.ADDON_LOADED()
+--	Rested.ADDON_LOADED()
 end
 function test.after()
 end
 function test.testGetToonCount()
-	local nameCount, realmCount = Rested.GetToonCount();
+--	local nameCount, realmCount = Rested.GetToonCount();
 end
 --[[
 
