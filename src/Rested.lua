@@ -237,6 +237,7 @@ function Rested.ScanInv()
 	if (Rested.lastScan+1 <= time()) then
 		Rested.lastScan=time();
 		--Rested.Print(Rested.realm..":"..Rested.name);
+		--[[
 		local itemLevelSum,slots = 0,16;
 		for _,v in pairs(Rested.slotList) do
 			local slotId = GetInventorySlotInfo(v);
@@ -262,10 +263,12 @@ function Rested.ScanInv()
 				end
 			end
 		end
+		]]
 		--Rested.Print("ItemLevelSum:"..itemLevelSum);
 		Rested.scanCount = Rested.scanCount + 1;
 		--Rested.Print("Average iLvl:"..math.floor(itemLevelSum/slots).."::"..Rested.scanCount);
-		local currentVal = max( itemLevelSum/slots, select(2,GetAverageItemLevel()))
+		--local currentVal = max( itemLevelSum/slots, select(2,GetAverageItemLevel()))
+		local currentVal = select( 2, GetAverageItemLevel() )
 		--Rested.Print("Calculated: "..itemLevelSum/slots.." From API: "..select(2,GetAverageItemLevel()))
 		Rested_restedState[Rested.realm][Rested.name].iLvl = math.floor(currentVal);
 		Rested_options["maxiLvl"] = math.max(Rested_options["maxiLvl"] or 0, math.floor(currentVal));
@@ -321,8 +324,11 @@ function Rested.ScanInv()
 				sdColor,sd,COLOR_END,
 				--Rested.scanCount,
 				currValCount,
-				count, delcount, SecondsToTime(minTS-timeCutOff), (currValCount/count)*100 );
+				count, delcount,
+				date("%H:%M", time()+(minTS-timeCutOff) ),
+				(currValCount/count)*100 );
 		RestediLvl_String:SetText( strOut )
+		--Rested.Print(time().." + ("..minTS.." - "..timeCutOff..") = "..(time()+(minTS-timeCutOff)))
 		--Rested.Print( strOut, false )
 	end
 end
