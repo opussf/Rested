@@ -237,44 +237,15 @@ function Rested.ScanInv()
 	if (Rested.lastScan+1 <= time()) then
 		Rested.lastScan=time();
 		--Rested.Print(Rested.realm..":"..Rested.name);
-		--[[
-		local itemLevelSum,slots = 0,16;
-		for _,v in pairs(Rested.slotList) do
-			local slotId = GetInventorySlotInfo(v);
-			--Rested.Print(v..":"..slotId);
-			local itemId = GetInventoryItemID("player", slotId);
-			if itemId then
-				--Rested.Print(".."..itemId);
-				local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-					itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(itemId);
-				--Rested.Print(".."..itemEquipLoc..":"..itemSubType);
-				if itemLevel then
-					if itemRarity == 7 then
-						local ul = UnitLevel("player")
-						itemLevel = (ul <= 57) and ul*1.1 or ((ul <= 80) and ul*(187/80) or 187)
-					end
-					itemLevelSum = itemLevelSum + itemLevel;
-					if (itemEquipLoc == "INVTYPE_2HWEAPON" or
-							((itemEquipLoc == "INVTYPE_RANGEDRIGHT" or itemEquipLoc == "INVTYPE_RANGED")
-								and itemSubType ~= "Wands")) then
-						slots = 15;
-					end
-					--Rested.Print("...."..itemLevel.." slots: "..slots);
-				end
-			end
-		end
-		]]
-		--Rested.Print("ItemLevelSum:"..itemLevelSum);
 		Rested.scanCount = Rested.scanCount + 1;
-		--Rested.Print("Average iLvl:"..math.floor(itemLevelSum/slots).."::"..Rested.scanCount);
-		--local currentVal = max( itemLevelSum/slots, select(2,GetAverageItemLevel()))
 		local currentVal = select( 2, GetAverageItemLevel() )
-		--Rested.Print("Calculated: "..itemLevelSum/slots.." From API: "..select(2,GetAverageItemLevel()))
 		Rested_restedState[Rested.realm][Rested.name].iLvl = math.floor(currentVal);
 		Rested_options["maxiLvl"] = math.max(Rested_options["maxiLvl"] or 0, math.floor(currentVal));
 
 		Rested_options.iLvlHistory[Rested.lastScan] = currentVal;
 		local timeCutOff = time() - Rested_options.iLvlMaxAge;  -- one hour
+
+		-- Calculate stats for display
 		local sum,min,minTS,ave,max,count,delcount,vm,sd = 0,nil,nil,0,0,0,0,0,0;
 		local currValCount = 0;
 		for ts, value in pairs(Rested_options.iLvlHistory) do
