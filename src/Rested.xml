@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 	<Script file="Rested.lua"/>
 	<!-- Version 2.0 -->
@@ -12,17 +12,17 @@
 			</OnMouseUp>
 		</Scripts>
 	</StatusBar>
-	
+
 	<CheckButton name="Rested_MenuButtonTemplate" inherits="UIRadioButtonTemplate" virtual="true">
 		<Scripts>
 			<PostClick></PostClick>
 		</Scripts>
 	</CheckButton>
-	
+
 	<FontString name="Rested_RestedBarTextTemplate" inherits="GameFontNormalSmall" wraponspaces="false" virtual="true">
 		<Color r="1" g="1" b="1" />
 	</FontString>
-	
+
 	<Frame name="RestedReminderFrame" frameStrata="BACKGROUND" toplevel="false" parent="UIParent">
 		<Scripts>
 			<OnUpdate>
@@ -30,7 +30,7 @@
 			</OnUpdate>
 		</Scripts>
 	</Frame>
-	
+
 	<Frame name="RestedFrame" frameStrata="BACKGROUND" toplevel="false" parent="UIParent" enableMouse="true" movable="true">
 		<Size x="316" y="125" />
 		<Anchors>
@@ -194,7 +194,7 @@
 				self:Hide();
 			</OnLoad>
 			<OnEvent>
-				Rested.OnEvent(event, arg1, arg2, arg3, ...);
+				Rested[event](...);
 			</OnEvent>
 			<OnUpdate>
 				Rested.OnUpdate()
@@ -207,7 +207,7 @@
 			</OnMouseUp>
 		</Scripts>
 	</Frame>
-	
+
 	<Frame name="Rested_BarMenuFrame" frameStrata="DIALOG" toplevel="false" parent="UIParent" enableMouse="true" movable="false">
 		<Size x="100" y="80" />
 		<Anchors>
@@ -278,7 +278,7 @@
 			</OnLoad>
 		</Scripts>
 	</Frame>
-	
+
 	<Frame name="RestedOptionsFrame">
 		<Layers>
 			<Layer level="ARTWORK">
@@ -289,7 +289,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				
+
 			</Layer>
 		</Layers>
 		<Frames>
@@ -340,7 +340,7 @@
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
-			
+
 		</Frames>
 		<Scripts>
 			<OnLoad>

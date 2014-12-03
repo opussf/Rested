@@ -54,6 +54,14 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 	RestedFrame:RegisterEvent("PLAYER_UPDATE_RESTING");
 	RestedFrame:RegisterEvent("UNIT_INVENTORY_CHANGED");
+
+	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
+	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATED");
+	RestedFrame:RegisterEvent("GARRISON_BUILDING_UPDATE");
+	RestedFrame:RegisterEvent("GARRISON_UPDATE");
+	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
+	RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
+
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
 
@@ -127,6 +135,33 @@ function Rested.ADDON_LOADED()
 
 	--Rested.Print("Addon_Loaded End");
 end
+function Rested.PLAYER_ENTERING_WORLD()
+	--Rested.Print(date("%x %X")..":"..event);
+	Rested.SaveRestedState();
+
+	if Rested.ForAllAlts( Rested.NagCharacters ) > 0 then
+		Rested.commandList.nag();
+	end
+end
+function Rested.UNIT_INVENTORY_CHANGED()
+	Rested.ScanInv()
+end
+function Rested.PLAYER_XP_UPDATE()
+	Rested.SaveRestedState()
+end
+Rested.PLAYER_UPDATE_RESTING = Rested.PLAYER_XP_UPDATE
+Rested.UPDATE_EXHAUSTION = Rested.PLAYER_XP_UPDATE
+Rested.CHANNEL_UI_UPDATE = Rested.PLAYER_XP_UPDATE
+
+function Rested.GARRISON_UPDATE( event )
+	Rested.Print("Event: "..event)
+end
+Rested.GARRISON_BUILDING_UPDATE = Rested.GARRISON_UPDATE
+Rested.GARRISON_BUILDING_ACTIVATABLE = Rested.GARRISON_UPDATE
+Rested.GARRISON_BUILDING_ACTIVATED = Rested.GARRISON_UPDATE
+Rested.GARRISON_MISSION_FINISHED = Rested.GARRISON_UPDATE
+Rested.SHIPMENT_UPDATE = Rested.GARRISON_UPDATE
+
 function Rested.Print( msg, showName)
 	-- print to the chat frame
 	-- set showName to false to suppress the addon name printing
@@ -162,23 +197,6 @@ function Rested_Debug( msg )
 	if Rested.debug then
 		msg = "debug-"..msg;
 		Rested.Print( msg );
-	end
-end
-function Rested.OnEvent(event, ...)
-	if (event == "ADDON_LOADED") then
-		Rested.ADDON_LOADED();
-	elseif (event == "PLAYER_ENTERING_WORLD") then
-		--Rested.Print(date("%x %X")..":"..event);
-		Rested.SaveRestedState();
-
-		if Rested.ForAllAlts( Rested.NagCharacters ) > 0 then
-			Rested.commandList.nag();
-		end
-	elseif (event == "UNIT_INVENTORY_CHANGED") then
-		Rested.ScanInv();
-	else
-		--Rested.Print("Rested Update");
-		Rested.SaveRestedState();
 	end
 end
 function Rested.ParseCmd(msg)
