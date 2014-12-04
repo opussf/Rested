@@ -59,8 +59,10 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATED");
 	RestedFrame:RegisterEvent("GARRISON_BUILDING_UPDATE");
 	RestedFrame:RegisterEvent("GARRISON_UPDATE");
+	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
-	RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
+	--RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
 
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
@@ -153,14 +155,58 @@ Rested.PLAYER_UPDATE_RESTING = Rested.PLAYER_XP_UPDATE
 Rested.UPDATE_EXHAUSTION = Rested.PLAYER_XP_UPDATE
 Rested.CHANNEL_UI_UPDATE = Rested.PLAYER_XP_UPDATE
 
-function Rested.GARRISON_UPDATE( event )
-	Rested.Print("Event: "..event)
+function Rested.GARRISON_UPDATE()
+	Rested.Print("GARRISON_UPDATE")
 end
-Rested.GARRISON_BUILDING_UPDATE = Rested.GARRISON_UPDATE
-Rested.GARRISON_BUILDING_ACTIVATABLE = Rested.GARRISON_UPDATE
-Rested.GARRISON_BUILDING_ACTIVATED = Rested.GARRISON_UPDATE
-Rested.GARRISON_MISSION_FINISHED = Rested.GARRISON_UPDATE
-Rested.SHIPMENT_UPDATE = Rested.GARRISON_UPDATE
+function Rested.GARRISON_BUILDING_UPDATE()
+	Rested.Print("GARRISON_BUILDING_UPDATE")
+end
+function Rested.GARRISON_BUILDING_ACTIVATABLE()
+	Rested.Print("GARRISON_BUILDING_ACTIVATABLE")
+end
+function Rested.GARRISON_BUILDING_ACTIVATED()
+	Rested.Print("GARRISON_BUILDING_ACTIVATED")
+end
+function Rested.GARRISON_MISSION_LIST_UPDATE()
+	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+	local missions = {}
+	C_Garrison.GetInProgressMissions( missions )
+	Rested.Print("You have "..#missions.." active missions.")
+	for k,m in pairs(missions) do
+		Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. Duration: "..m.durationSeconds..". Time remaining: "..m.timeLeft)
+	end
+end
+function Rested.GARRISON_MISSION_STARTED()
+	Rested.Print("GARRISON_MISSION_STARTED")
+	local missions = {}
+	local storeMission = {}
+	C_Garrison.GetInProgressMissions( missions )
+	Rested.Print("You have "..#missions.." active missions.")
+	for k,m in pairs(missions) do
+		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
+			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
+		storeMission = {["started"]=now(), ["duration"]=m.durationSeconds, ["etc"] = date("%x %X",time()+m.durationSeconds)}
+		Rested_restedState[Rested.realm][Rested.name].missions =
+				Rested_restedState[Rested.realm][Rested.name].missions and
+				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] = storeMission or
+				{[m.missionID] = storeMission
+	end
+end
+function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
+	Rested.Print("GARRISON_MISSION_FINISHED")
+	local missions = {}
+	C_Garrison.GetInProgressMissions( missions )
+	Rested.Print("A mission has finished. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
+	for k,m in pairs(missions) do
+		if not m.inProgress then
+			Rested.Print(m.missionID..":"..m.name.." completed at: "..date("%x %X", time()))
+		end
+	end
+end
+function Rested.SHIPMENT_UPDATE()
+	-- This gets spammed when opening a building work order person
+	Rested.Print("SHIPMENT_UPDATE")
+end
 
 function Rested.Print( msg, showName)
 	-- print to the chat frame
