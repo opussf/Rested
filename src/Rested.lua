@@ -805,6 +805,7 @@ function Rested.OnUpdate()
 	if Rested.lastUpdate + 1 <= time() then
 		Rested.lastUpdate = time();
 		Rested.UpdateFrame();
+		-- if (Rested.maxTimeLeftSeconds) then Rested.Print(Rested.maxTimeLeftSeconds) end
 	end
 end
 function Rested.SetIgnore(param)
@@ -1099,7 +1100,8 @@ function Rested.Missions( realm, name, charStruct )
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
 
 			--Rested.maxCompletedAtSeconds = max(Rested.maxCompletedAtSeconds or 0, completedAtSeconds)
-			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds or 1, timeLeft)
+			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds or 1,
+					max(timeLeft,60))
 			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
 --			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..(timeLeft / Rested.maxTimeLeftSeconds) * 150)
 
@@ -1109,8 +1111,8 @@ function Rested.Missions( realm, name, charStruct )
 			table.insert( Rested.charList, { 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150) , Rested.strOut } )
 		end
 	end
-	if (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds > 1) then
-		Rested.maxTimeLeftSeconds = Rested.maxTimeLeftSeconds - 1
+	if (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds > 60) then
+		Rested.maxTimeLeftSeconds = Rested.maxTimeLeftSeconds - 60
 	end -- always drop this down
 	return lineCount
 end
