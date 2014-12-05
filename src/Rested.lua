@@ -205,16 +205,11 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 --	Rested.Print("GARRISON_MISSION_FINISHED")
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
-	Rested.Print("A mission has finished. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
-	for k,m in pairs(missions) do
-		if not m.inProgress then  -- I don't think this is set correctly at this time.
-			Rested.Print(m.missionID..":"..m.name.." completed at: "..date("%x %X", time()))
-		end
-	end
+--	Rested.Print("A mission has finished. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
 	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, arg2, arg3 )
-	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
+--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
 	end
@@ -884,6 +879,14 @@ Rested.reminderValues = {
 	[172800] = "2 days until %s:%s is fully rested.",
 	[432000] = "5 days until %s:%s is fully rested.",
 }
+Rested.missionReminderValues = {
+	[0] = "A mission has finished for %s-%s.",
+	[60] = "1 minute until a mission finishes for %s-%s.",
+	[300] = "%s-%s has a mission finishing in 5 minutes.",
+	[600] = "%s-%s has a mission finsihing in 10 minutes.",
+	[900] = "15 minutes until a mission finishes for %s-%s.",
+	[1800] = "30 minutes until a mission finishes for %s-%s.",
+}
 function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
 	for realm in pairs(Rested_restedState) do
@@ -913,9 +916,6 @@ function Rested.MakeReminderSchedule()
 							Rested.reminders[reminderTime] = {};
 						end
 						table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, realm, name)});
---						Rested.Print(string.format("Rested %s:%s at %s",
---							realm, name, date("%x %X",reminderTime)));
-
 					end
 				end
 				if charStruct.xpNow then
@@ -931,6 +931,20 @@ function Rested.MakeReminderSchedule()
 								realm, name, date("%x %X",lvlRestedAt)));
 					end
 				end
+				if charStruct.missions then
+					for i,m in pairs(charStruct.missions) do
+						local completedAtSeconds = m.started + m.duration
+						for diff, format in pairs(Rested.missionReminderValues) do
+							local reminderTime = completedAtSeconds - diff  -- reminder time is before completion
+							if (reminderTime > now) then -- yet, still in the future
+								if (not Rested.reminders[reminderTime]) then
+									Rested.reminders[reminderTime] = {}
+								end
+								table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, name, realm)})
+							end -- reminder time in future
+						end -- reminder times to watch
+					end
+				end -- Missions
 			end
 		end
 	end
@@ -1085,10 +1099,9 @@ function Rested.Missions( realm, name, charStruct )
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
 
 			--Rested.maxCompletedAtSeconds = max(Rested.maxCompletedAtSeconds or 0, completedAtSeconds)
-			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds-1 or 0, timeLeft)
+			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds or 1, timeLeft)
 			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
---			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..
---					(timeLeft / Rested.maxTimeLeftSeconds) * 150)
+--			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..(timeLeft / Rested.maxTimeLeftSeconds) * 150)
 
 			Rested.strOut = string.format("%s :: %s",
 					timeLeftStr,
@@ -1096,5 +1109,8 @@ function Rested.Missions( realm, name, charStruct )
 			table.insert( Rested.charList, { 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150) , Rested.strOut } )
 		end
 	end
+	if (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds > 1) then
+		Rested.maxTimeLeftSeconds = Rested.maxTimeLeftSeconds - 1
+	end -- always drop this down
 	return lineCount
 end
