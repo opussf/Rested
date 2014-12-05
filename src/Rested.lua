@@ -62,6 +62,7 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
+	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 	--RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
 
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
@@ -208,6 +209,9 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 			Rested.Print(m.missionID..":"..m.name.." completed at: "..date("%x %X", time()))
 		end
 	end
+end
+function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, arg2, arg3 )
+	Rested.Print("A mission is being completed. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
 end
 function Rested.SHIPMENT_UPDATE()
 	-- This gets spammed when opening a building work order person
@@ -1073,12 +1077,17 @@ function Rested.Missions( realm, name, charStruct )
 			local completedAtSeconds = m.started + m.duration
 			local timeLeft = completedAtSeconds - time()
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
+
+			--Rested.maxCompletedAtSeconds = max(Rested.maxCompletedAtSeconds or 0, completedAtSeconds)
+			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds-1 or 0, timeLeft)
 			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
+--			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..
+--					(timeLeft / Rested.maxTimeLeftSeconds) * 150)
 
 			Rested.strOut = string.format("%s :: %s",
 					timeLeftStr,
 					rn)
-			table.insert( Rested.charList, { completedAtSeconds, Rested.strOut } )
+			table.insert( Rested.charList, { (timeLeft / Rested.maxTimeLeftSeconds) * 150 , Rested.strOut } )
 		end
 	end
 	return lineCount
