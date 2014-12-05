@@ -1071,7 +1071,7 @@ function Rested.Missions( realm, name, charStruct )
 		for i,m in pairs(charStruct.missions) do
 			lineCount = lineCount + 1
 			local completedAtSeconds = m.started + m.duration
-			local timeLeft = time() - completedAtSeconds
+			local timeLeft = completedAtSeconds - time()
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
 			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
 
