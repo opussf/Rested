@@ -173,14 +173,19 @@ function Rested.GARRISON_BUILDING_ACTIVATED()
 	Rested.Print("GARRISON_BUILDING_ACTIVATED")
 end
 function Rested.GARRISON_MISSION_LIST_UPDATE()
-	--Rested.Print("GARRISON_MISSION_LIST_UPDATE")
-	--[[	This might be a good place to remove out of date missions from the Rested tracking area
+	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
-	Rested.Print("You have "..#missions.." active missions.")
 	for k,m in pairs(missions) do
-		Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. Duration: "..m.durationSeconds..". Time remaining: "..m.timeLeft)
+		Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
+		if Rested_restedState[Rested.realm][Rested.name].missions and
+				Rested_restedState[Rested.realm][Rested.name].missions[k] then  -- missions is set, and am tracking the mission id
+			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].mission[k].duration)
+		end
 	end
+	--[[	This might be a good place to remove out of date missions from the Rested tracking area
+	Rested.Print("You have "..#missions.." active missions.")
+
 	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
@@ -195,13 +200,15 @@ function Rested.GARRISON_MISSION_STARTED()
 		if not Rested_restedState[Rested.realm][Rested.name].missions then
 			Rested_restedState[Rested.realm][Rested.name].missions = {}
 		end
-		Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] = {
-				["started"]=time(),
-				["duration"]=m.durationSeconds,
-				["etc"] = date("%x %X",time()+m.durationSeconds),
-				["etcSeconds"] = time()+m.durationSeconds,
-				["name"] = m.name,
-		}
+		if not Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- only set this if the id is new.
+			Rested_restedState[Rested.realm][Rested.name].missions[m.missionID]  = {
+					["started"]=time(),
+					["duration"]=m.durationSeconds,
+					["etc"] = date("%x %X",time()+m.durationSeconds),
+					["etcSeconds"] = time()+m.durationSeconds,
+					["name"] = m.name,
+			}
+		end
 	end
 	Rested.commandList.missions()
 end
@@ -888,7 +895,6 @@ Rested.missionReminderValues = {
 	[0] = "A mission has finished for %s-%s.",
 	[60] = "1 minute until a mission finishes for %s-%s.",
 	[300] = "%s-%s has a mission finishing in 5 minutes.",
-	[600] = "%s-%s has a mission finsihing in 10 minutes.",
 	[900] = "15 minutes until a mission finishes for %s-%s.",
 	[1800] = "30 minutes until a mission finishes for %s-%s.",
 }
