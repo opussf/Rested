@@ -185,11 +185,17 @@ function Rested.GARRISON_MISSION_STARTED()
 	for k,m in pairs(missions) do
 		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
 			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
-		storeMission = {["started"]=now(), ["duration"]=m.durationSeconds, ["etc"] = date("%x %X",time()+m.durationSeconds)}
-		Rested_restedState[Rested.realm][Rested.name].missions =
-				Rested_restedState[Rested.realm][Rested.name].missions and
-				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] = storeMission or
-				{[m.missionID] = storeMission
+		--storeMission = {["started"]=now(), ["duration"]=m.durationSeconds, ["etc"] = date("%x %X",time()+m.durationSeconds)}
+		if not Rested_restedState[Rested.realm][Rested.name].missions then
+			Rested_restedState[Rested.realm][Rested.name].missions = {}
+		end
+		Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] = {
+				["started"]=time(),
+				["duration"]=m.durationSeconds,
+				["etc"] = date("%x %X",time()+m.durationSeconds),
+				["etcSeconds"] = time()+m.durationSeconds,
+				["name"] = m.name,
+		}
 	end
 end
 function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
@@ -399,8 +405,8 @@ function Rested.GetColorFromRange(value, average, range)
 		--Rested.Print("Just set to red.");
 		return "|cffff0000";
 	end
-
 end
+
 function Rested.Command(msg)
 	local cmd, param = Rested.ParseCmd(msg);
 	cmd = string.lower(cmd);
@@ -1051,4 +1057,29 @@ function Rested.Deaths( realm, name, charStruct )
 	return 1;
 --	end
 --	return 0;
+end
+
+Rested.dropDownMenuTable["Missions"] = "missions"
+Rested.commandList["missions"] = function()
+	Rested.reportName = "Missions"
+	Rested.ShowReport( Rested.Missions )
+end
+function Rested.Missions( realm, name, charStruct )
+	local rn = realm..":"..name
+	local lineCount = 0
+	if charStruct.missions then
+		for i,m in pairs(charStruct.missions) do
+			lineCount = lineCount + 1
+			local completedAtSeconds = m.started + m.duration
+			local timeLeft = time() - completedAtSeconds
+			timeLeft = (timeLeft >= 0) and timeLeft or 0
+			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
+
+			Rested.strOut = string.format("%s :: %s",
+					timeLeftStr,
+					rn)
+			table.insert( Rested.charList, { completedAtSeconds, Rested.strOut } )
+		end
+	end
+	return lineCount
 end
