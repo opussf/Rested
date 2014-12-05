@@ -1100,6 +1100,9 @@ Rested.commandList["missions"] = function()
 end
 function Rested.Missions( realm, name, charStruct )
 	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
 	local lineCount = 0
 	if charStruct.missions then
 		for i,m in pairs(charStruct.missions) do
