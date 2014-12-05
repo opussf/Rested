@@ -170,12 +170,14 @@ function Rested.GARRISON_BUILDING_ACTIVATED()
 end
 function Rested.GARRISON_MISSION_LIST_UPDATE()
 	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+	--[[	This might be a good place to remove out of date missions from the Rested tracking area
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
 	Rested.Print("You have "..#missions.." active missions.")
 	for k,m in pairs(missions) do
 		Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. Duration: "..m.durationSeconds..". Time remaining: "..m.timeLeft)
 	end
+	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
 	Rested.Print("GARRISON_MISSION_STARTED")
@@ -184,9 +186,8 @@ function Rested.GARRISON_MISSION_STARTED()
 	C_Garrison.GetInProgressMissions( missions )
 	Rested.Print("You have "..#missions.." active missions.")
 	for k,m in pairs(missions) do
-		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
-			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
-		--storeMission = {["started"]=now(), ["duration"]=m.durationSeconds, ["etc"] = date("%x %X",time()+m.durationSeconds)}
+--		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
+--			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
 		if not Rested_restedState[Rested.realm][Rested.name].missions then
 			Rested_restedState[Rested.realm][Rested.name].missions = {}
 		end
@@ -198,6 +199,7 @@ function Rested.GARRISON_MISSION_STARTED()
 				["name"] = m.name,
 		}
 	end
+	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 	Rested.Print("GARRISON_MISSION_FINISHED")
@@ -209,9 +211,13 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 			Rested.Print(m.missionID..":"..m.name.." completed at: "..date("%x %X", time()))
 		end
 	end
+	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, arg2, arg3 )
-	Rested.Print("A mission is being completed. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
+	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
+	if Rested_restedState[Rested.realm][Rested.name].missions then
+		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
+	end
 end
 function Rested.SHIPMENT_UPDATE()
 	-- This gets spammed when opening a building work order person
@@ -1087,7 +1093,7 @@ function Rested.Missions( realm, name, charStruct )
 			Rested.strOut = string.format("%s :: %s",
 					timeLeftStr,
 					rn)
-			table.insert( Rested.charList, { (timeLeft / Rested.maxTimeLeftSeconds) * 150 , Rested.strOut } )
+			table.insert( Rested.charList, { 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150) , Rested.strOut } )
 		end
 	end
 	return lineCount
