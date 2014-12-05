@@ -173,19 +173,18 @@ function Rested.GARRISON_BUILDING_ACTIVATED()
 	Rested.Print("GARRISON_BUILDING_ACTIVATED")
 end
 function Rested.GARRISON_MISSION_LIST_UPDATE()
+	--[[	This might be a good place to remove out of date missions from the Rested tracking area
 	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
-	for k,m in pairs(missions) do
-		Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
+	--Rested.Print("You have "..#missions.." active missions.")
+	for _,m in pairs(missions) do
+		--Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
 		if Rested_restedState[Rested.realm][Rested.name].missions and
-				Rested_restedState[Rested.realm][Rested.name].missions[k] then  -- missions is set, and am tracking the mission id
-			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].mission[k].duration)
+				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- missions is set, and am tracking the mission id
+			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].missions[m.missionID].duration)
 		end
 	end
-	--[[	This might be a good place to remove out of date missions from the Rested tracking area
-	Rested.Print("You have "..#missions.." active missions.")
-
 	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
@@ -194,7 +193,7 @@ function Rested.GARRISON_MISSION_STARTED()
 	local storeMission = {}
 	C_Garrison.GetInProgressMissions( missions )
 --	Rested.Print("You have "..#missions.." active missions.")
-	for k,m in pairs(missions) do
+	for _,m in pairs(missions) do
 --		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
 --			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
 		if not Rested_restedState[Rested.realm][Rested.name].missions then
