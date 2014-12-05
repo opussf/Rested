@@ -55,14 +55,18 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("PLAYER_UPDATE_RESTING");
 	RestedFrame:RegisterEvent("UNIT_INVENTORY_CHANGED");
 
-	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
-	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATED");
-	RestedFrame:RegisterEvent("GARRISON_BUILDING_UPDATE");
-	RestedFrame:RegisterEvent("GARRISON_UPDATE");
-	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+	-- Garrison events
 	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
+	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+
+	-- Not sure what to do with these
+--	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
+--	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATED");
+--	RestedFrame:RegisterEvent("GARRISON_BUILDING_UPDATE");
+--	RestedFrame:RegisterEvent("GARRISON_UPDATE");
+
 	--RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
 
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
