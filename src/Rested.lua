@@ -208,7 +208,7 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 --	Rested.Print("A mission has finished. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
 	Rested.commandList.missions()
 end
-function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, arg2, arg3 )
+function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succeeded )
 --	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
