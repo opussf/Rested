@@ -169,7 +169,7 @@ function Rested.GARRISON_BUILDING_ACTIVATED()
 	Rested.Print("GARRISON_BUILDING_ACTIVATED")
 end
 function Rested.GARRISON_MISSION_LIST_UPDATE()
-	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+	--Rested.Print("GARRISON_MISSION_LIST_UPDATE")
 	--[[	This might be a good place to remove out of date missions from the Rested tracking area
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
@@ -180,11 +180,11 @@ function Rested.GARRISON_MISSION_LIST_UPDATE()
 	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
-	Rested.Print("GARRISON_MISSION_STARTED")
+	--Rested.Print("GARRISON_MISSION_STARTED")
 	local missions = {}
 	local storeMission = {}
 	C_Garrison.GetInProgressMissions( missions )
-	Rested.Print("You have "..#missions.." active missions.")
+--	Rested.Print("You have "..#missions.." active missions.")
 	for k,m in pairs(missions) do
 --		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
 --			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
@@ -202,12 +202,12 @@ function Rested.GARRISON_MISSION_STARTED()
 	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
-	Rested.Print("GARRISON_MISSION_FINISHED")
+--	Rested.Print("GARRISON_MISSION_FINISHED")
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
 	Rested.Print("A mission has finished. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
 	for k,m in pairs(missions) do
-		if not m.inProgress then
+		if not m.inProgress then  -- I don't think this is set correctly at this time.
 			Rested.Print(m.missionID..":"..m.name.." completed at: "..date("%x %X", time()))
 		end
 	end
