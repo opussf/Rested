@@ -36,7 +36,8 @@ function test.testGetToonCount()
 --	local nameCount, realmCount = Rested.GetToonCount();
 end
 function test.test_main_forAllAlts()
-
+	count = Rested.ForAllAlts( function() return 1 end, false )
+	assertEquals( 2, count )
 end
 -- Deaths report
 function test.beforeDeaths()
