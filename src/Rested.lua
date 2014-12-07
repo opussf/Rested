@@ -893,7 +893,6 @@ Rested.reminderValues = {
 Rested.missionReminderValues = {
 	[0] = "A mission has finished for %s-%s.",
 	[60] = "1 minute until a mission finishes for %s-%s.",
-	[300] = "%s-%s has a mission finishing in 5 minutes.",
 	[900] = "15 minutes until a mission finishes for %s-%s.",
 	[1800] = "30 minutes until a mission finishes for %s-%s.",
 }
