@@ -521,6 +521,9 @@ function Rested.FormatRested(charStruct)
 end
 function Rested.ForAllAlts( action, processIgnored )
 	-- loops through all the alts, using the action to return count and to build
+	-- param: action -- function to pass (realm, name, charStruct)
+	-- param: processIgnored -- boolean (true to include ignored toons)
+	-- returns: integer -- count of entries in the table
 	-- Rested.charList
 	Rested.charList = {};
 	count = 0;
@@ -1071,7 +1074,6 @@ function Rested.iLevel( realm, name, charStruct )
 --	end
 --	return 0;
 end
-
 Rested.dropDownMenuTable["Deaths"] = "deaths";
 Rested.commandList["deaths"] = function()
 	Rested.reportName = "Deaths";
