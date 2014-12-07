@@ -20,11 +20,57 @@ RestedFrame = CreateFrame()
 
 function test.before()
 --	Rested.ADDON_LOADED()
+	Rested_restedState = {
+		["testRealm"] = {
+			["testPlayer"] = {
+				["deaths"] = 1,
+			},
+			["noDeaths"] = {
+			},
+		},
+	}
 end
 function test.after()
 end
 function test.testGetToonCount()
 --	local nameCount, realmCount = Rested.GetToonCount();
+end
+function test.test_main_forAllAlts()
+
+end
+-- Deaths report
+function test.beforeDeaths()
+end
+function test.afterDeaths()
+end
+function test.test_deaths_hasDropDownMenuEntry()
+	assertEquals( "deaths", Rested.dropDownMenuTable["Deaths"] )
+end
+function test.test_deaths_hasCommandListEntry()
+	assertEquals( "function", type(Rested.commandList["deaths"]) )
+end
+function test.test_deaths_0()
+	test.beforeDeaths()
+	Rested.ForAllAlts( Rested.Deaths, false )
+--[[
+Rested.dropDownMenuTable["Deaths"] = "deaths";
+Rested.commandList["deaths"] = function()
+	Rested.reportName = "Deaths";
+	Rested.ShowReport( Rested.Deaths );
+end
+]]
+
+
+	test.afterDeaths()
+end
+-- Missions report
+function test.beforeMissions()
+end
+function test.afterMissions()
+end
+function test.test_missions_01()
+	test.beforeMissions()
+	test.afterMissions()
 end
 --[[
 
