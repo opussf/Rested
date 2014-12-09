@@ -1122,8 +1122,8 @@ function Rested.Missions( realm, name, charStruct )
 			table.insert( Rested.charList, { 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150) , Rested.strOut } )
 		end
 		if (not Rested.maxTimeLeftAdjustAt or time() > Rested.maxTimeLeftAdjustAt) then
-			Rested.maxTimeLeftAdjustAt = time() + 60
-			Rested.maxTimeLeftSeconds = Rested.maxTimeLeftSeconds - 3600
+			Rested.maxTimeLeftAdjustAt = time() + 5
+			Rested.maxTimeLeftSeconds = Rested.maxTimeLeftSeconds - 30
 		end
 
 	end
