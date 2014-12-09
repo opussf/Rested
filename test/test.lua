@@ -35,10 +35,13 @@ end
 function test.testGetToonCount()
 --	local nameCount, realmCount = Rested.GetToonCount();
 end
-function test.test_main_forAllAlts()
+function test.test_main_ForAllAlts_count()
 	count = Rested.ForAllAlts( function() return 1 end, false )
 	assertEquals( 2, count )
 end
+--function test.test_main_ForAllAlts_charList()
+--end
+------------------------------------------
 -- Deaths report
 function test.beforeDeaths()
 end
@@ -50,20 +53,12 @@ end
 function test.test_deaths_hasCommandListEntry()
 	assertEquals( "function", type(Rested.commandList["deaths"]) )
 end
-function test.test_deaths_0()
+function test.test_deaths_count()
 	test.beforeDeaths()
 	Rested.ForAllAlts( Rested.Deaths, false )
---[[
-Rested.dropDownMenuTable["Deaths"] = "deaths";
-Rested.commandList["deaths"] = function()
-	Rested.reportName = "Deaths";
-	Rested.ShowReport( Rested.Deaths );
-end
-]]
-
-
 	test.afterDeaths()
 end
+------------------------------------------
 -- Missions report
 function test.beforeMissions()
 end
