@@ -1123,7 +1123,7 @@ function Rested.Missions( realm, name, charStruct )
 		end
 		if (not Rested.maxTimeLeftAdjustAt or time() > Rested.maxTimeLeftAdjustAt) then
 			Rested.maxTimeLeftAdjustAt = time() + 5
-			Rested.maxTimeLeftSeconds = Rested.maxTimeLeftSeconds - 30
+			Rested.maxTimeLeftSeconds = (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds - 30)
 		end
 
 	end
