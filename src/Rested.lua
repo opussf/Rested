@@ -1121,8 +1121,6 @@ function Rested.Missions( realm, name, charStruct )
 			Rested.strOut = string.format("%s :: %s",
 					timeLeftStr,
 					rn)
-			--table.insert( Rested.charList, { 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150) , Rested.strOut } )
-			--table.insert( Rested.charList, {time()-completedAtSeconds, (time()-completedAtSeconds).." "..rn } )
 			table.insert( Rested.charList,
 					{ (timeLeft==0 and (150+ (time()-completedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
 						Rested.strOut
