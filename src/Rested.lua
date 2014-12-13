@@ -876,7 +876,7 @@ function Rested.DropDownOnClick( self, func )
 end
 -- Reminder schedule code
 Rested.reminderValues = {
-	[0] = "%s:%s is now fully rested.",
+	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
 	[60] = "1 minute until %s:%s is fully rested.",
 	[300] = "5 minutes until %s:%s is fully rested.",
 	[600] = "10 minutes until %s:%s is fully rested.",
@@ -894,10 +894,10 @@ Rested.reminderValues = {
 	[432000] = "5 days until %s:%s is fully rested.",
 }
 Rested.missionReminderValues = {
-	[0] = "A mission has finished for %s-%s.",
-	[60] = "1 minute until a mission finishes for %s-%s.",
-	[900] = "15 minutes until a mission finishes for %s-%s.",
-	[1800] = "30 minutes until a mission finishes for %s-%s.",
+	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
+	[300] = COLOR_RED.."MISSION:"..COLOR_END.." 5 minutes until a mission finishes for %s-%s.",
+	[900] = COLOR_RED.."MISSION:"..COLOR_END.." 15 minutes until a mission finishes for %s-%s.",
+	[1800] = COLOR_RED.."MISSION:"..COLOR_END.." 30 minutes until a mission finishes for %s-%s.",
 }
 function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
@@ -963,7 +963,7 @@ function Rested.MakeReminderSchedule()
 end
 function Rested.PrintReminders()
 	if (Rested.reminders[time()]) then
-		Rested.Print("=+=+=+=+=+=+=+=+=+=+", false);
+		--Rested.Print("=+=+=+=+=+=+=+=+=+=+", false);
 		for i, struct in ipairs(Rested.reminders[time()]) do
 			Rested.Print(struct.msg, false);
 		end
