@@ -877,21 +877,21 @@ end
 -- Reminder schedule code
 Rested.reminderValues = {
 	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
-	[60] = "1 minute until %s:%s is fully rested.",
-	[300] = "5 minutes until %s:%s is fully rested.",
-	[600] = "10 minutes until %s:%s is fully rested.",
-	[900] = "15 minutes until %s:%s is fully rested.",
-	[1800] = "30 minutes until %s:%s is fully rested.",
-	[3600] = "1 hour until %s:%s is fully rested.",
-	[7200] = "2 hours until %s:%s is fully rested.",
-	[14400] = "4 hours until %s:%s is fully rested.",
-	[21600] = "6 hours until %s:%s is fully rested.",
-	[28800] = "8 hours until %s:%s is fully rested.",
-	[43200] = "12 hours until %s:%s is fully rested.",
-	[57600] = "16 hours until %s:%s is fully rested.",
-	[86400] = "1 day until %s:%s is fully rested.",
-	[172800] = "2 days until %s:%s is fully rested.",
-	[432000] = "5 days until %s:%s is fully rested.",
+	[60] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 minute until %s:%s is fully rested.",
+	[300] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 minutes until %s:%s is fully rested.",
+	[600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 10 minutes until %s:%s is fully rested.",
+	[900] = COLOR_GREEN.."RESTED:"..COLOR_END.." 15 minutes until %s:%s is fully rested.",
+	[1800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 30 minutes until %s:%s is fully rested.",
+	[3600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 hour until %s:%s is fully rested.",
+	[7200] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 hours until %s:%s is fully rested.",
+	[14400] = COLOR_GREEN.."RESTED:"..COLOR_END.." 4 hours until %s:%s is fully rested.",
+	[21600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 6 hours until %s:%s is fully rested.",
+	[28800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 8 hours until %s:%s is fully rested.",
+	[43200] = COLOR_GREEN.."RESTED:"..COLOR_END.." 12 hours until %s:%s is fully rested.",
+	[57600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 16 hours until %s:%s is fully rested.",
+	[86400] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 day until %s:%s is fully rested.",
+	[172800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 days until %s:%s is fully rested.",
+	[432000] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 days until %s:%s is fully rested.",
 }
 Rested.missionReminderValues = {
 	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
@@ -957,9 +957,9 @@ function Rested.MakeReminderSchedule()
 						end -- reminder times to watch
 					end
 				end -- Missions
-			end
-		end
-	end
+			end  -- Ignore Check
+		end -- Name Loop
+	end -- Realm loop
 end
 function Rested.PrintReminders()
 	if (Rested.reminders[time()]) then
