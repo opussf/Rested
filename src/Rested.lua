@@ -54,6 +54,21 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 	RestedFrame:RegisterEvent("PLAYER_UPDATE_RESTING");
 	RestedFrame:RegisterEvent("UNIT_INVENTORY_CHANGED");
+
+	-- Garrison events
+	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
+	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
+	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
+	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+
+	-- Not sure what to do with these
+--	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
+--	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATED");
+--	RestedFrame:RegisterEvent("GARRISON_BUILDING_UPDATE");
+--	RestedFrame:RegisterEvent("GARRISON_UPDATE");
+
+	--RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
+
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
 
@@ -127,6 +142,93 @@ function Rested.ADDON_LOADED()
 
 	--Rested.Print("Addon_Loaded End");
 end
+function Rested.PLAYER_ENTERING_WORLD()
+	--Rested.Print(date("%x %X")..":"..event);
+	Rested.SaveRestedState();
+
+	if Rested.ForAllAlts( Rested.NagCharacters ) > 0 then
+		Rested.commandList.nag();
+	end
+end
+function Rested.UNIT_INVENTORY_CHANGED()
+	Rested.ScanInv()
+end
+function Rested.PLAYER_XP_UPDATE()
+	Rested.SaveRestedState()
+end
+Rested.PLAYER_UPDATE_RESTING = Rested.PLAYER_XP_UPDATE
+Rested.UPDATE_EXHAUSTION = Rested.PLAYER_XP_UPDATE
+Rested.CHANNEL_UI_UPDATE = Rested.PLAYER_XP_UPDATE
+
+function Rested.GARRISON_UPDATE()
+	Rested.Print("GARRISON_UPDATE")
+end
+function Rested.GARRISON_BUILDING_UPDATE()
+	Rested.Print("GARRISON_BUILDING_UPDATE")
+end
+function Rested.GARRISON_BUILDING_ACTIVATABLE()
+	Rested.Print("GARRISON_BUILDING_ACTIVATABLE")
+end
+function Rested.GARRISON_BUILDING_ACTIVATED()
+	Rested.Print("GARRISON_BUILDING_ACTIVATED")
+end
+function Rested.GARRISON_MISSION_LIST_UPDATE()
+	--[[	This might be a good place to remove out of date missions from the Rested tracking area
+	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+	local missions = {}
+	C_Garrison.GetInProgressMissions( missions )
+	--Rested.Print("You have "..#missions.." active missions.")
+	for _,m in pairs(missions) do
+		--Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
+		if Rested_restedState[Rested.realm][Rested.name].missions and
+				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- missions is set, and am tracking the mission id
+			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].missions[m.missionID].duration)
+		end
+	end
+	]]
+end
+function Rested.GARRISON_MISSION_STARTED()
+	--Rested.Print("GARRISON_MISSION_STARTED")
+	local missions = {}
+	local storeMission = {}
+	C_Garrison.GetInProgressMissions( missions )
+--	Rested.Print("You have "..#missions.." active missions.")
+	for _,m in pairs(missions) do
+--		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
+--			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
+		if not Rested_restedState[Rested.realm][Rested.name].missions then
+			Rested_restedState[Rested.realm][Rested.name].missions = {}
+		end
+		if not Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- only set this if the id is new.
+			Rested_restedState[Rested.realm][Rested.name].missions[m.missionID]  = {
+					["started"]=time(),
+					["duration"]=m.durationSeconds,
+					["etc"] = date("%x %X",time()+m.durationSeconds),
+					["etcSeconds"] = time()+m.durationSeconds,
+					["name"] = m.name,
+			}
+		end
+	end
+	Rested.commandList.missions()
+end
+function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
+--	Rested.Print("GARRISON_MISSION_FINISHED")
+	local missions = {}
+	C_Garrison.GetInProgressMissions( missions )
+--	Rested.Print("A mission has finished. qID:"..(questID or "nil").." a2:"..(arg2 or "nil").." a3:"..(arg3 or "nil"))
+	Rested.commandList.missions()
+end
+function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succeeded )
+--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
+	if Rested_restedState[Rested.realm][Rested.name].missions then
+		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
+	end
+end
+function Rested.SHIPMENT_UPDATE()
+	-- This gets spammed when opening a building work order person
+	Rested.Print("SHIPMENT_UPDATE")
+end
+
 function Rested.Print( msg, showName)
 	-- print to the chat frame
 	-- set showName to false to suppress the addon name printing
@@ -162,23 +264,6 @@ function Rested_Debug( msg )
 	if Rested.debug then
 		msg = "debug-"..msg;
 		Rested.Print( msg );
-	end
-end
-function Rested.OnEvent(event, ...)
-	if (event == "ADDON_LOADED") then
-		Rested.ADDON_LOADED();
-	elseif (event == "PLAYER_ENTERING_WORLD") then
-		--Rested.Print(date("%x %X")..":"..event);
-		Rested.SaveRestedState();
-
-		if Rested.ForAllAlts( Rested.NagCharacters ) > 0 then
-			Rested.commandList.nag();
-		end
-	elseif (event == "UNIT_INVENTORY_CHANGED") then
-		Rested.ScanInv();
-	else
-		--Rested.Print("Rested Update");
-		Rested.SaveRestedState();
 	end
 end
 function Rested.ParseCmd(msg)
@@ -335,8 +420,8 @@ function Rested.GetColorFromRange(value, average, range)
 		--Rested.Print("Just set to red.");
 		return "|cffff0000";
 	end
-
 end
+
 function Rested.Command(msg)
 	local cmd, param = Rested.ParseCmd(msg);
 	cmd = string.lower(cmd);
@@ -436,6 +521,9 @@ function Rested.FormatRested(charStruct)
 end
 function Rested.ForAllAlts( action, processIgnored )
 	-- loops through all the alts, using the action to return count and to build
+	-- param: action -- function to pass (realm, name, charStruct)
+	-- param: processIgnored -- boolean (true to include ignored toons)
+	-- returns: integer -- count of entries in the table
 	-- Rested.charList
 	Rested.charList = {};
 	count = 0;
@@ -730,6 +818,7 @@ function Rested.OnUpdate()
 	if Rested.lastUpdate + 1 <= time() then
 		Rested.lastUpdate = time();
 		Rested.UpdateFrame();
+		-- if (Rested.maxTimeLeftSeconds) then Rested.Print(Rested.maxTimeLeftSeconds) end
 	end
 end
 function Rested.SetIgnore(param)
@@ -787,22 +876,28 @@ function Rested.DropDownOnClick( self, func )
 end
 -- Reminder schedule code
 Rested.reminderValues = {
-	[0] = "%s:%s is now fully rested.",
-	[60] = "1 minute until %s:%s is fully rested.",
-	[300] = "5 minutes until %s:%s is fully rested.",
-	[600] = "10 minutes until %s:%s is fully rested.",
-	[900] = "15 minutes until %s:%s is fully rested.",
-	[1800] = "30 minutes until %s:%s is fully rested.",
-	[3600] = "1 hour until %s:%s is fully rested.",
-	[7200] = "2 hours until %s:%s is fully rested.",
-	[14400] = "4 hours until %s:%s is fully rested.",
-	[21600] = "6 hours until %s:%s is fully rested.",
-	[28800] = "8 hours until %s:%s is fully rested.",
-	[43200] = "12 hours until %s:%s is fully rested.",
-	[57600] = "16 hours until %s:%s is fully rested.",
-	[86400] = "1 day until %s:%s is fully rested.",
-	[172800] = "2 days until %s:%s is fully rested.",
-	[432000] = "5 days until %s:%s is fully rested.",
+	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
+	[60] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 minute until %s:%s is fully rested.",
+	[300] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 minutes until %s:%s is fully rested.",
+	[600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 10 minutes until %s:%s is fully rested.",
+	[900] = COLOR_GREEN.."RESTED:"..COLOR_END.." 15 minutes until %s:%s is fully rested.",
+	[1800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 30 minutes until %s:%s is fully rested.",
+	[3600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 hour until %s:%s is fully rested.",
+	[7200] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 hours until %s:%s is fully rested.",
+	[14400] = COLOR_GREEN.."RESTED:"..COLOR_END.." 4 hours until %s:%s is fully rested.",
+	[21600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 6 hours until %s:%s is fully rested.",
+	[28800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 8 hours until %s:%s is fully rested.",
+	[43200] = COLOR_GREEN.."RESTED:"..COLOR_END.." 12 hours until %s:%s is fully rested.",
+	[57600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 16 hours until %s:%s is fully rested.",
+	[86400] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 day until %s:%s is fully rested.",
+	[172800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 days until %s:%s is fully rested.",
+	[432000] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 days until %s:%s is fully rested.",
+}
+Rested.missionReminderValues = {
+	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
+	[300] = COLOR_RED.."MISSION:"..COLOR_END.." 5 minutes until a mission finishes for %s-%s.",
+	[900] = COLOR_RED.."MISSION:"..COLOR_END.." 15 minutes until a mission finishes for %s-%s.",
+	[1800] = COLOR_RED.."MISSION:"..COLOR_END.." 30 minutes until a mission finishes for %s-%s.",
 }
 function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
@@ -833,9 +928,6 @@ function Rested.MakeReminderSchedule()
 							Rested.reminders[reminderTime] = {};
 						end
 						table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, realm, name)});
---						Rested.Print(string.format("Rested %s:%s at %s",
---							realm, name, date("%x %X",reminderTime)));
-
 					end
 				end
 				if charStruct.xpNow then
@@ -851,13 +943,27 @@ function Rested.MakeReminderSchedule()
 								realm, name, date("%x %X",lvlRestedAt)));
 					end
 				end
-			end
-		end
-	end
+				if charStruct.missions then
+					for i,m in pairs(charStruct.missions) do
+						local completedAtSeconds = m.started + m.duration
+						for diff, format in pairs(Rested.missionReminderValues) do
+							local reminderTime = completedAtSeconds - diff  -- reminder time is before completion
+							if (reminderTime > now) then -- yet, still in the future
+								if (not Rested.reminders[reminderTime]) then
+									Rested.reminders[reminderTime] = {}
+								end
+								table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, name, realm)})
+							end -- reminder time in future
+						end -- reminder times to watch
+					end
+				end -- Missions
+			end  -- Ignore Check
+		end -- Name Loop
+	end -- Realm loop
 end
 function Rested.PrintReminders()
 	if (Rested.reminders[time()]) then
-		Rested.Print("=+=+=+=+=+=+=+=+=+=+", false);
+		--Rested.Print("=+=+=+=+=+=+=+=+=+=+", false);
 		for i, struct in ipairs(Rested.reminders[time()]) do
 			Rested.Print(struct.msg, false);
 		end
@@ -968,7 +1074,6 @@ function Rested.iLevel( realm, name, charStruct )
 --	end
 --	return 0;
 end
-
 Rested.dropDownMenuTable["Deaths"] = "deaths";
 Rested.commandList["deaths"] = function()
 	Rested.reportName = "Deaths";
@@ -987,4 +1092,46 @@ function Rested.Deaths( realm, name, charStruct )
 	return 1;
 --	end
 --	return 0;
+end
+
+Rested.dropDownMenuTable["Missions"] = "missions"
+Rested.commandList["missions"] = function()
+	Rested.reportName = "Missions"
+	Rested.ShowReport( Rested.Missions )
+end
+function Rested.Missions( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.missions then
+		for i,m in pairs(charStruct.missions) do
+			lineCount = lineCount + 1
+			local completedAtSeconds = m.started + m.duration
+			local timeLeft = completedAtSeconds - time()
+			timeLeft = (timeLeft >= 0) and timeLeft or 0
+
+			--Rested.maxCompletedAtSeconds = max(Rested.maxCompletedAtSeconds or 0, completedAtSeconds)
+			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds or 1,
+					max(timeLeft,60))
+			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
+--			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..(timeLeft / Rested.maxTimeLeftSeconds) * 150)
+
+			Rested.strOut = string.format("%s :: %s",
+					timeLeftStr,
+					rn)
+			table.insert( Rested.charList,
+					{ (timeLeft==0 and (150+ (time()-completedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
+						Rested.strOut
+					}
+			)
+		end
+		if (not Rested.maxTimeLeftAdjustAt or time() > Rested.maxTimeLeftAdjustAt) then
+			Rested.maxTimeLeftAdjustAt = time() + 5
+			Rested.maxTimeLeftSeconds = (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds - 30)
+		end
+
+	end
+	return lineCount
 end
