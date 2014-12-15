@@ -30,6 +30,7 @@ Rested_options = {
 	["ignoreTime"] = 5*24*3600,
 	["maxiLvl"] = 1,
 	["maxDeaths"] = 1,
+	["iLvlMaxAge"] = 3600,
 }
 
 Rested = {};
