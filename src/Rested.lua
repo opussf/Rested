@@ -459,6 +459,15 @@ function Rested.PrintHelp()
 --	Rested.Print("/Rested nagtime # -> Set # of nag days for max lvl toons");
 	Rested.Print("/Rested ignore name -> Ignore for "..SecondsToTime(Rested_options.ignoreTime));
 end
+--[[
+function Rested.PrintHelp()
+	Rested.Print(RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..")", false)
+	for cmd, info in pairs(Rested.CommandList) do
+		Rested.Print( string.format( "%s %s %s -> %s",
+			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
+	end
+end
+]]
 function Rested.SaveRestedState()
 	--Rested.Print("Save Rested State");
 	Rested.rested = GetXPExhaustion() or 0;		-- XP till Exhaustion
