@@ -1,4 +1,4 @@
-Welcome to Rested 2.0.
+Welcome to Rested
 
 Rested shows the rested status of your alts.
 
@@ -11,7 +11,7 @@ Type '/rested' to see a list of alts and their rested status.
 Rested shows:
 Character level    - What level the character is was at when last seen.
 Resting status     - + means resting, - means not resting
-Rested % / 150     - Total expected rested amount.  This is green if the 
+Rested % / 150     - Total expected rested amount.  This is green if the
                    - rested will take the alt into the next level.
 Time till rested   - Amount of time till the character is fully rested
 Realm : Char Name  - The realm and name of the character.
@@ -62,13 +62,17 @@ Toons not seen in 10 days.
 
 
 Change Log:
+2.6     - Bringing the version numbers back into sync
+        - Garrison Cache (gcache) tracking
+2.5     - Messed up versions with git tags
+        - Garrison Mission tracking
 2.4     - Gender
 2.3     - New layout - shrunk search bar, and moved dropdown up next to it
         - right click menu
 2.2     - Changed the ALL report to show: Level (Expected Rested) Name
 2.1     - Some clean ups
 2.0     - adding UI interface
-		
+
 1.4     - added dynamic maxLevel value based on account type
 1.3     - updated for Cataclysm
         - added the find function.
@@ -115,7 +119,7 @@ To do:
   -- On each second update:
      - check current timestamp against table
 		- print reminders
-		
+
   -- Table structure:
 reminders = {
 	[1277372992] = {
