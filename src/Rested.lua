@@ -252,7 +252,7 @@ function Rested.VIGNETTE_REMOVED( arg1 )
 			Rested.Print("I think you just picked up Garrison Cache.  Setting TimeStamp")
 			Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 		end
-		Rested.Print("Removing "..Rested.vignettes[arg1])
+		-- Rested.Print("Removing "..Rested.vignettes[arg1])
 		Rested.vignettes[arg1] = nil
 	end
 end
@@ -1164,15 +1164,15 @@ function Rested.Missions( realm, name, charStruct )
 	return lineCount
 end
 
-Rested.dropDownMenuTable["Resources"] = "resources"
-Rested.commandList["resources"] = function()
-	Rested.reportName="Garrison Resources"
-	Rested.ShowReport( Rested.Resources )
+Rested.dropDownMenuTable["G-Cache"] = "gcache"
+Rested.commandList["gcache"] = function()
+	Rested.reportName="Garrison Cache"
+	Rested.ShowReport( Rested.Gcache )
 end
 Rested.cacheRate = 6 -- 6/hour (144/day)
 Rested.cacheMax = 500
 Rested.cacheMin = 5
-function Rested.Resources( realm, name, charStruct )
+function Rested.Gcache( realm, name, charStruct )
 	local rn = realm..":"..name
 	if (realm == Rested.realm and name == Rested.name) then
 		rn = COLOR_GREEN..rn..COLOR_END;
