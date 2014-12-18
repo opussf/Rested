@@ -237,7 +237,7 @@ function Rested.VIGNETTE_ADDED( arg1 )
 	-- http://wow.gamepedia.com/Events/V
 	-- http://wow.gamepedia.com/API_C_Vignettes.GetVignetteInfoFromInstanceID
 	local _, _, vName, vObjectIcon = C_Vignettes.GetVignetteInfoFromInstanceID( arg1 )
-	Rested.Print("VIGNETTE_ADDED: "..vName.." ("..(arg1 or nil)..")")
+	--Rested.Print("VIGNETTE_ADDED: "..vName.." ("..(arg1 or nil)..")")
 	if Rested.vignettes then
 		Rested.vignettes[arg1] = vName
 	else
@@ -245,11 +245,11 @@ function Rested.VIGNETTE_ADDED( arg1 )
 	end
 end
 function Rested.VIGNETTE_REMOVED( arg1 )
-	Rested.Print("VIGNETTE_REMOVED ("..(arg1 or nil)..")")
+	--Rested.Print("VIGNETTE_REMOVED ("..(arg1 or nil)..")")
 	if Rested.vignettes[arg1] then
-		Rested.Print("I know about '"..Rested.vignettes[arg1].."'")
+		--Rested.Print("I know about '"..Rested.vignettes[arg1].."'")
 		if Rested.vignettes[arg1] == "Garrison Cache" then
-			Rested.Print("I think you just picked up Garrison Cache.  Setting TimeStamp")
+			--Rested.Print("I think you just picked up Garrison Cache.  Setting TimeStamp")
 			Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 		end
 		-- Rested.Print("Removing "..Rested.vignettes[arg1])
