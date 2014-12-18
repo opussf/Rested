@@ -62,6 +62,10 @@ Toons not seen in 10 days.
 
 
 Change Log:
+2.6     - Bringing the version numbers back into sync
+        - Garrison Cache (gcache) tracking
+2.5     - Messed up versions with git tags
+        - Garrison Mission tracking
 2.4     - Gender
 2.3     - New layout - shrunk search bar, and moved dropdown up next to it
         - right click menu
