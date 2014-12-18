@@ -62,6 +62,10 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
 	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
 
+	-- Garrison Resources event
+	RestedFrame:RegisterEvent("VIGNETTE_ADDED")
+	RestedFrame:RegisterEvent("VIGNETTE_REMOVED")
+
 	-- Not sure what to do with these
 --	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
 --	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATED");
@@ -228,6 +232,29 @@ end
 function Rested.SHIPMENT_UPDATE()
 	-- This gets spammed when opening a building work order person
 	Rested.Print("SHIPMENT_UPDATE")
+end
+function Rested.VIGNETTE_ADDED( arg1 )
+	-- http://wow.gamepedia.com/Events/V
+	-- http://wow.gamepedia.com/API_C_Vignettes.GetVignetteInfoFromInstanceID
+	local _, _, vName, vObjectIcon = C_Vignettes.GetVignetteInfoFromInstanceID( arg1 )
+	Rested.Print("VIGNETTE_ADDED: "..vName.." ("..(arg1 or nil)..")")
+	if Rested.vignettes then
+		Rested.vignettes[arg1] = vName
+	else
+		Rested.vignettes = { [arg1] = vName }
+	end
+end
+function Rested.VIGNETTE_REMOVED( arg1 )
+	Rested.Print("VIGNETTE_REMOVED ("..(arg1 or nil)..")")
+	if Rested.vignettes[arg1] then
+		Rested.Print("I know about '"..Rested.vignettes[arg1].."'")
+		if Rested.vignettes[arg1] == "Garrison Cache" then
+			Rested.Print("I think you just picked up Garrison Cache.  Setting TimeStamp")
+			Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
+		end
+		Rested.Print("Removing "..Rested.vignettes[arg1])
+		Rested.vignettes[arg1] = nil
+	end
 end
 
 function Rested.Print( msg, showName)
@@ -1134,5 +1161,40 @@ function Rested.Missions( realm, name, charStruct )
 		end
 
 	end
+	return lineCount
+end
+
+Rested.dropDownMenuTable["Resources"] = "resources"
+Rested.commandList["resources"] = function()
+	Rested.reportName="Garrison Resources"
+	Rested.ShowReport( Rested.Resources )
+end
+Rested.cacheRate = 6 -- 6/hour (144/day)
+Rested.cacheMax = 500
+Rested.cacheMin = 5
+function Rested.Resources( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.garrisonCache then
+		lineCount = 1
+		local timeSince = time() - charStruct.garrisonCache
+		local timeSinceStr = SecondsToTime(timeSince)
+
+		local resourcesInCache = math.min( ( timeSince / 3600 ) * Rested.cacheRate, Rested.cacheMax )
+
+		Rested.strOut = string.format("%i - %s :: %s",
+				(resourcesInCache >= Rested.cacheMin and resourcesInCache or 0),
+				timeSinceStr,
+				rn)
+		table.insert( Rested.charList,
+				{ (resourcesInCache / Rested.cacheMax) * 150 ,
+					Rested.strOut
+				}
+		)
+	end
+
 	return lineCount
 end
