@@ -985,6 +985,8 @@ function Rested.MakeReminderSchedule()
 						end -- reminder times to watch
 					end
 				end -- Missions
+				if charStruct.garrisonCache then
+				end -- garrisonCache
 			end  -- Ignore Check
 		end -- Name Loop
 	end -- Realm loop
