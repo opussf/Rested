@@ -102,6 +102,7 @@
 				<include name="Readme.txt"/>
 			</fileset>
 		</copy>
+		<chmod perm="ugo+x" dir="${addon.dir}" includes="Rested2*.lua" />
 	</target>
 
 	<target name="test" description="run unit tests" if="test.check">
