@@ -4,6 +4,7 @@
 	<xsl:output method="xml" />
 
 	<xsl:variable name="now" select="ex:seconds()" />
+	<xsl:variable name='maxLevel' select='/restedToons/maxLevel'/>
 
 	<xsl:template match="/">
 		<rss version="2.0">
@@ -26,7 +27,7 @@
 		<xsl:variable name='PCgained' select='$sincePlayed * /restedToons/resting'/>
 		<xsl:variable name='restedText'>
 			<xsl:choose>
-				<xsl:when test='@lvlNow = 85'>Max Level</xsl:when>
+				<xsl:when test='@lvlNow = $maxLevel'>Max Level</xsl:when>
 				<xsl:when test='(@restedPC + $PCgained) &gt; 150'>Fully Rested</xsl:when>
 				<xsl:otherwise>Resting</xsl:otherwise>
 			</xsl:choose>
@@ -48,6 +49,8 @@
 			<xsl:value-of select='@rn'/>
 			<xsl:text> (Level </xsl:text>
 			<xsl:value-of select='@lvlNow'/>
+			<xsl:text>::</xsl:text>
+			<xsl:value-of select='@faction'/>
 			<xsl:text>::</xsl:text>
 			<xsl:value-of select='@race'/>
 			<xsl:text> - </xsl:text>
