@@ -157,6 +157,8 @@ function showObject(id) {
 		<xsl:variable name='catMax' select="count(/restedToons/c[@lvlNow = '85'])"/>
 		<xsl:variable name='mpCount' select="count(/restedToons/c[@lvlNow &gt; '85' and @lvlNow &lt;'90'])"/>
 		<xsl:variable name='mpMax' select="count(/restedToons/c[@lvlNow = '90'])"/>
+		<xsl:variable name='wdCount' select="count(/restedToons/c[@lvlNow &gt; '90' and @lvlNow &lt;'100'])"/>
+		<xsl:variable name='wdMax' select="count(/restedToons/c[@lvlNow = '100'])"/>
 		
 		<div class='statsbox'>
 		<xsl:text>By Levels:</xsl:text>
@@ -200,6 +202,15 @@ function showObject(id) {
 			<xsl:with-param name='title'>Mists of Pandera Max [90]</xsl:with-param>
 			<xsl:with-param name='val'><xsl:value-of select='$mpMax'/></xsl:with-param>
 		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Warlords of Draenor [91-99]</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select='$wdCount'/></xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Warlords of Draenor Max [100]</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select='$wdMax'/></xsl:with-param>
+		</xsl:call-template>
+
 		</div>
 	</xsl:template>
 
@@ -426,6 +437,14 @@ function showObject(id) {
 		</div> <!-- statsbox -->
 	</xsl:template>
 
+	<xsl:template name='iLvl'>
+		<xsl:element name='a'>
+			<xsl:attribute name='target'>_blank</xsl:attribute>
+			<xsl:attribute name='href'>http://www.askmrrobot.com/wow/optimize/us/<xsl:value-of select='@rn'/>/<xsl:value-of select='@cn'/></xsl:attribute>
+			<xsl:value-of select='@iLvl'/>
+		</xsl:element>
+	</xsl:template>
+
 	<xsl:template match="c">
 		<xsl:variable name='sincePlayed' select="$now - @updated"/> <!-- seconds -->
 		<xsl:variable name='restingRate'><xsl:choose> <!-- % per second -->
@@ -487,13 +506,13 @@ function showObject(id) {
 				<xsl:when test="@lvlNow != $maxLevel">
 					<xsl:attribute name='style'>background-color: #96f; width: <xsl:value-of select='$lvlPC'/>%</xsl:attribute>
 					<div class='meter-text'>
-						<xsl:value-of select='@lvlNow'/> (<xsl:value-of select='format-number($lvlPC,"#.00")'/>%) <xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:value-of select='@iLvl'/>
+						<xsl:value-of select='@lvlNow'/> (<xsl:value-of select='format-number($lvlPC,"#.00")'/>%) <xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:call-template name='iLvl'/>
 					</div> <!-- meter-text -->
 				</xsl:when>
 				<xsl:when test="@lvlNow = $maxLevel">
 					<xsl:attribute name='style'>background-color: #96f; width: <xsl:value-of select='$iLvlPC'/>%</xsl:attribute>
 					<div class='meter-text'>
-						<xsl:value-of select='@lvlNow'/><xsl:text> </xsl:text><xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:value-of select='@iLvl'/>
+						<xsl:value-of select='@lvlNow'/><xsl:text> </xsl:text><xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:call-template name='iLvl'/>
 					</div> <!-- meter-text -->
 				</xsl:when>
 			</xsl:choose>
