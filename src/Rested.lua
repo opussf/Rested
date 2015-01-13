@@ -924,8 +924,21 @@ Rested.reminderValues = {
 Rested.missionReminderValues = {
 	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
 	[300] = COLOR_RED.."MISSION:"..COLOR_END.." 5 minutes until a mission finishes for %s-%s.",
+	[600] = COLOR_RED.."MISSION:"..COLOR_END.." 10 minutes until a mission finishes for %s-%s.",
 	[900] = COLOR_RED.."MISSION:"..COLOR_END.." 15 minutes until a mission finishes for %s-%s.",
 	[1800] = COLOR_RED.."MISSION:"..COLOR_END.." 30 minutes until a mission finishes for %s-%s.",
+}
+Rested.cacheReminderValues = {
+	[5] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." Garrison cache is ready for %s-%s.",
+	[12] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 12 resources for %s-%s.",
+	[100] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 100 resources for %s-%s.",
+	[144] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 144 resources for %s-%s.", -- 1 day
+	[200] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 200 resources for %s-%s.",
+	[288] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 288 resources for %s-%s.", -- 2 days
+	[300] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 300 resources for %s-%s.",
+	[400] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 400 resources for %s-%s.",
+	[432] = COLOR_RED.."G-CACHE:"..COLOR_END.." 432 resources for %s-%s.", -- 3 days
+	[500] = COLOR_RED.."G-CACHE:"..COLOR_END.." Is full for %s-%s.", -- Full
 }
 function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
@@ -986,6 +999,15 @@ function Rested.MakeReminderSchedule()
 					end
 				end -- Missions
 				if charStruct.garrisonCache then
+					for targetAmount, format in pairs(Rested.cacheReminderValues) do
+						local reminderTime = Rested.GcacheWhenAt( targetAmount, charStruct.garrisonCache )
+						if (reminderTime > now) then -- yet, still in the future
+							if (not Rested.reminders[reminderTime]) then
+								Rested.reminders[reminderTime] = {}
+							end
+							table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, name, realm)})
+						end -- reminder time in future
+					end
 				end -- garrisonCache
 			end  -- Ignore Check
 		end -- Name Loop
@@ -1174,6 +1196,9 @@ end
 Rested.cacheRate = 6 -- 6/hour (144/day)
 Rested.cacheMax = 500
 Rested.cacheMin = 5
+function Rested.GcacheWhenAt( targetAmount, gCacheTS )
+	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
+end
 function Rested.Gcache( realm, name, charStruct )
 	local rn = realm..":"..name
 	if (realm == Rested.realm and name == Rested.name) then
@@ -1197,6 +1222,5 @@ function Rested.Gcache( realm, name, charStruct )
 				}
 		)
 	end
-
 	return lineCount
 end
