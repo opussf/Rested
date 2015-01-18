@@ -589,7 +589,7 @@ function Rested.RestingCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct
 	-- appends to the global Rested.charList
 	-- returns 1 on success, 0 on fail
-	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC ~= 150) or
+	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC < 150) or
 			(realm == Rested.realm and name == Rested.name) then
 		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct );
 		Rested.strOut = string.format("% 2d%s %s", charStruct.lvlNow, code, restedStr);
