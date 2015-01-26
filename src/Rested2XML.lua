@@ -24,8 +24,8 @@ for realm, chars in pairs(Rested_restedState) do
 
 			if c.missions then
 				for id, mi in pairs(c.missions) do
-					strOut = strOut .. string.format('\t<m rn="%s" cn="%s" id="%s" started="%s" duration="%s" etc="%s" name="%s" />\n',
-							realm, name, id, mi.started, mi.duration, mi.etcSeconds, mi.name )
+					strOut = strOut .. string.format('\t<m rn="%s" cn="%s" id="%s" started="%s" duration="%s" etc="%s" emc="%s" name="%s" />\n',
+							realm, name, id, mi.started, mi.duration, mi.etcSeconds, (mi.emc or 0), mi.name )
 				end
 			end
 			if c.garrisonCache then
