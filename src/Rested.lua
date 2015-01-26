@@ -230,8 +230,8 @@ function Rested.GARRISON_MISSION_STARTED()
 			Rested_restedState[Rested.realm][Rested.name].missions[m.missionID]  = {
 					["started"]=time(),
 					["duration"]=m.durationSeconds,
-					["etc"] = date("%x %X",time()+m.durationSeconds),
-					["etcSeconds"] = time()+m.durationSeconds,
+					--["etc"] = date("%x %X",time()+m.durationSeconds),
+					["etcSeconds"] = time()+ (m.durationSeconds * (1 / (emc>0 and emc*2 or 1))),
 					["name"] = m.name,
 					["emc"] = ( emc>0 and emc or nil ),
 			}
