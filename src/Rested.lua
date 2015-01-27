@@ -209,10 +209,11 @@ function Rested.GARRISON_MISSION_STARTED()
 	--Rested.Print("GARRISON_MISSION_STARTED")
 	local missions = {}
 	local storeMission = {}
-	local emc = 0 -- Epic Mount Count
+
 	C_Garrison.GetInProgressMissions( missions )
 --	Rested.Print("You have "..#missions.." active missions.")
 	for _,m in pairs(missions) do
+		local emc = 0 -- Epic Mount Count
 		for _,followerID in pairs(m.followers) do
 			local abilities = C_Garrison.GetFollowerAbilities( followerID ) -- array of abilities
 			for _,ability in pairs(abilities) do
@@ -1009,7 +1010,8 @@ function Rested.MakeReminderSchedule()
 				end
 				if charStruct.missions then
 					for i,m in pairs(charStruct.missions) do
-						local completedAtSeconds =  m.started + (m.duration * (1 / (m.emc and m.emc*2 or 1)))
+						local completedAtSeconds =  m.started + (m.duration * (1 / ((m.emc and m.emc>0) and m.emc*2 or 1)))
+						if ( m.emc and m.emv>0 ) then Rested.Print(m.name.." has "..m.emc.." epic mounts to finish at: "..date("%x %X",completedAtSeconds)) end
 						for diff, format in pairs(Rested.missionReminderValues) do
 							local reminderTime = completedAtSeconds - diff  -- reminder time is before completion
 							if (reminderTime > now) then -- yet, still in the future
