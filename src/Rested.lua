@@ -60,7 +60,8 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
-	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+	--RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+	RestedFrame:RegisterEvent("GARRISON_MISSION_NPC_OPENED")
 
 	-- Garrison Resources event
 	RestedFrame:RegisterEvent("VIGNETTE_ADDED")
@@ -177,28 +178,41 @@ end
 function Rested.GARRISON_BUILDING_ACTIVATED()
 	Rested.Print("GARRISON_BUILDING_ACTIVATED")
 end
-function Rested.GARRISON_MISSION_LIST_UPDATE()
-	--[[	This might be a good place to remove out of date missions from the Rested tracking area
-	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+function Rested.GARRISON_MISSION_NPC_OPENED()
+	-- Prune missions here
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
-	--Rested.Print("You have "..#missions.." active missions.")
+	local activeMissionIDs = {}
 	for _,m in pairs(missions) do
-		--Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
-		if Rested_restedState[Rested.realm][Rested.name].missions and
-				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- missions is set, and am tracking the mission id
-			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].missions[m.missionID].duration)
+		activeMissionIDs[m.missionID] = 1
+	end
+	if Rested_restedState[Rested.realm][Rested.name].missions then
+		for pruneID,_ in pairs(Rested_restedState[Rested.realm][Rested.name].missions) do
+			--Rested.Print(pruneID.." isActive: "..(activeMissionIDs[pruneID] and "true" or "false"))
+			if not activeMissionIDs[pruneID] then
+				--Rested.Print("Prune unknown missionID: "..pruneID)
+				Rested_restedState[Rested.realm][Rested.name].missions[pruneID] = nil
+			end
 		end
 	end
-	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
 	--Rested.Print("GARRISON_MISSION_STARTED")
 	local missions = {}
 	local storeMission = {}
+
 	C_Garrison.GetInProgressMissions( missions )
 --	Rested.Print("You have "..#missions.." active missions.")
 	for _,m in pairs(missions) do
+		local emc = 0 -- Epic Mount Count
+		for _,followerID in pairs(m.followers) do
+			local abilities = C_Garrison.GetFollowerAbilities( followerID ) -- array of abilities
+			for _,ability in pairs(abilities) do
+				if ability.id == 221 then  -- ability.id == 221 = Epic Mount
+					emc = emc + 1
+				end
+			end
+		end
 --		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
 --			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
 		if not Rested_restedState[Rested.realm][Rested.name].missions then
@@ -208,9 +222,10 @@ function Rested.GARRISON_MISSION_STARTED()
 			Rested_restedState[Rested.realm][Rested.name].missions[m.missionID]  = {
 					["started"]=time(),
 					["duration"]=m.durationSeconds,
-					["etc"] = date("%x %X",time()+m.durationSeconds),
-					["etcSeconds"] = time()+m.durationSeconds,
+					--["etc"] = date("%x %X",time()+m.durationSeconds),
+					["etcSeconds"] = time()+ (m.durationSeconds * (1 / (emc>0 and emc*2 or 1))),
 					["name"] = m.name,
+					["emc"] = ( emc>0 and emc or nil ),
 			}
 		end
 	end
@@ -224,7 +239,7 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succeeded )
---	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
+	--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
 	end
@@ -986,7 +1001,8 @@ function Rested.MakeReminderSchedule()
 				end
 				if charStruct.missions then
 					for i,m in pairs(charStruct.missions) do
-						local completedAtSeconds = m.started + m.duration
+						local completedAtSeconds =  m.started + (m.duration * (1 / ((m.emc and m.emc>0) and m.emc*2 or 1)))
+						if ( m.emc and m.emv>0 ) then Rested.Print(m.name.." has "..m.emc.." epic mounts to finish at: "..date("%x %X",completedAtSeconds)) end
 						for diff, format in pairs(Rested.missionReminderValues) do
 							local reminderTime = completedAtSeconds - diff  -- reminder time is before completion
 							if (reminderTime > now) then -- yet, still in the future
@@ -1160,7 +1176,7 @@ function Rested.Missions( realm, name, charStruct )
 	if charStruct.missions then
 		for i,m in pairs(charStruct.missions) do
 			lineCount = lineCount + 1
-			local completedAtSeconds = m.started + m.duration
+			local completedAtSeconds = m.started + (m.duration * (1 / (m.emc and m.emc*2 or 1)))
 			local timeLeft = completedAtSeconds - time()
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
 
