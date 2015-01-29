@@ -62,6 +62,8 @@ Toons not seen in 10 days.
 
 
 Change Log:
+2.6.1   - Modifying missions complete time based on a follower with an Epic Mount
+        - Adding code to prune missions that are no longer active (on opening mission NPC table)
 2.6     - Bringing the version numbers back into sync
         - Garrison Cache (gcache) tracking
 2.5     - Messed up versions with git tags
