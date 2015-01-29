@@ -60,7 +60,8 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
-	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+	--RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+	RestedFrame:RegisterEvent("GARRISON_MISSION_NPC_OPENED")
 
 	-- Garrison Resources event
 	RestedFrame:RegisterEvent("VIGNETTE_ADDED")
@@ -177,33 +178,23 @@ end
 function Rested.GARRISON_BUILDING_ACTIVATED()
 	Rested.Print("GARRISON_BUILDING_ACTIVATED")
 end
-function Rested.GARRISON_MISSION_LIST_UPDATE()
-	--[[	This might be a good place to remove out of date missions from the Rested tracking area
-	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+function Rested.GARRISON_MISSION_NPC_OPENED()
+	-- Prune missions here
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
-	--Rested.Print("You have "..#missions.." active missions.")
+	local activeMissionIDs = {}
 	for _,m in pairs(missions) do
-		Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
-		Rested.Print("Followers on misson:"..#m.followers)
-
-		for k,followerID in pairs(m.followers) do
-			Rested.Print("k:"..k.." v:"..followerID)
-			local abilities = C_Garrison.GetFollowerAbilities( followerID ) -- array of abilities
-			for i = 1, #abilities do
-				Rested.Print("id: "..abilities[i].id.." name: "..abilities[i].name )
-				for ck, cv in pairs(abilities[i].counters) do
-					Rested.Print( "ck: "..ck.." cv: "..type(cv) )
-				end
+		activeMissionIDs[m.missionID] = 1
+	end
+	if Rested_restedState[Rested.realm][Rested.name].missions then
+		for pruneID,_ in pairs(Rested_restedState[Rested.realm][Rested.name].missions) do
+			--Rested.Print(pruneID.." isActive: "..(activeMissionIDs[pruneID] and "true" or "false"))
+			if not activeMissionIDs[pruneID] then
+				--Rested.Print("Prune unknown missionID: "..pruneID)
+				Rested_restedState[Rested.realm][Rested.name].missions[pruneID] = nil
 			end
 		end
-
-		if Rested_restedState[Rested.realm][Rested.name].missions and
-				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- missions is set, and am tracking the mission id
-			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].missions[m.missionID].duration)
-		end
 	end
-	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
 	--Rested.Print("GARRISON_MISSION_STARTED")
@@ -248,7 +239,7 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succeeded )
---	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
+	--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
 	end
