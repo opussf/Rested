@@ -3,12 +3,11 @@ before_install:
   - sudo apt-get install lua5.1
 script:
   - ant clean package
-  - pwd
 deploy:
   provider: releases
   api-key: 30507115dd3dec007197220dcf06cfb60501a88a
   file:
-    - "/home/travis/build/opussf/Rested/target/"
+    - "/home/travis/build/opussf/Rested/target/Rested_*"
   skip_cleanup: true
   on:
     tags: true
