@@ -76,6 +76,7 @@
 		</copy>
 		<zip 	destfile="${target.dir}/${project.zip}"
 				basedir="${working.dir}"
+				encoding="UTF-8"
 				includes="${ant.project.name}/**"/>
 		<delete dir="${package.dir}" verbose="false"/>
 		<checksum file="${target.dir}/${project.zip}"
