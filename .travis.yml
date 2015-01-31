@@ -8,6 +8,7 @@ deploy:
   provider: releases
   api-key: 30507115dd3dec007197220dcf06cfb60501a88a
   file:
+    - *.zip
     - target/*.zip
     - target/*.md5
   skip_cleanup: true
