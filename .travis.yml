@@ -7,7 +7,7 @@ deploy:
   provider: releases
   api-key: 30507115dd3dec007197220dcf06cfb60501a88a
   directory:
-    - "/home/travis/build/opussf/Rested/target"
+    - "/home/travis/build/opussf/Rested/target/"
   skip_cleanup: true
   on:
     tags: true
