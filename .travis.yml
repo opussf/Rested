@@ -1,7 +1,9 @@
 language: lua
 before_install:
   - sudo apt-get install lua5.1
-script: ant clean package
+script:
+  - ant clean package
+  - pwd
 deploy:
   provider: releases
   api-key: 30507115dd3dec007197220dcf06cfb60501a88a
