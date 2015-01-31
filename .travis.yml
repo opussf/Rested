@@ -1,5 +1,11 @@
+PACKAGECLOUD_TOKEN:54138e81e09e8f005ae297f5298cfd6f45a1b82e110aa2bf
+
 language: lua
 before_install:
   - sudo apt-get install lua5.1
-script: ant clean package
+  - gem install package_cloud
+script:
+  - ant clean package
+  - package_cloud push opussf/rested/ ./target/*.zip
+  - package_cloud push opussf/rested/ ./target/*.md5
 
