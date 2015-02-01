@@ -46,7 +46,6 @@ Rested.slotList={"HeadSlot","NeckSlot","ShoulderSlot","BackSlot","ChestSlot","Wr
 		"Trinket1Slot","MainHandSlot","SecondaryHandSlot"};
 Rested.genders={"","Male","Female"};
 
-
 function Rested.OnLoad()
 	RestedFrame:RegisterEvent("PLAYER_XP_UPDATE");
 	RestedFrame:RegisterEvent("UPDATE_EXHAUSTION");
@@ -1162,6 +1161,7 @@ function Rested.Deaths( realm, name, charStruct )
 --	return 0;
 end
 
+Rested.maxTimeLeftSecondsTable = {}
 Rested.dropDownMenuTable["Missions"] = "missions"
 Rested.commandList["missions"] = function()
 	Rested.reportName = "Missions"
@@ -1180,9 +1180,19 @@ function Rested.Missions( realm, name, charStruct )
 			local timeLeft = completedAtSeconds - time()
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
 
-			--Rested.maxCompletedAtSeconds = max(Rested.maxCompletedAtSeconds or 0, completedAtSeconds)
-			Rested.maxTimeLeftSeconds = max(Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds or 1,
+			local now = time()
+			Rested.maxTimeLeftSecondsTable[now] = (Rested.maxTimeLeftSecondsTable[now] and  -- test to see if a value is present
+					max(max(timeLeft,60), Rested.maxTimeLeftSecondsTable[now]) or  -- if so, set a value,
 					max(timeLeft,60))
+
+			Rested.maxTimeLeftSeconds = 0
+			for ts,v in pairs(Rested.maxTimeLeftSecondsTable) do
+				Rested.maxTimeLeftSeconds = max( Rested.maxTimeLeftSeconds, v )
+				if ts + 3 < now then
+					Rested.maxTimeLeftSecondsTable[ts] = nil
+				end
+			end
+
 			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
 --			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..(timeLeft / Rested.maxTimeLeftSeconds) * 150)
 
@@ -1195,12 +1205,13 @@ function Rested.Missions( realm, name, charStruct )
 					}
 			)
 		end
-		if (not Rested.maxTimeLeftAdjustAt or time() > Rested.maxTimeLeftAdjustAt) then
-			Rested.maxTimeLeftAdjustAt = time() + 5
-			Rested.maxTimeLeftSeconds = (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds - 150)
-		end
-
 	end
+--	local M = 0
+--	for ts,v in pairs(Rested.maxTimeLeftSecondsTable) do
+--		Rested.Print(ts..":"..v)
+--		M = max( M, v )
+--	end
+--	Rested.Print("Max: "..M)
 	return lineCount
 end
 
