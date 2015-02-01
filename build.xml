@@ -76,6 +76,7 @@
 		</copy>
 		<zip 	destfile="${target.dir}/${project.zip}"
 				basedir="${working.dir}"
+				encoding="UTF-8"
 				includes="${ant.project.name}/**"/>
 		<delete dir="${package.dir}" verbose="false"/>
 		<checksum file="${target.dir}/${project.zip}"
@@ -102,6 +103,7 @@
 				<include name="Readme.txt"/>
 			</fileset>
 		</copy>
+		<chmod perm="ugo+x" dir="${addon.dir}" includes="Rested2*.lua" />
 	</target>
 
 	<target name="test" description="run unit tests" if="test.check">

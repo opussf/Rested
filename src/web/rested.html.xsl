@@ -15,6 +15,8 @@ doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" />
 			<xsl:if test="position()=1"><xsl:value-of select="@iLvl"/></xsl:if>
 		</xsl:for-each>
 	</xsl:variable>
+	<xsl:variable name='cacheRate'>6</xsl:variable>
+	<xsl:variable name='maxCache'>500</xsl:variable>
 
 	<xsl:template match="/">
 		<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -80,6 +82,10 @@ function showObject(id) {
 		<span>Character Stats</span>
 		<xsl:call-template name='stats'/>
 		</div>  <!-- stats -->
+		<div class='stats'>
+		<!-- <span>Garrison Stats</span> -->
+		<xsl:call-template name='gstats'/>
+		</div>  <!-- stats -->
 		</div>  <!-- restedtop -->
 		</body>
 		</html>
@@ -93,6 +99,11 @@ function showObject(id) {
 		<xsl:call-template name='gender'/>
 		<xsl:call-template name='race'/>
 		<xsl:call-template name='class'/>
+	</xsl:template>
+
+	<xsl:template name='gstats'>
+		<xsl:call-template name='gcache'/>
+		<xsl:call-template name='gmissions'/>
 	</xsl:template>
 
 	<xsl:template name='showGroups'>
@@ -137,7 +148,6 @@ function showObject(id) {
 		</div> <!-- char -->
 
 	</xsl:template>
-		
 
 	<xsl:template name='total'>
 		<div class='statsbox' style='width: 100%'>
@@ -157,6 +167,8 @@ function showObject(id) {
 		<xsl:variable name='catMax' select="count(/restedToons/c[@lvlNow = '85'])"/>
 		<xsl:variable name='mpCount' select="count(/restedToons/c[@lvlNow &gt; '85' and @lvlNow &lt;'90'])"/>
 		<xsl:variable name='mpMax' select="count(/restedToons/c[@lvlNow = '90'])"/>
+		<xsl:variable name='wdCount' select="count(/restedToons/c[@lvlNow &gt; '90' and @lvlNow &lt;'100'])"/>
+		<xsl:variable name='wdMax' select="count(/restedToons/c[@lvlNow = '100'])"/>
 		
 		<div class='statsbox'>
 		<xsl:text>By Levels:</xsl:text>
@@ -200,6 +212,15 @@ function showObject(id) {
 			<xsl:with-param name='title'>Mists of Pandera Max [90]</xsl:with-param>
 			<xsl:with-param name='val'><xsl:value-of select='$mpMax'/></xsl:with-param>
 		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Warlords of Draenor [91-99]</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select='$wdCount'/></xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Warlords of Draenor Max [100]</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select='$wdMax'/></xsl:with-param>
+		</xsl:call-template>
+
 		</div>
 	</xsl:template>
 
@@ -426,6 +447,34 @@ function showObject(id) {
 		</div> <!-- statsbox -->
 	</xsl:template>
 
+	<xsl:template name='gcache'>
+		<div class='statsbox'>
+		<xsl:text>Garrison Cache:</xsl:text>
+		<xsl:for-each select="restedToons/gc">
+			<xsl:sort data-type='number' order='ascending' select='@claimed'/>
+			<xsl:apply-templates select='.'/>
+		</xsl:for-each>
+		</div>  <!-- statsbox -->
+	</xsl:template>
+
+	<xsl:template name='gmissions'>
+		<div class='statsbox'>
+		<xsl:text>Garrion Missions: </xsl:text><xsl:value-of select='count(/restedToons/m)'/>
+		<xsl:for-each select="restedToons/m">
+			<xsl:sort data-type='number' order='ascending' select='@etc'/>
+			<xsl:apply-templates select='.'/>
+		</xsl:for-each>
+		</div>  <!-- gmissions -->
+	</xsl:template>
+
+	<xsl:template name='iLvl'>
+		<xsl:element name='a'>
+			<xsl:attribute name='target'>_blank</xsl:attribute>
+			<xsl:attribute name='href'>http://www.askmrrobot.com/wow/optimize/us/<xsl:value-of select='@rn'/>/<xsl:value-of select='@cn'/></xsl:attribute>
+			<xsl:value-of select='@iLvl'/>
+		</xsl:element>
+	</xsl:template>
+
 	<xsl:template match="c">
 		<xsl:variable name='sincePlayed' select="$now - @updated"/> <!-- seconds -->
 		<xsl:variable name='restingRate'><xsl:choose> <!-- % per second -->
@@ -487,13 +536,13 @@ function showObject(id) {
 				<xsl:when test="@lvlNow != $maxLevel">
 					<xsl:attribute name='style'>background-color: #96f; width: <xsl:value-of select='$lvlPC'/>%</xsl:attribute>
 					<div class='meter-text'>
-						<xsl:value-of select='@lvlNow'/> (<xsl:value-of select='format-number($lvlPC,"#.00")'/>%) <xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:value-of select='@iLvl'/>
+						<xsl:value-of select='@lvlNow'/> (<xsl:value-of select='format-number($lvlPC,"#.00")'/>%) <xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:call-template name='iLvl'/>
 					</div> <!-- meter-text -->
 				</xsl:when>
 				<xsl:when test="@lvlNow = $maxLevel">
 					<xsl:attribute name='style'>background-color: #96f; width: <xsl:value-of select='$iLvlPC'/>%</xsl:attribute>
 					<div class='meter-text'>
-						<xsl:value-of select='@lvlNow'/><xsl:text> </xsl:text><xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:value-of select='@iLvl'/>
+						<xsl:value-of select='@lvlNow'/><xsl:text> </xsl:text><xsl:value-of select='@race'/> - <xsl:value-of select='@class'/> :: <xsl:value-of select='@faction'/> :: iLvl: <xsl:call-template name='iLvl'/>
 					</div> <!-- meter-text -->
 				</xsl:when>
 			</xsl:choose>
@@ -513,6 +562,76 @@ function showObject(id) {
 			<xsl:text>Date Full: </xsl:text>
 			<xsl:value-of select='$timeFullStr'/>
 		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match='gc'>
+		<xsl:variable name='sinceClaimed' select="$now - @claimed"/> <!-- seconds -->
+		<xsl:variable name='currentCache' select="($sinceClaimed div 3600) * $cacheRate"/>
+		<xsl:variable name='displayCache'><xsl:choose>
+			<xsl:when test='$currentCache &gt; $maxCache'><xsl:value-of select='$maxCache'/></xsl:when>
+			<xsl:otherwise><xsl:value-of select='$currentCache'/></xsl:otherwise>
+		</xsl:choose></xsl:variable>
+		<xsl:variable name='cachePC' select="($displayCache div $maxCache) * 100"/>
+
+		<div class='char'>
+		<div class='meter-wrap'>
+		<xsl:element name='div'>
+			<xsl:attribute name='class'>meter-value</xsl:attribute>
+			<xsl:attribute name='style'>background-color: #09f; width: <xsl:value-of select='$cachePC'/>%</xsl:attribute>
+			<div class='meter-text'>
+				<xsl:value-of select='@cn'/>
+				<xsl:text> - </xsl:text>
+				<xsl:value-of select='@rn'/>
+				<xsl:text> (</xsl:text>
+				<xsl:value-of select="format-number($displayCache, '0')"/>
+				<xsl:text>)</xsl:text>
+			</div> <!-- meter-text -->
+		</xsl:element>
+		</div> <!-- meter-wrap -->
+		</div> <!-- char -->
+	</xsl:template>
+
+	<xsl:template match='m'>
+		<xsl:variable name='etcDiff' select="@etc - $now"/>
+		<xsl:variable name='currDuration' select="$now - @started"/>
+		<xsl:variable name='durationPC' select="($currDuration div @duration) * 100"/>
+		<xsl:variable name='displayPC'><xsl:choose>
+			<xsl:when test='$etcDiff &lt; 0'>100</xsl:when>
+			<xsl:otherwise><xsl:value-of select='$durationPC'/></xsl:otherwise>
+		</xsl:choose></xsl:variable>
+		<xsl:variable name='missionDoneStr'>
+			<xsl:value-of select='ex:duration($etcDiff)'/>
+		<!--	<xsl:value-of select="concat(ex:day-abbreviation(@etc), ', ',
+				format-number(ex:day-in-month(@etc), '00'), ' ',
+				ex:month-abbreviation(@etc), ' ', ex:year(@etc), ' ',
+				format-number(ex:hour-in-day(@etc), '00'), ':',
+				format-number(ex:minute-in-hour(@etc), '00'), ':',
+				format-number(ex:second-in-minute(@etc), '00'), ' GMT')"/>
+-->
+		</xsl:variable>
+		<xsl:variable name='showStr'><xsl:choose>
+			<xsl:when test='$etcDiff &lt; 0'>Finished</xsl:when>
+			<xsl:otherwise><xsl:value-of select='$missionDoneStr'/></xsl:otherwise>
+		</xsl:choose></xsl:variable>
+
+		<div class='char'>
+		<div class='meter-wrap'>
+		<xsl:element name='div'>
+			<xsl:attribute name='class'>meter-value</xsl:attribute>
+			<xsl:attribute name='style'>background-color: #09f; width: <xsl:value-of select='$displayPC'/>%</xsl:attribute>
+			<div class='meter-text'>
+				<xsl:value-of select='@cn'/>
+				<xsl:text> - </xsl:text>
+				<xsl:value-of select='@rn'/>
+				<xsl:text> (</xsl:text>
+				<xsl:value-of select="@name"/>
+				<xsl:text>) </xsl:text>
+				<xsl:value-of select="$showStr"/>
+			</div> <!-- meter-text -->
+		</xsl:element>
+<!--  <span><xsl:value-of select='@cn'/></span> -->
+		</div> <!-- meter-wrap -->
+		</div> <!-- char -->
 	</xsl:template>
 
 </xsl:stylesheet>

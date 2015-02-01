@@ -60,7 +60,12 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent("GARRISON_MISSION_STARTED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_FINISHED");
 	RestedFrame:RegisterEvent("GARRISON_MISSION_COMPLETE_RESPONSE")
-	RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE");
+	--RestedFrame:RegisterEvent("GARRISON_MISSION_LIST_UPDATE")
+	RestedFrame:RegisterEvent("GARRISON_MISSION_NPC_OPENED")
+
+	-- Garrison Resources event
+	RestedFrame:RegisterEvent("VIGNETTE_ADDED")
+	RestedFrame:RegisterEvent("VIGNETTE_REMOVED")
 
 	-- Not sure what to do with these
 --	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
@@ -173,28 +178,41 @@ end
 function Rested.GARRISON_BUILDING_ACTIVATED()
 	Rested.Print("GARRISON_BUILDING_ACTIVATED")
 end
-function Rested.GARRISON_MISSION_LIST_UPDATE()
-	--[[	This might be a good place to remove out of date missions from the Rested tracking area
-	Rested.Print("GARRISON_MISSION_LIST_UPDATE")
+function Rested.GARRISON_MISSION_NPC_OPENED()
+	-- Prune missions here
 	local missions = {}
 	C_Garrison.GetInProgressMissions( missions )
-	--Rested.Print("You have "..#missions.." active missions.")
+	local activeMissionIDs = {}
 	for _,m in pairs(missions) do
-		--Rested.Print(m.name..(m.inProgress and " is " or " is not ").."in progress. "..m.timeLeft.."/"..m.durationSeconds.." seconds.")
-		if Rested_restedState[Rested.realm][Rested.name].missions and
-				Rested_restedState[Rested.realm][Rested.name].missions[m.missionID] then  -- missions is set, and am tracking the mission id
-			Rested.Print(m.durationSeconds.."=?"..Rested_restedState[Rested.realm][Rested.name].missions[m.missionID].duration)
+		activeMissionIDs[m.missionID] = 1
+	end
+	if Rested_restedState[Rested.realm][Rested.name].missions then
+		for pruneID,_ in pairs(Rested_restedState[Rested.realm][Rested.name].missions) do
+			--Rested.Print(pruneID.." isActive: "..(activeMissionIDs[pruneID] and "true" or "false"))
+			if not activeMissionIDs[pruneID] then
+				--Rested.Print("Prune unknown missionID: "..pruneID)
+				Rested_restedState[Rested.realm][Rested.name].missions[pruneID] = nil
+			end
 		end
 	end
-	]]
 end
 function Rested.GARRISON_MISSION_STARTED()
 	--Rested.Print("GARRISON_MISSION_STARTED")
 	local missions = {}
 	local storeMission = {}
+
 	C_Garrison.GetInProgressMissions( missions )
 --	Rested.Print("You have "..#missions.." active missions.")
 	for _,m in pairs(missions) do
+		local emc = 0 -- Epic Mount Count
+		for _,followerID in pairs(m.followers) do
+			local abilities = C_Garrison.GetFollowerAbilities( followerID ) -- array of abilities
+			for _,ability in pairs(abilities) do
+				if ability.id == 221 then  -- ability.id == 221 = Epic Mount
+					emc = emc + 1
+				end
+			end
+		end
 --		Rested.Print(m.missionID..":"..m.name..(m.inProgress and " is " or " is not ").."in progress."..
 --			" Duration: "..m.durationSeconds..". ETC: "..date("%x %X",time()+m.durationSeconds))
 		if not Rested_restedState[Rested.realm][Rested.name].missions then
@@ -204,9 +222,10 @@ function Rested.GARRISON_MISSION_STARTED()
 			Rested_restedState[Rested.realm][Rested.name].missions[m.missionID]  = {
 					["started"]=time(),
 					["duration"]=m.durationSeconds,
-					["etc"] = date("%x %X",time()+m.durationSeconds),
-					["etcSeconds"] = time()+m.durationSeconds,
+					--["etc"] = date("%x %X",time()+m.durationSeconds),
+					["etcSeconds"] = time()+ (m.durationSeconds * (1 / (emc>0 and emc*2 or 1))),
 					["name"] = m.name,
+					["emc"] = ( emc>0 and emc or nil ),
 			}
 		end
 	end
@@ -220,7 +239,7 @@ function Rested.GARRISON_MISSION_FINISHED( questID, arg2, arg3 )
 	Rested.commandList.missions()
 end
 function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succeeded )
---	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
+	--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
 	end
@@ -228,6 +247,29 @@ end
 function Rested.SHIPMENT_UPDATE()
 	-- This gets spammed when opening a building work order person
 	Rested.Print("SHIPMENT_UPDATE")
+end
+function Rested.VIGNETTE_ADDED( arg1 )
+	-- http://wow.gamepedia.com/Events/V
+	-- http://wow.gamepedia.com/API_C_Vignettes.GetVignetteInfoFromInstanceID
+	local _, _, vName, vObjectIcon = C_Vignettes.GetVignetteInfoFromInstanceID( arg1 )
+	--Rested.Print("VIGNETTE_ADDED: "..vName.." ("..(arg1 or nil)..")")
+	if Rested.vignettes then
+		Rested.vignettes[arg1] = vName
+	else
+		Rested.vignettes = { [arg1] = vName }
+	end
+end
+function Rested.VIGNETTE_REMOVED( arg1 )
+	--Rested.Print("VIGNETTE_REMOVED ("..(arg1 or nil)..")")
+	if Rested.vignettes[arg1] then
+		--Rested.Print("I know about '"..Rested.vignettes[arg1].."'")
+		if Rested.vignettes[arg1] == "Garrison Cache" then
+			--Rested.Print("I think you just picked up Garrison Cache.  Setting TimeStamp")
+			Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
+		end
+		-- Rested.Print("Removing "..Rested.vignettes[arg1])
+		Rested.vignettes[arg1] = nil
+	end
 end
 
 function Rested.Print( msg, showName)
@@ -571,7 +613,7 @@ function Rested.RestingCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct
 	-- appends to the global Rested.charList
 	-- returns 1 on success, 0 on fail
-	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC ~= 150) or
+	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC < 150) or
 			(realm == Rested.realm and name == Rested.name) then
 		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct );
 		Rested.strOut = string.format("% 2d%s %s", charStruct.lvlNow, code, restedStr);
@@ -906,8 +948,21 @@ Rested.reminderValues = {
 Rested.missionReminderValues = {
 	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
 	[300] = COLOR_RED.."MISSION:"..COLOR_END.." 5 minutes until a mission finishes for %s-%s.",
+	[600] = COLOR_RED.."MISSION:"..COLOR_END.." 10 minutes until a mission finishes for %s-%s.",
 	[900] = COLOR_RED.."MISSION:"..COLOR_END.." 15 minutes until a mission finishes for %s-%s.",
 	[1800] = COLOR_RED.."MISSION:"..COLOR_END.." 30 minutes until a mission finishes for %s-%s.",
+}
+Rested.cacheReminderValues = {
+	[5] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." Garrison cache is ready for %s-%s.",
+	[12] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 12 resources for %s-%s.",
+	[100] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 100 resources for %s-%s.",
+	[144] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 144 resources for %s-%s.", -- 1 day
+	[200] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 200 resources for %s-%s.",
+	[288] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 288 resources for %s-%s.", -- 2 days
+	[300] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 300 resources for %s-%s.",
+	[400] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 400 resources for %s-%s.",
+	[432] = COLOR_RED.."G-CACHE:"..COLOR_END.." 432 resources for %s-%s.", -- 3 days
+	[500] = COLOR_RED.."G-CACHE:"..COLOR_END.." Is full for %s-%s.", -- Full
 }
 function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
@@ -955,7 +1010,8 @@ function Rested.MakeReminderSchedule()
 				end
 				if charStruct.missions then
 					for i,m in pairs(charStruct.missions) do
-						local completedAtSeconds = m.started + m.duration
+						local completedAtSeconds =  m.started + (m.duration * (1 / ((m.emc and m.emc>0) and m.emc*2 or 1)))
+						if ( m.emc and m.emv>0 ) then Rested.Print(m.name.." has "..m.emc.." epic mounts to finish at: "..date("%x %X",completedAtSeconds)) end
 						for diff, format in pairs(Rested.missionReminderValues) do
 							local reminderTime = completedAtSeconds - diff  -- reminder time is before completion
 							if (reminderTime > now) then -- yet, still in the future
@@ -967,6 +1023,17 @@ function Rested.MakeReminderSchedule()
 						end -- reminder times to watch
 					end
 				end -- Missions
+				if charStruct.garrisonCache then
+					for targetAmount, format in pairs(Rested.cacheReminderValues) do
+						local reminderTime = Rested.GcacheWhenAt( targetAmount, charStruct.garrisonCache )
+						if (reminderTime > now) then -- yet, still in the future
+							if (not Rested.reminders[reminderTime]) then
+								Rested.reminders[reminderTime] = {}
+							end
+							table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, name, realm)})
+						end -- reminder time in future
+					end
+				end -- garrisonCache
 			end  -- Ignore Check
 		end -- Name Loop
 	end -- Realm loop
@@ -1118,7 +1185,7 @@ function Rested.Missions( realm, name, charStruct )
 	if charStruct.missions then
 		for i,m in pairs(charStruct.missions) do
 			lineCount = lineCount + 1
-			local completedAtSeconds = m.started + m.duration
+			local completedAtSeconds = m.started + (m.duration * (1 / (m.emc and m.emc*2 or 1)))
 			local timeLeft = completedAtSeconds - time()
 			timeLeft = (timeLeft >= 0) and timeLeft or 0
 
@@ -1142,6 +1209,43 @@ function Rested.Missions( realm, name, charStruct )
 			Rested.maxTimeLeftSeconds = (Rested.maxTimeLeftSeconds and Rested.maxTimeLeftSeconds - 150)
 		end
 
+	end
+	return lineCount
+end
+
+Rested.dropDownMenuTable["G-Cache"] = "gcache"
+Rested.commandList["gcache"] = function()
+	Rested.reportName="Garrison Cache"
+	Rested.ShowReport( Rested.Gcache )
+end
+Rested.cacheRate = 6 -- 6/hour (144/day)
+Rested.cacheMax = 500
+Rested.cacheMin = 5
+function Rested.GcacheWhenAt( targetAmount, gCacheTS )
+	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
+end
+function Rested.Gcache( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.garrisonCache then
+		lineCount = 1
+		local timeSince = time() - charStruct.garrisonCache
+		local timeSinceStr = SecondsToTime(timeSince)
+
+		local resourcesInCache = math.min( ( timeSince / 3600 ) * Rested.cacheRate, Rested.cacheMax )
+
+		Rested.strOut = string.format("%i - %s :: %s",
+				(resourcesInCache >= Rested.cacheMin and resourcesInCache or 0),
+				timeSinceStr,
+				rn)
+		table.insert( Rested.charList,
+				{ (resourcesInCache / Rested.cacheMax) * 150 ,
+					Rested.strOut
+				}
+		)
 	end
 	return lineCount
 end
