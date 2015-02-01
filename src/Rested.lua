@@ -1206,12 +1206,6 @@ function Rested.Missions( realm, name, charStruct )
 			)
 		end
 	end
---	local M = 0
---	for ts,v in pairs(Rested.maxTimeLeftSecondsTable) do
---		Rested.Print(ts..":"..v)
---		M = max( M, v )
---	end
---	Rested.Print("Max: "..M)
 	return lineCount
 end
 
