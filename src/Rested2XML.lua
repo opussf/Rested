@@ -15,7 +15,7 @@ strOut = strOut .. "\t<cacheRate>6</cacheRate>\n"
 
 for realm, chars in pairs(Rested_restedState) do
 	for name, c in pairs(chars) do
-		if not c.ignore then
+		if not c.ignore or c.ignore < os.time() then
 
 			strOut = strOut .. string.format('\t<c rn="%s" cn="%s" isResting="%s" class="%s" initAt="%s" updated="%s" '..
 					'race="%s" xpNow="%s" xpMax="%s" restedPC="%s" lvlNow="%s" faction="%s" iLvl="%s" gender="%s"/>\n',
