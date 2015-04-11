@@ -1206,7 +1206,7 @@ function Rested.Missions( realm, name, charStruct )
 			end
 		end
 
-		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
+		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, 1)
 
 		Rested.strOut = string.format("%s :: %i / %i :: %s",
 				timeLeftStr,
