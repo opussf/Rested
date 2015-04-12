@@ -241,6 +241,7 @@ function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succee
 	--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
+		Rested.firstCompleted = nil
 	end
 end
 function Rested.SHIPMENT_UPDATE()
@@ -1166,6 +1167,7 @@ Rested.dropDownMenuTable["Missions"] = "missions"
 Rested.commandList["missions"] = function()
 	Rested.reportName = "Missions"
 	Rested.ShowReport( Rested.Missions )
+	Rested.firstCompleted = nil
 end
 function Rested.Missions( realm, name, charStruct )
 	local rn = realm..":"..name
@@ -1190,6 +1192,14 @@ function Rested.Missions( realm, name, charStruct )
 				countDone = countDone + 1
 			end
 			total = total + 1
+			--
+			Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
+			if Rested.firstCompleted == completedAtSeconds then
+				table.insert( Rested.charList,
+						{ time(), "--> "..rn.." :: "..m.name } )
+				lineCount = lineCount + 1
+			end
+			--
 		end
 		local timeLeft = displayCompletedAtSeconds - time()
 		timeLeft = (timeLeft >= 0) and timeLeft or 0
