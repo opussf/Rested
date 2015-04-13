@@ -241,6 +241,7 @@ function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succee
 	--	Rested.Print("A mission is being completed. qID:"..(questID or "nil"))
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
+		Rested.firstCompleted = nil
 	end
 end
 function Rested.SHIPMENT_UPDATE()
@@ -1001,7 +1002,7 @@ function Rested.MakeReminderSchedule()
 				if charStruct.missions then
 					for i,m in pairs(charStruct.missions) do
 						local completedAtSeconds =  m.started + (m.duration * (1 / ((m.emc and m.emc>0) and m.emc*2 or 1)))
-						if ( m.emc and m.emv>0 ) then Rested.Print(m.name.." has "..m.emc.." epic mounts to finish at: "..date("%x %X",completedAtSeconds)) end
+						if ( m.emc and m.emc>0 ) then Rested.Print(m.name.." has "..m.emc.." epic mounts to finish at: "..date("%x %X",completedAtSeconds)) end
 						for diff, format in pairs(Rested.missionReminderValues) do
 							local reminderTime = completedAtSeconds - diff  -- reminder time is before completion
 							if (reminderTime > now) then -- yet, still in the future
@@ -1166,6 +1167,7 @@ Rested.dropDownMenuTable["Missions"] = "missions"
 Rested.commandList["missions"] = function()
 	Rested.reportName = "Missions"
 	Rested.ShowReport( Rested.Missions )
+	Rested.firstCompleted = nil
 end
 function Rested.Missions( realm, name, charStruct )
 	local rn = realm..":"..name
@@ -1174,37 +1176,59 @@ function Rested.Missions( realm, name, charStruct )
 	end
 	local lineCount = 0
 	if charStruct.missions then
+		local now = time()
+		local countDone, total = 0, 0
+		local displayCompletedAtSeconds = 0
 		for i,m in pairs(charStruct.missions) do
-			lineCount = lineCount + 1
+			-- Display::   time :: count done/ total :: name
+			-- Show time to complete of shortest non-complete mission or 100%
 			local completedAtSeconds = m.started + (m.duration * (1 / (m.emc and m.emc*2 or 1)))
-			local timeLeft = completedAtSeconds - time()
-			timeLeft = (timeLeft >= 0) and timeLeft or 0
 
-			local now = time()
-			Rested.maxTimeLeftSecondsTable[now] = (Rested.maxTimeLeftSecondsTable[now] and  -- test to see if a value is present
-					max(max(timeLeft,60), Rested.maxTimeLeftSecondsTable[now]) or  -- if so, set a value,
-					max(timeLeft,60))
-
-			Rested.maxTimeLeftSeconds = 0
-			for ts,v in pairs(Rested.maxTimeLeftSecondsTable) do
-				Rested.maxTimeLeftSeconds = max( Rested.maxTimeLeftSeconds, v )
-				if ts + 3 < now then
-					Rested.maxTimeLeftSecondsTable[ts] = nil
+			if (completedAtSeconds > now) then -- completes in the futue (not done)
+				if (displayCompletedAtSeconds == 0) or (completedAtSeconds < displayCompletedAtSeconds) then -- completes earlier than current display value (not done)
+					displayCompletedAtSeconds = completedAtSeconds
 				end
+			else
+				countDone = countDone + 1
 			end
-
-			local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft)
---			Rested.Print("("..timeLeft.."/"..Rested.maxTimeLeftSeconds..") * 150 = "..(timeLeft / Rested.maxTimeLeftSeconds) * 150)
-
-			Rested.strOut = string.format("%s :: %s",
-					timeLeftStr,
-					rn)
-			table.insert( Rested.charList,
-					{ (timeLeft==0 and (150+ (time()-completedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
-						Rested.strOut
-					}
-			)
+			total = total + 1
+			--
+			Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
+			if Rested.firstCompleted == completedAtSeconds then
+				table.insert( Rested.charList,
+						{ time(), "--> "..rn.." :: "..m.name } )
+				lineCount = lineCount + 1
+			end
+			--
 		end
+		local timeLeft = displayCompletedAtSeconds - time()
+		timeLeft = (timeLeft >= 0) and timeLeft or 0
+
+		Rested.maxTimeLeftSecondsTable[now] = (Rested.maxTimeLeftSecondsTable[now] and  -- test to see if a value is present
+				max(max(timeLeft,60), Rested.maxTimeLeftSecondsTable[now]) or  -- if so, set a value,
+				max(timeLeft,60))
+
+		Rested.maxTimeLeftSeconds = 0
+		for ts,v in pairs(Rested.maxTimeLeftSecondsTable) do
+			Rested.maxTimeLeftSeconds = max( Rested.maxTimeLeftSeconds, v )
+			if ts + 3 < now then
+				Rested.maxTimeLeftSecondsTable[ts] = nil
+			end
+		end
+
+		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, 1)
+
+		Rested.strOut = string.format("%s :: %i / %i :: %s",
+				timeLeftStr,
+				countDone,
+				total,
+				rn)
+		table.insert( Rested.charList,
+				{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
+					Rested.strOut
+				}
+		)
+		lineCount = lineCount + 1
 	end
 	return lineCount
 end
