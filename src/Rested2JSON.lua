@@ -15,7 +15,7 @@ strOut = strOut .. "\t\"chars\": [\n";
 
 for realm, chars in pairs(Rested_restedState) do
 	for name, c in pairs(chars) do
-		if not c.ignore then
+		if not c.ignore or c.ignore < os.time()then
 			if pastFirst then
 				strOut = strOut .. ",\n";
 			end
