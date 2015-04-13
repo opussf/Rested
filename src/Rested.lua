@@ -1176,13 +1176,13 @@ function Rested.Missions( realm, name, charStruct )
 	end
 	local lineCount = 0
 	if charStruct.missions then
+		local now = time()
 		local countDone, total = 0, 0
 		local displayCompletedAtSeconds = 0
 		for i,m in pairs(charStruct.missions) do
 			-- Display::   time :: count done/ total :: name
 			-- Show time to complete of shortest non-complete mission or 100%
 			local completedAtSeconds = m.started + (m.duration * (1 / (m.emc and m.emc*2 or 1)))
-			local now = time()
 
 			if (completedAtSeconds > now) then -- completes in the futue (not done)
 				if (displayCompletedAtSeconds == 0) or (completedAtSeconds < displayCompletedAtSeconds) then -- completes earlier than current display value (not done)
