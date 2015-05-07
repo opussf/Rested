@@ -1172,10 +1172,30 @@ end
 function Rested.Missions( realm, name, charStruct )
 	local rn = realm..":"..name
 	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
+		rn = COLOR_GREEN..rn..COLOR_END
+--[[
+		local s = ""
+		local m = (charStruct.missions and "true" or "false")
+		s = "m:"..m.." and "
+		local nc = ((not charStruct.garrisonCache) and "true" or "false")
+		s = s.."( ( (nc:"..nc..") or "
+		local lm = ((charStruct.garrisonCache and (((time() - charStruct.garrisonCache)/3600 * Rested.cacheRate) < Rested.cacheMax)) and "true" or "false")
+		s = s.."( lm:"..lm.." ) ) or "
+		s = s.."(me: true) ) "
+
+		s = s..(time()-charStruct.garrisonCache)/3600 * Rested.cacheRate
+
+
+
+		Rested.Print(s, false)
+]]
 	end
 	local lineCount = 0
-	if charStruct.missions then
+
+	if charStruct.missions and  -- missions
+			( ( (not charStruct.garrisonCache) or  -- no gCache info
+				( charStruct.garrisonCache and ( (time() - charStruct.garrisonCache)/3600 * Rested.cacheRate < Rested.cacheMax ) ) ) or  -- less than max cache
+			(realm == Rested.realm and name == Rested.name) ) then -- missions and current character
 		local now = time()
 		local countDone, total = 0, 0
 		local displayCompletedAtSeconds = 0
@@ -1216,7 +1236,7 @@ function Rested.Missions( realm, name, charStruct )
 			end
 		end
 
-		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, 1)
+		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, 2)
 
 		Rested.strOut = string.format("%s :: %i / %i :: %s",
 				timeLeftStr,
