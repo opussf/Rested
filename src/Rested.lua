@@ -65,6 +65,7 @@ function Rested.OnLoad()
 	-- Garrison Resources event
 	RestedFrame:RegisterEvent("VIGNETTE_ADDED")
 	RestedFrame:RegisterEvent("VIGNETTE_REMOVED")
+	RestedFrame:RegisterEvent("SHOW_LOOT_TOAST")
 
 	-- Not sure what to do with these
 --	RestedFrame:RegisterEvent("GARRISON_BUILDING_ACTIVATABLE");
@@ -263,14 +264,20 @@ function Rested.VIGNETTE_REMOVED( arg1 )
 	--Rested.Print("VIGNETTE_REMOVED ("..(arg1 or nil)..")")
 	if Rested.vignettes[arg1] then
 		--Rested.Print("I know about '"..Rested.vignettes[arg1].."'")
-		if Rested.vignettes[arg1] == "Garrison Cache" then
-			--Rested.Print("I think you just picked up Garrison Cache.  Setting TimeStamp")
-			Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
-		end
-		-- Rested.Print("Removing "..Rested.vignettes[arg1])
+		--Rested.Print("Removing "..Rested.vignettes[arg1])
 		Rested.vignettes[arg1] = nil
 	end
 end
+function Rested.SHOW_LOOT_TOAST( ... )
+	local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lootSource = ...;
+	Rested.Print(string.format("Looted %s (amount: %s) of %s from %s",
+			tostring(typeIdentifier), tostring(quantity), tostring(itemLink), tostring(lootSource))
+	)
+	if lootSource == 10 then -- Garrison Cache
+		Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
+	end
+end
+
 
 function Rested.Print( msg, showName)
 	-- print to the chat frame
@@ -1165,6 +1172,7 @@ end
 Rested.maxTimeLeftSecondsTable = {}
 Rested.dropDownMenuTable["Missions"] = "missions"
 Rested.commandList["missions"] = function()
+Rested.minMissionTime = 300 -- 5 minutes
 	Rested.reportName = "Missions"
 	Rested.ShowReport( Rested.Missions )
 	Rested.firstCompleted = nil
@@ -1172,10 +1180,14 @@ end
 function Rested.Missions( realm, name, charStruct )
 	local rn = realm..":"..name
 	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
+		rn = COLOR_GREEN..rn..COLOR_END
 	end
 	local lineCount = 0
-	if charStruct.missions then
+
+	if charStruct.missions and  -- missions
+			( ( (not charStruct.garrisonCache) or  -- no gCache info
+				( charStruct.garrisonCache and ( (time() - charStruct.garrisonCache)/3600 * Rested.cacheRate < Rested.cacheMax ) ) ) or  -- less than max cache
+			(realm == Rested.realm and name == Rested.name) ) then -- missions and current character
 		local now = time()
 		local countDone, total = 0, 0
 		local displayCompletedAtSeconds = 0
@@ -1205,8 +1217,8 @@ function Rested.Missions( realm, name, charStruct )
 		timeLeft = (timeLeft >= 0) and timeLeft or 0
 
 		Rested.maxTimeLeftSecondsTable[now] = (Rested.maxTimeLeftSecondsTable[now] and  -- test to see if a value is present
-				max(max(timeLeft,60), Rested.maxTimeLeftSecondsTable[now]) or  -- if so, set a value,
-				max(timeLeft,60))
+				max(max(timeLeft,Rested.minMissionTime), Rested.maxTimeLeftSecondsTable[now]) or  -- if so, set a value,
+				max(timeLeft,Rested.minMissionTime))
 
 		Rested.maxTimeLeftSeconds = 0
 		for ts,v in pairs(Rested.maxTimeLeftSecondsTable) do
@@ -1216,7 +1228,7 @@ function Rested.Missions( realm, name, charStruct )
 			end
 		end
 
-		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, 2)
+		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, (timeLeft > 3600 and 2 or 1) )
 
 		Rested.strOut = string.format("%s :: %i / %i :: %s",
 				timeLeftStr,
