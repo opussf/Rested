@@ -270,9 +270,11 @@ function Rested.VIGNETTE_REMOVED( arg1 )
 end
 function Rested.SHOW_LOOT_TOAST( ... )
 	local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lootSource = ...;
+	--[[
 	Rested.Print(string.format("Looted %s (amount: %s) of %s from %s",
 			tostring(typeIdentifier), tostring(quantity), tostring(itemLink), tostring(lootSource))
 	)
+	]]
 	if lootSource == 10 then -- Garrison Cache
 		Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 	end
