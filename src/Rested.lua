@@ -243,6 +243,7 @@ function Rested.GARRISON_MISSION_COMPLETE_RESPONSE( questID, canComplete, succee
 	if Rested_restedState[Rested.realm][Rested.name].missions then
 		Rested_restedState[Rested.realm][Rested.name].missions[questID] = nil
 		Rested.firstCompleted = nil
+		Rested.firstCompletedWho = nil
 	end
 end
 function Rested.SHIPMENT_UPDATE()
@@ -1178,6 +1179,7 @@ Rested.minMissionTime = 300 -- 5 minutes
 	Rested.reportName = "Missions"
 	Rested.ShowReport( Rested.Missions )
 	Rested.firstCompleted = nil
+	Rested.firstCompletedWho = nil
 end
 function Rested.Missions( realm, name, charStruct )
 	local rn = realm..":"..name
@@ -1193,6 +1195,7 @@ function Rested.Missions( realm, name, charStruct )
 		local now = time()
 		local countDone, total = 0, 0
 		local displayCompletedAtSeconds = 0
+
 		for i,m in pairs(charStruct.missions) do
 			-- Display::   time :: count done/ total :: name
 			-- Show time to complete of shortest non-complete mission or 100%
@@ -1207,11 +1210,16 @@ function Rested.Missions( realm, name, charStruct )
 			end
 			total = total + 1
 			--
+			--Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
 			Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
+			if Rested.firstCompleted == time() then Rested.firstCompleted = nil end
 			if Rested.firstCompleted == completedAtSeconds then
+				Rested.firstCompletedWho = rn
+				--[[
 				table.insert( Rested.charList,
 						{ time(), "--> "..rn.." :: "..m.name } )
 				lineCount = lineCount + 1
+				]]
 			end
 			--
 		end
@@ -1232,7 +1240,8 @@ function Rested.Missions( realm, name, charStruct )
 
 		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, (timeLeft > 3600 and 2 or 1) )
 
-		Rested.strOut = string.format("%s :: %i / %i :: %s",
+		Rested.strOut = string.format("%s%s :: %i / %i :: %s",
+				(Rested.firstCompletedWho == rn and "-->" or ""),
 				timeLeftStr,
 				countDone,
 				total,
