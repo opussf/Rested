@@ -226,6 +226,10 @@ function Rested.GARRISON_MISSION_STARTED()
 					["etcSeconds"] = time()+ (m.durationSeconds * (1 / (emc>0 and emc*2 or 1))),
 					["name"] = m.name,
 					["emc"] = ( emc>0 and emc or nil ),
+					-- \/ 'extra' mission info
+					["isRare"] = m.isRare,
+					["locPrefix"] = m.locPrefix,
+					["type"] = m.typeAtlas,
 			}
 		end
 	end
@@ -1262,7 +1266,7 @@ Rested.commandList["gcache"] = function()
 	Rested.ShowReport( Rested.Gcache )
 end
 Rested.cacheRate = 6 -- 6/hour (144/day)
-Rested.cacheMax = 500
+Rested.cacheMax = 500  -- Todo:  This needs to come from a variable, and be stored per character...  :|
 Rested.cacheMin = 5
 function Rested.GcacheWhenAt( targetAmount, gCacheTS )
 	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
