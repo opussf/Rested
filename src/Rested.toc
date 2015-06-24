@@ -7,4 +7,4 @@
 ## SavedVariables: Rested_restedState Rested_options
 Rested.lua
 Rested.xml
-
+RestedAlerts.lua
