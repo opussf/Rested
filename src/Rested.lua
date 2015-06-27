@@ -226,10 +226,12 @@ function Rested.GARRISON_MISSION_STARTED()
 					["etcSeconds"] = time()+ (m.durationSeconds * (1 / (emc>0 and emc*2 or 1))),
 					["name"] = m.name,
 					["emc"] = ( emc>0 and emc or nil ),
+					["followerTypeID"] = m.followerTypeID,
 					-- \/ 'extra' mission info
-					["isRare"] = m.isRare,
-					["locPrefix"] = m.locPrefix,
-					["type"] = m.typeAtlas,
+					--["isRare"] = m.isRare,
+					--["locPrefix"] = m.locPrefix,
+					--["type"] = m.typeAtlas,
+
 			}
 		end
 	end
@@ -1178,8 +1180,9 @@ end
 
 Rested.maxTimeLeftSecondsTable = {}
 Rested.dropDownMenuTable["Missions"] = "missions"
-Rested.commandList["missions"] = function()
 Rested.minMissionTime = 300 -- 5 minutes
+--Rested.followerTypeIDInfo = {[1] = "G", [2] = "F"}
+Rested.commandList["missions"] = function()
 	Rested.reportName = "Missions"
 	Rested.ShowReport( Rested.Missions )
 	Rested.firstCompleted = nil
