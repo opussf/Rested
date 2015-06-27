@@ -10,7 +10,8 @@ local plots = C_Garrison.GetPlots();
 
 ## Expand Mission info
 
-0-0/0   Garrison-Fleet/Total
+0-0/0-0   Garrison-Fleet/G-F totals
+
 
 
 http://wowprogramming.com/utils/xmlbrowser/test/AddOns/Blizzard_GarrisonUI/Blizzard_GarrisonMissionUI.lua

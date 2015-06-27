@@ -1255,12 +1255,13 @@ function Rested.Missions( realm, name, charStruct )
 			totalMissions = totalMissions + total[i]
 		end
 		mCounts = table.concat(countDone, "-")
+		mTotals = table.concat(total, "-")
 
-		Rested.strOut = string.format("%s%s :: %s/%i :: %s",
+		Rested.strOut = string.format("%s%s :: %s/%s :: %s",
 				(Rested.firstCompletedWho == rn and "-->" or ""),
 				timeLeftStr,
 				mCounts,
-				totalMissions,
+				mTotals,
 				rn)
 		table.insert( Rested.charList,
 				{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
