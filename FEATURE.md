@@ -10,6 +10,9 @@ local plots = C_Garrison.GetPlots();
 
 ## Expand Mission info
 
+0-0/0   Garrison-Fleet/Total
+
+
 http://wowprogramming.com/utils/xmlbrowser/test/AddOns/Blizzard_GarrisonUI/Blizzard_GarrisonMissionUI.lua
 local location, xp, environment, environmentDesc, environmentTexture, locPrefix, isExhausting, enemies = C_Garrison.GetMissionInfo(missionID);
 
