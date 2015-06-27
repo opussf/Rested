@@ -1200,7 +1200,7 @@ function Rested.Missions( realm, name, charStruct )
 				( charStruct.garrisonCache and ( (time() - charStruct.garrisonCache)/3600 * Rested.cacheRate < Rested.cacheMax ) ) ) or  -- less than max cache
 			(realm == Rested.realm and name == Rested.name) ) then -- missions and current character
 		local now = time()
-		local countDone, total = 0, 0
+		local countDone, total = {[1]=0, [2]=0}, {[1]=0, [2]=0}
 		local displayCompletedAtSeconds = 0
 
 		for i,m in pairs(charStruct.missions) do
@@ -1213,9 +1213,12 @@ function Rested.Missions( realm, name, charStruct )
 					displayCompletedAtSeconds = completedAtSeconds
 				end
 			else
-				countDone = countDone + 1
+				m.followerTypeID = m.followerTypeID or 1
+				countDone[m.followerTypeID] = ( countDone[ m.followerTypeID] and countDone[m.followerTypeID] + 1 or 1 )
+				-- countDone = countDone + 1
 			end
-			total = total + 1
+			total[m.followerTypeID] = ( total[m.followerTypeID] and total[m.followerTypeID] + 1 or 1 )
+			--total = total + 1
 			--
 			--Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
 			Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
@@ -1247,11 +1250,17 @@ function Rested.Missions( realm, name, charStruct )
 
 		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, (timeLeft > 3600 and 2 or 1) )
 
-		Rested.strOut = string.format("%s%s :: %i / %i :: %s",
+		totalMissions = 0
+		for i in ipairs(total) do
+			totalMissions = totalMissions + total[i]
+		end
+		mCounts = table.concat(countDone, "-")
+
+		Rested.strOut = string.format("%s%s :: %s/%i :: %s",
 				(Rested.firstCompletedWho == rn and "-->" or ""),
 				timeLeftStr,
-				countDone,
-				total,
+				mCounts,
+				totalMissions,
 				rn)
 		table.insert( Rested.charList,
 				{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
