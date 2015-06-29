@@ -10,7 +10,7 @@ local plots = C_Garrison.GetPlots();
 
 ## Expand Mission info
 
-0-0/0-0   Garrison-Fleet/G-F totals
+0/0-0/0   G/total-F/total
 
 
 
