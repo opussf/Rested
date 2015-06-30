@@ -10,7 +10,8 @@ local plots = C_Garrison.GetPlots();
 
 ## Expand Mission info
 
-0/0-0/0   G/total-F/total
+G <time> 0/0 <name>
+F <time> 0/0 <name>
 
 
 
