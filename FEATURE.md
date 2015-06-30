@@ -13,6 +13,7 @@ local plots = C_Garrison.GetPlots();
 G <time> 0/0 <name>
 F <time> 0/0 <name>
 
+----  No.  Too much extra lines, too much stuff all over the place.
 
 
 http://wowprogramming.com/utils/xmlbrowser/test/AddOns/Blizzard_GarrisonUI/Blizzard_GarrisonMissionUI.lua
