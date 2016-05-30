@@ -41,7 +41,7 @@ Rested.lastUpdate = 0;
 Rested.lastReminderUpdate = 0;
 Rested.showNumBars = 6;
 Rested.reportName = "";
-Rested.searchKeys = {"class","race","faction","lvlNow","gender"};
+Rested.searchKeys = {"class","race","faction","lvlNow","gender","guildName"}
 Rested.slotList={"HeadSlot","NeckSlot","ShoulderSlot","BackSlot","ChestSlot","WristSlot","HandsSlot",
 		"WaistSlot","LegsSlot","FeetSlot","Finger0Slot","Finger1Slot","Trinket0Slot",
 		"Trinket1Slot","MainHandSlot","SecondaryHandSlot"};
@@ -1355,7 +1355,7 @@ Rested.commandList["guild"] = function()
 	Rested.reportName="Guild Standing"
 	Rested.ShowReport( Rested.GuildStanding )
 end
-table.insert( Rested.seachKeys, "guildName")
+--table.insert( Rested.seachKeys, "guildName" )
 function Rested.PLAYER_GUILD_UPDATE( ... )
 	Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
@@ -1366,6 +1366,7 @@ function Rested.PLAYER_GUILD_UPDATE( ... )
 	Rested_restedState[Rested.realm][Rested.name].guildRep = rep
 	Rested_restedState[Rested.realm][Rested.name].guildBottom = bottom
 	Rested_restedState[Rested.realm][Rested.name].guildTop = top
+	Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
 end
 
 function Rested.GetGuildRep( )
