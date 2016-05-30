@@ -6,6 +6,10 @@ restingRate = {};
 restingRate[0] = (5/(32*3600));
 restingRate[1] = (5/(8*3600));
 
+cacheRate = 6 -- 6/hour (144/day)
+cacheMax = 500  -- Todo:  This needs to come from a variable, and be stored per character...  :|
+
+
 strOut = "<?xml version='1.0' encoding='utf-8' ?>\n";
 strOut = strOut .. "<restedToons>\n";
 strOut = strOut .. "\t<resting>"..restingRate[1].."</resting>\n";
@@ -22,13 +26,17 @@ for realm, chars in pairs(Rested_restedState) do
 					realm, name, (c.isResting and "1" or "0"), c.class, c.initAt, c.updated, c.race, c.xpNow, c.xpMax, c.restedPC,
 					c.lvlNow, c.faction, c.iLvl or 0, c.gender)
 
-			if c.missions then
-				for id, mi in pairs(c.missions) do
-					strOut = strOut .. string.format('\t<m rn="%s" cn="%s" id="%s" started="%s" duration="%s" etc="%s" emc="%s" name="%s" followerTypeID="%s"/>\n',
-							realm, name, id, mi.started, mi.duration, mi.etcSeconds, (mi.emc or 0), mi.name, (mi.followerTypeID or "0") )
-				end
-			end
 			if c.garrisonCache then
+				timeSince = os.time() - c.garrisonCache
+				resourcesInCache = math.min( ( timeSince / 3600 ) * cacheRate, cacheMax )
+				if resourcesInCache < cacheMax then
+					if c.missions then
+						for id, mi in pairs(c.missions) do
+							strOut = strOut .. string.format('\t<m rn="%s" cn="%s" id="%s" started="%s" duration="%s" etc="%s" emc="%s" name="%s" followerTypeID="%s"/>\n',
+									realm, name, id, mi.started, mi.duration, mi.etcSeconds, (mi.emc or 0), mi.name, (mi.followerTypeID or "0") )
+						end
+					end
+				end
 				strOut = strOut .. string.format('\t<gc rn="%s" cn="%s" claimed="%s" />\n',
 						realm, name, c.garrisonCache )
 			end
