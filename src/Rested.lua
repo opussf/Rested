@@ -294,12 +294,6 @@ function Rested.SHOW_LOOT_TOAST( ... )
 		Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 	end
 end
-function Rested.PLAYER_GUILD_UPDATE( ... )
-	Rested.Print("PLAYER_GUILD_UPDATE")
-	local gName, gRankName, gRankIndex = GetGuildInfo("player")
-	Rested_restedState[Rested.realm][Rested.name].guildName = gName
-end
-
 
 function Rested.Print( msg, showName)
 	-- print to the chat frame
@@ -1316,6 +1310,91 @@ function Rested.Gcache( realm, name, charStruct )
 				rn)
 		table.insert( Rested.charList,
 				{ (resourcesInCache / Rested.cacheMax) * 150 ,
+					Rested.strOut
+				}
+		)
+	end
+	return lineCount
+end
+
+--=================
+-- Guild Info
+--=================
+--[[
+	factionName = (factionName == "Guild" and GetGuildInfo("player") or factionName);
+	FB.FactionGain( factionName, amount );
+end
+-- return a list of faction info
+function FB.GetFactionInfo( factionNameIn )
+	for factionIndex = 1, GetNumFactions() do
+		local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
+				canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex);
+		if isCollapsed then
+			ExpandFactionHeader(factionIndex);
+			return nil;
+		end
+		local barBottomValue = 0;
+		local barTopValue = topValue - bottomValue;
+		local barEarnedValue = earnedValue - bottomValue;
+		local standingStr = _G["FACTION_STANDING_LABEL"..standingId..FB.genderString];
+		if name == factionNameIn then
+			--FB.Print(name..":"..bottomValue.."<"..earnedValue.."<"..topValue);
+			return name, description, standingStr, barBottomValue, barTopValue, barEarnedValue, atWarWith,
+					canToggleAtWar, isHeader, isCollapsed, isWatched, factionIndex, FACTION_BAR_COLORS[standingId] ;
+		end
+	end
+	if not name then
+		FB.Print("No faction found that matches: "..factionNameIn..". Pruning.");
+		FB_repSaved[factionNameIn]=nil;
+	end
+end
+]]
+
+Rested.dropDownMenuTable["Guild"] = "guild"
+Rested.commandList["guild"] = function()
+	Rested.reportName="Guild Standing"
+	Rested.ShowReport( Rested.GuildStanding )
+end
+table.insert( Rested.seachKeys, "guildName")
+function Rested.PLAYER_GUILD_UPDATE( ... )
+	Rested.Print("PLAYER_GUILD_UPDATE")
+	local gName, gRankName, gRankIndex = GetGuildInfo("player")
+	Rested_restedState[Rested.realm][Rested.name].guildName = gName
+	Rested_restedState[Rested.realm][Rested.name].guildRank = gRankName
+	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gRankIndex
+	local rep, bottom, top = Rested.GetGuildRep()
+	Rested_restedState[Rested.realm][Rested.name].guildRep = rep
+	Rested_restedState[Rested.realm][Rested.name].guildBottom = bottom
+	Rested_restedState[Rested.realm][Rested.name].guildTop = top
+end
+
+function Rested.GetGuildRep( )
+	-- Return the rep for the guild only
+	for factionIndex = 1, GetNumFactions() do
+		local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
+				canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex);
+		if isCollapsed then
+			ExpandFactionHeader(factionIndex)
+			return
+		end
+		if name == "Guild" then
+			return earnedValue, bottomValue, topValue
+		end
+	end
+end
+function Rested.GuildStanding( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.guildName then
+		lineCount = 1
+		Rested.strOut = string.format("%s :: %s",
+				charStruct.guildName,
+				rn)
+		table.insert( Rested.charList,
+				{ ( charStruct.guildRep / (( charStruct.guildTop - charStruct.guildBottom ) + 1 ) ) * 150,
 					Rested.strOut
 				}
 		)

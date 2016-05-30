@@ -1,5 +1,11 @@
 # Feature document for Rested
 
+## guildInfo
+
+┌─────────────────────────────────────────────────────┐
+│<Guild Standing> :: <realm-name>                     │
+└─────────────────────────────────────────────────────┘
+
 ## Track Building creation and updating
 http://wowprogramming.com/utils/xmlbrowser/test/AddOns/Blizzard_GarrisonUI/Blizzard_GarrisonBuildingUI.lua
 
