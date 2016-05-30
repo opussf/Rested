@@ -1363,6 +1363,8 @@ function Rested.PLAYER_GUILD_UPDATE( ... )
 	Rested_restedState[Rested.realm][Rested.name].guildRank = gRankName
 	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gRankIndex
 	local rep, bottom, top = Rested.GetGuildRep()
+	bottom = 0
+	--rep = rep - bottom; top = top - bottom; bottom = 0
 	Rested_restedState[Rested.realm][Rested.name].guildRep = rep
 	Rested_restedState[Rested.realm][Rested.name].guildBottom = bottom
 	Rested_restedState[Rested.realm][Rested.name].guildTop = top
@@ -1378,7 +1380,7 @@ function Rested.GetGuildRep( )
 			ExpandFactionHeader(factionIndex)
 			return
 		end
-		if name == "Guild" then
+		if name == Rested_restedState[Rested.realm][Rested.name].guildName then
 			return earnedValue, bottomValue, topValue
 		end
 	end
