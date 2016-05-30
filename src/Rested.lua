@@ -235,6 +235,10 @@ function Rested.GARRISON_MISSION_STARTED()
 
 			}
 		end
+		if not Rested_restedState[Rested.realm][Rested.name].knownFollowerTypes then
+			Rested_restedState[Rested.realm][Rested.name].knownFollowerTypes = {}
+		end
+		Rested_restedState[Rested.realm][Rested.name].knownFollowerTypes[m.followerTypeID] = true
 	end
 	Rested.commandList.missions()
 end
