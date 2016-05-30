@@ -20,12 +20,12 @@ for realm, chars in pairs(Rested_restedState) do
 			strOut = strOut .. string.format('\t<c rn="%s" cn="%s" isResting="%s" class="%s" initAt="%s" updated="%s" '..
 					'race="%s" xpNow="%s" xpMax="%s" restedPC="%s" lvlNow="%s" faction="%s" iLvl="%s" gender="%s"/>\n',
 					realm, name, (c.isResting and "1" or "0"), c.class, c.initAt, c.updated, c.race, c.xpNow, c.xpMax, c.restedPC,
-					c.lvlNow, c.faction, c.iLvl or 0, c.gender);
+					c.lvlNow, c.faction, c.iLvl or 0, c.gender)
 
 			if c.missions then
 				for id, mi in pairs(c.missions) do
-					strOut = strOut .. string.format('\t<m rn="%s" cn="%s" id="%s" started="%s" duration="%s" etc="%s" emc="%s" name="%s" />\n',
-							realm, name, id, mi.started, mi.duration, mi.etcSeconds, (mi.emc or 0), mi.name )
+					strOut = strOut .. string.format('\t<m rn="%s" cn="%s" id="%s" started="%s" duration="%s" etc="%s" emc="%s" name="%s" followerTypeID="%s"/>\n',
+							realm, name, id, mi.started, mi.duration, mi.etcSeconds, (mi.emc or 0), mi.name, (mi.followerTypeID or "0") )
 				end
 			end
 			if c.garrisonCache then
