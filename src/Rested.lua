@@ -79,6 +79,9 @@ function Rested.OnLoad()
 	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
 
+	-- This appears to be fired when a player is gkicked, gquits, etc.
+	RestedFrame:RegisterEvent("PLAYER_GUILD_UPDATE")
+
 	--register slash commands
 	SLASH_RESTED1 = "/rested";
 	SlashCmdList["RESTED"] = function(msg) Rested.Command(msg); end
@@ -280,6 +283,11 @@ function Rested.SHOW_LOOT_TOAST( ... )
 	if lootSource == 10 then -- Garrison Cache
 		Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 	end
+end
+function Rested.PLAYER_GUILD_UPDATE( ... )
+	Rested.Print("PLAYER_GUILD_UPDATE")
+	local gName, gRankName, gRankIndex = GetGuildInfo("player")
+	Rested_restedState[Rested.realm][Rested.name].guildName = gName
 end
 
 
