@@ -1253,7 +1253,7 @@ function Rested.Missions( realm, name, charStruct )
 			end
 		end
 
-		local timeLeftStr = (timeLeft == 0) and ("Finished "..150+(time()-displayCompletedAtSeconds)) or SecondsToTime(timeLeft, false, false, (timeLeft > 3600 and 2 or 1) )
+		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, (timeLeft > 3600 and 2 or 1) )
 
 		totalMissions = 0
 		for i in ipairs(total) do
