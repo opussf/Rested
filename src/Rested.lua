@@ -1332,14 +1332,14 @@ function Rested.PLAYER_GUILD_UPDATE( ... )
 	--Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
 	Rested_restedState[Rested.realm][Rested.name].guildName = gName
-	Rested_restedState[Rested.realm][Rested.name].guildRank = gRankName
-	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gRankIndex
+	Rested_restedState[Rested.realm][Rested.name].guildRank = gName and gRankName or nil
+	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gName and gRankIndex or nil
 	local rep, bottom, top = Rested.GetGuildRep()
 	bottom = 0
 	--rep = rep - bottom; top = top - bottom; bottom = 0
-	Rested_restedState[Rested.realm][Rested.name].guildRep = rep
-	Rested_restedState[Rested.realm][Rested.name].guildBottom = bottom
-	Rested_restedState[Rested.realm][Rested.name].guildTop = top
+	Rested_restedState[Rested.realm][Rested.name].guildRep = gName and rep or nil
+	Rested_restedState[Rested.realm][Rested.name].guildBottom = gName and bottom or nil
+	Rested_restedState[Rested.realm][Rested.name].guildTop = gName and top or nil
 	--Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
 end
 
