@@ -81,6 +81,7 @@ function Rested.OnLoad()
 
 	-- This appears to be fired when a player is gkicked, gquits, etc.
 	RestedFrame:RegisterEvent("PLAYER_GUILD_UPDATE")
+	ChatFrame_AddMessageEventFilter( "CHAT_MSG_COMBAT_FACTION_CHANGE", Rested.PLAYER_GUILD_UPDATE )
 
 	--register slash commands
 	SLASH_RESTED1 = "/rested";
@@ -1320,35 +1321,6 @@ end
 --=================
 -- Guild Info
 --=================
---[[
-	factionName = (factionName == "Guild" and GetGuildInfo("player") or factionName);
-	FB.FactionGain( factionName, amount );
-end
--- return a list of faction info
-function FB.GetFactionInfo( factionNameIn )
-	for factionIndex = 1, GetNumFactions() do
-		local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
-				canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex);
-		if isCollapsed then
-			ExpandFactionHeader(factionIndex);
-			return nil;
-		end
-		local barBottomValue = 0;
-		local barTopValue = topValue - bottomValue;
-		local barEarnedValue = earnedValue - bottomValue;
-		local standingStr = _G["FACTION_STANDING_LABEL"..standingId..FB.genderString];
-		if name == factionNameIn then
-			--FB.Print(name..":"..bottomValue.."<"..earnedValue.."<"..topValue);
-			return name, description, standingStr, barBottomValue, barTopValue, barEarnedValue, atWarWith,
-					canToggleAtWar, isHeader, isCollapsed, isWatched, factionIndex, FACTION_BAR_COLORS[standingId] ;
-		end
-	end
-	if not name then
-		FB.Print("No faction found that matches: "..factionNameIn..". Pruning.");
-		FB_repSaved[factionNameIn]=nil;
-	end
-end
-]]
 
 Rested.dropDownMenuTable["Guild"] = "guild"
 Rested.commandList["guild"] = function()
@@ -1357,7 +1329,7 @@ Rested.commandList["guild"] = function()
 end
 --table.insert( Rested.seachKeys, "guildName" )
 function Rested.PLAYER_GUILD_UPDATE( ... )
-	Rested.Print("PLAYER_GUILD_UPDATE")
+	--Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
 	Rested_restedState[Rested.realm][Rested.name].guildName = gName
 	Rested_restedState[Rested.realm][Rested.name].guildRank = gRankName
@@ -1368,7 +1340,7 @@ function Rested.PLAYER_GUILD_UPDATE( ... )
 	Rested_restedState[Rested.realm][Rested.name].guildRep = rep
 	Rested_restedState[Rested.realm][Rested.name].guildBottom = bottom
 	Rested_restedState[Rested.realm][Rested.name].guildTop = top
-	Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
+	--Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
 end
 
 function Rested.GetGuildRep( )
