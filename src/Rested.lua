@@ -1210,6 +1210,7 @@ function Rested.Missions( realm, name, charStruct )
 		local now = time()
 		local countDone, total = {[1]=0, [2]=0}, {[1]=0, [2]=0}
 		local displayCompletedAtSeconds = 0
+		myFirstCompleted = time()
 
 		for i,m in pairs(charStruct.missions) do
 			-- Display::   time :: count done/ total :: name
@@ -1229,6 +1230,7 @@ function Rested.Missions( realm, name, charStruct )
 			--total = total + 1
 			--
 			--Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
+			myFirstCompleted = math.min(myFirstCompleted, completedAtSeconds)
 			Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
 			if Rested.firstCompleted == time() then Rested.firstCompleted = nil end
 			if Rested.firstCompleted == completedAtSeconds then
@@ -1272,7 +1274,8 @@ function Rested.Missions( realm, name, charStruct )
 				mTotals,
 				rn)
 		table.insert( Rested.charList,
-				{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
+				--{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
+				{ (timeLeft==0 and (time() - myFirstCompleted + time())or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
 					Rested.strOut
 				}
 		)
