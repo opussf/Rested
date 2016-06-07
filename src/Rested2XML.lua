@@ -1,13 +1,15 @@
 #!/usr/bin/env lua
 
-dofile("/Applications/World of Warcraft/WTF/Account/OPUSSF/SavedVariables/Rested.lua");
+dofile("/Applications/World of Warcraft/WTF/Account/OPUSSF/SavedVariables/Rested.lua")
 
-restingRate = {};
-restingRate[0] = (5/(32*3600));
-restingRate[1] = (5/(8*3600));
+restingRate = {}
+restingRate[0] = (5/(32*3600))
+restingRate[1] = (5/(8*3600))
 
 cacheRate = 6 -- 6/hour (144/day)
 cacheMax = 500  -- Todo:  This needs to come from a variable, and be stored per character...  :|
+
+guildList = {}
 
 
 strOut = "<?xml version='1.0' encoding='utf-8' ?>\n";
@@ -22,9 +24,11 @@ for realm, chars in pairs(Rested_restedState) do
 		if not c.ignore or c.ignore < os.time() then
 
 			strOut = strOut .. string.format('\t<c rn="%s" cn="%s" isResting="%s" class="%s" initAt="%s" updated="%s" '..
-					'race="%s" xpNow="%s" xpMax="%s" restedPC="%s" lvlNow="%s" faction="%s" iLvl="%s" gender="%s"/>\n',
+					'race="%s" xpNow="%s" xpMax="%s" restedPC="%s" lvlNow="%s" faction="%s" iLvl="%s" gender="%s" guild="%s"/>\n',
 					realm, name, (c.isResting and "1" or "0"), c.class, c.initAt, c.updated, c.race, c.xpNow, c.xpMax, c.restedPC,
-					c.lvlNow, c.faction, c.iLvl or 0, c.gender)
+					c.lvlNow, c.faction, c.iLvl or 0, c.gender, c.guildName)
+
+			guildList[c.guildName] = realm
 
 			if c.garrisonCache then
 				timeSince = os.time() - c.garrisonCache
@@ -42,6 +46,10 @@ for realm, chars in pairs(Rested_restedState) do
 			end
 		end
 	end
+end
+
+for guildName, realm in pairs( guildList ) do
+	strOut = strOut .. string.format('\t<gi gn="%s" rn="%s" />\n', guildName, realm)
 end
 
 strOut = strOut .. "</restedToons>";

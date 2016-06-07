@@ -34,6 +34,7 @@ for realm, chars in pairs(Rested_restedState) do
 			strOut = strOut .. "\"faction\": \"" .. c.faction .. "\", ";
 			strOut = strOut .. "\"iLvl\": " .. (c.iLvl or 0) .. ", ";
 			strOut = strOut .. "\"gender\": \"" .. c.gender .. "\"}";
+			strOut = strOut .. "\"guild\": \"" .. c.guildName .."\"}"
 
 			pastFirst = true;
 
