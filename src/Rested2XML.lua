@@ -26,9 +26,12 @@ for realm, chars in pairs(Rested_restedState) do
 			strOut = strOut .. string.format('\t<c rn="%s" cn="%s" isResting="%s" class="%s" initAt="%s" updated="%s" '..
 					'race="%s" xpNow="%s" xpMax="%s" restedPC="%s" lvlNow="%s" faction="%s" iLvl="%s" gender="%s" guild="%s"/>\n',
 					realm, name, (c.isResting and "1" or "0"), c.class, c.initAt, c.updated, c.race, c.xpNow, c.xpMax, c.restedPC,
-					c.lvlNow, c.faction, c.iLvl or 0, c.gender, c.guildName)
+					c.lvlNow, c.faction, c.iLvl or 0, c.gender, c.guildName or "")
 
-			guildList[c.guildName] = realm
+
+			if c.guildName then
+				guildList[c.guildName] = realm
+			end
 
 			if c.garrisonCache then
 				timeSince = os.time() - c.garrisonCache

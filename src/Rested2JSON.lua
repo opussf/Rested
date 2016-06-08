@@ -38,7 +38,7 @@ for realm, chars in pairs(Rested_restedState) do
 			strOut = strOut .. "\"lvlNow\": " .. c.lvlNow .. ", ";
 			strOut = strOut .. "\"faction\": \"" .. c.faction .. "\", ";
 			strOut = strOut .. "\"iLvl\": " .. (c.iLvl or 0) .. ", ";
-			strOut = strOut .. "\"guild\": \"" .. c.guildName .."\",";
+			strOut = strOut .. "\"guild\": \"" .. (c.guildName or "") .."\",";
 			strOut = strOut .. "\"gender\": \"" .. c.gender .. "\"}";
 
 
