@@ -20,8 +20,13 @@ for realm, chars in pairs(Rested_restedState) do
 				strOut = strOut .. ",\n";
 			end
 
-			strOut = strOut .. "\t\t{\"rn\": \"" .. realm .. "\", ";
-			strOut = strOut .. "\"cn\": \"" .. name .. "\", ";
+			strOut = strOut .. string.format('\t\t{"rn": "%s", "cn": "%s", ',
+					realm, name
+			)
+
+
+--			strOut = strOut .. "\t\t{\"rn\": \"" .. realm .. "\", ";
+--			strOut = strOut .. "\"cn\": \"" .. name .. "\", ";
 			strOut = strOut .. "\"isResting\": " .. (c.isResting and "1" or "0") .. ", ";
 			strOut = strOut .. "\"class\": \"" .. c.class .. "\", ";
 			strOut = strOut .. "\"initAt\": " .. c.initAt .. ", ";
@@ -33,7 +38,9 @@ for realm, chars in pairs(Rested_restedState) do
 			strOut = strOut .. "\"lvlNow\": " .. c.lvlNow .. ", ";
 			strOut = strOut .. "\"faction\": \"" .. c.faction .. "\", ";
 			strOut = strOut .. "\"iLvl\": " .. (c.iLvl or 0) .. ", ";
+			strOut = strOut .. "\"guild\": \"" .. (c.guildName or "") .."\",";
 			strOut = strOut .. "\"gender\": \"" .. c.gender .. "\"}";
+
 
 			pastFirst = true;
 
