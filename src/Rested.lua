@@ -76,12 +76,15 @@ function Rested.OnLoad()
 
 	--RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
 
-	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
+
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 	-- This appears to be fired when a player is gkicked, gquits, etc.
 	RestedFrame:RegisterEvent("PLAYER_GUILD_UPDATE")
 	ChatFrame_AddMessageEventFilter( "CHAT_MSG_COMBAT_FACTION_CHANGE", Rested.PLAYER_GUILD_UPDATE )
+
+	RestedFrame:RegisterEvent("TIME_PLAYED_MSG")
+	RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 
 	--register slash commands
 	SLASH_RESTED1 = "/rested";
@@ -1373,6 +1376,44 @@ function Rested.GuildStanding( realm, name, charStruct )
 				rn)
 		table.insert( Rested.charList,
 				{ ( charStruct.guildRep / (( charStruct.guildTop - charStruct.guildBottom ) + 1 ) ) * 150,
+					Rested.strOut
+				}
+		)
+	end
+	return lineCount
+end
+
+--=================
+-- Played Info
+--=================
+
+Rested.dropDownMenuTable["Played"] = "played"
+Rested.commandList["played"] = function()
+	Rested.reportName="Time Played"
+	Rested.ShowReport( Rested.ShowPlayed )
+end
+function Rested.PLAYER_LEAVING_WORLD()
+	RequestTimePlayed()
+end
+function Rested.TIME_PLAYED_MSG( total, currentLvl )
+	print("Rested.TIME_PLAYED_MSG: "..total.." - "..currentLvl )
+	Rested_restedState[Rested.realm][Rested.name].totalPlayed = total
+end
+function Rested.ShowPlayed( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.totalPlayed then
+		lineCount = 1
+		Rested.maxPlayed = max( Rested.maxPlayed or 0, charStruct.totalPlayed )
+
+		Rested.strOut = string.format("%s :: %s",
+				SecondsToTime( charStruct.totalPlayed ),
+				rn)
+		table.insert( Rested.charList,
+				{ ( charStruct.totalPlayed / Rested.maxPlayed ) * 150,
 					Rested.strOut
 				}
 		)
