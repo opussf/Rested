@@ -41,7 +41,7 @@ Rested.lastUpdate = 0;
 Rested.lastReminderUpdate = 0;
 Rested.showNumBars = 6;
 Rested.reportName = "";
-Rested.searchKeys = {"class","race","faction","lvlNow","gender"};
+Rested.searchKeys = {"class","race","faction","lvlNow","gender","guildName"}
 Rested.slotList={"HeadSlot","NeckSlot","ShoulderSlot","BackSlot","ChestSlot","WristSlot","HandsSlot",
 		"WaistSlot","LegsSlot","FeetSlot","Finger0Slot","Finger1Slot","Trinket0Slot",
 		"Trinket1Slot","MainHandSlot","SecondaryHandSlot"};
@@ -76,8 +76,15 @@ function Rested.OnLoad()
 
 	--RestedFrame:RegisterEvent("SHIPMENT_UPDATE");
 
-	--RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD");
+
 	--RestedFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
+
+	-- This appears to be fired when a player is gkicked, gquits, etc.
+	RestedFrame:RegisterEvent("PLAYER_GUILD_UPDATE")
+	ChatFrame_AddMessageEventFilter( "CHAT_MSG_COMBAT_FACTION_CHANGE", Rested.PLAYER_GUILD_UPDATE )
+
+	RestedFrame:RegisterEvent("TIME_PLAYED_MSG")
+	RestedFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 
 	--register slash commands
 	SLASH_RESTED1 = "/rested";
@@ -227,8 +234,18 @@ function Rested.GARRISON_MISSION_STARTED()
 					["etcSeconds"] = time()+ (m.durationSeconds * (1 / (emc>0 and emc*2 or 1))),
 					["name"] = m.name,
 					["emc"] = ( emc>0 and emc or nil ),
+					["followerTypeID"] = m.followerTypeID,
+					-- \/ 'extra' mission info
+					--["isRare"] = m.isRare,
+					--["locPrefix"] = m.locPrefix,
+					--["type"] = m.typeAtlas,
+
 			}
 		end
+		if not Rested_restedState[Rested.realm][Rested.name].knownFollowerTypes then
+			Rested_restedState[Rested.realm][Rested.name].knownFollowerTypes = {}
+		end
+		Rested_restedState[Rested.realm][Rested.name].knownFollowerTypes[m.followerTypeID] = true
 	end
 	Rested.commandList.missions()
 end
@@ -281,7 +298,6 @@ function Rested.SHOW_LOOT_TOAST( ... )
 		Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 	end
 end
-
 
 function Rested.Print( msg, showName)
 	-- print to the chat frame
@@ -1175,8 +1191,9 @@ end
 
 Rested.maxTimeLeftSecondsTable = {}
 Rested.dropDownMenuTable["Missions"] = "missions"
-Rested.commandList["missions"] = function()
 Rested.minMissionTime = 300 -- 5 minutes
+--Rested.followerTypeIDInfo = {[1] = "G", [2] = "F"}
+Rested.commandList["missions"] = function()
 	Rested.reportName = "Missions"
 	Rested.ShowReport( Rested.Missions )
 	Rested.firstCompleted = nil
@@ -1194,8 +1211,9 @@ function Rested.Missions( realm, name, charStruct )
 				( charStruct.garrisonCache and ( (time() - charStruct.garrisonCache)/3600 * Rested.cacheRate < Rested.cacheMax ) ) ) or  -- less than max cache
 			(realm == Rested.realm and name == Rested.name) ) then -- missions and current character
 		local now = time()
-		local countDone, total = 0, 0
+		local countDone, total = {[1]=0, [2]=0}, {[1]=0, [2]=0}
 		local displayCompletedAtSeconds = 0
+		myFirstCompleted = time()
 
 		for i,m in pairs(charStruct.missions) do
 			-- Display::   time :: count done/ total :: name
@@ -1207,11 +1225,15 @@ function Rested.Missions( realm, name, charStruct )
 					displayCompletedAtSeconds = completedAtSeconds
 				end
 			else
-				countDone = countDone + 1
+				m.followerTypeID = m.followerTypeID or 1
+				countDone[m.followerTypeID] = ( countDone[ m.followerTypeID] and countDone[m.followerTypeID] + 1 or 1 )
+				-- countDone = countDone + 1
 			end
-			total = total + 1
+			total[m.followerTypeID] = ( total[m.followerTypeID] and total[m.followerTypeID] + 1 or 1 )
+			--total = total + 1
 			--
 			--Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
+			myFirstCompleted = math.min(myFirstCompleted, completedAtSeconds)
 			Rested.firstCompleted = math.min(Rested.firstCompleted or time(), completedAtSeconds)
 			if Rested.firstCompleted == time() then Rested.firstCompleted = nil end
 			if Rested.firstCompleted == completedAtSeconds then
@@ -1241,14 +1263,22 @@ function Rested.Missions( realm, name, charStruct )
 
 		local timeLeftStr = (timeLeft == 0) and "Finished" or SecondsToTime(timeLeft, false, false, (timeLeft > 3600 and 2 or 1) )
 
-		Rested.strOut = string.format("%s%s :: %i / %i :: %s",
+		totalMissions = 0
+		for i in ipairs(total) do
+			totalMissions = totalMissions + total[i]
+		end
+		mCounts = table.concat(countDone, "-")
+		mTotals = table.concat(total, "-")
+
+		Rested.strOut = string.format("%s%s :: %s/%s :: %s",
 				(Rested.firstCompletedWho == rn and "-->" or ""),
 				timeLeftStr,
-				countDone,
-				total,
+				mCounts,
+				mTotals,
 				rn)
 		table.insert( Rested.charList,
-				{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
+				--{ (timeLeft==0 and (150+ (time()-displayCompletedAtSeconds)) or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
+				{ (timeLeft==0 and (time() - myFirstCompleted + time())or 150 - ((timeLeft / Rested.maxTimeLeftSeconds) * 150)),
 					Rested.strOut
 				}
 		)
@@ -1263,7 +1293,7 @@ Rested.commandList["gcache"] = function()
 	Rested.ShowReport( Rested.Gcache )
 end
 Rested.cacheRate = 6 -- 6/hour (144/day)
-Rested.cacheMax = 500
+Rested.cacheMax = 500  -- Todo:  This needs to come from a variable, and be stored per character...  :|
 Rested.cacheMin = 5
 function Rested.GcacheWhenAt( targetAmount, gCacheTS )
 	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
@@ -1287,6 +1317,103 @@ function Rested.Gcache( realm, name, charStruct )
 				rn)
 		table.insert( Rested.charList,
 				{ (resourcesInCache / Rested.cacheMax) * 150 ,
+					Rested.strOut
+				}
+		)
+	end
+	return lineCount
+end
+
+--=================
+-- Guild Info
+--=================
+
+Rested.dropDownMenuTable["Guild"] = "guild"
+Rested.commandList["guild"] = function()
+	Rested.reportName="Guild Standing"
+	Rested.ShowReport( Rested.GuildStanding )
+end
+--table.insert( Rested.seachKeys, "guildName" )
+function Rested.PLAYER_GUILD_UPDATE( ... )
+	--Rested.Print("PLAYER_GUILD_UPDATE")
+	local gName, gRankName, gRankIndex = GetGuildInfo("player")
+	Rested_restedState[Rested.realm][Rested.name].guildName = gName
+	Rested_restedState[Rested.realm][Rested.name].guildRank = gName and gRankName or nil
+	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gName and gRankIndex or nil
+	local rep, bottom, top = Rested.GetGuildRep()
+	bottom = 0
+	--rep = rep - bottom; top = top - bottom; bottom = 0
+	Rested_restedState[Rested.realm][Rested.name].guildRep = gName and rep or nil
+	Rested_restedState[Rested.realm][Rested.name].guildBottom = gName and bottom or nil
+	Rested_restedState[Rested.realm][Rested.name].guildTop = gName and top or nil
+	--Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
+end
+
+function Rested.GetGuildRep( )
+	-- Return the rep for the guild only
+	for factionIndex = 1, GetNumFactions() do
+		local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
+				canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex);
+		if isCollapsed then
+			ExpandFactionHeader(factionIndex)
+			return
+		end
+		if name == Rested_restedState[Rested.realm][Rested.name].guildName then
+			return earnedValue, bottomValue, topValue
+		end
+	end
+end
+function Rested.GuildStanding( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.guildName then
+		lineCount = 1
+		Rested.strOut = string.format("%s :: %s",
+				charStruct.guildName,
+				rn)
+		table.insert( Rested.charList,
+				{ ( charStruct.guildRep / (( charStruct.guildTop - charStruct.guildBottom ) + 1 ) ) * 150,
+					Rested.strOut
+				}
+		)
+	end
+	return lineCount
+end
+
+--=================
+-- Played Info
+--=================
+
+Rested.dropDownMenuTable["Played"] = "played"
+Rested.commandList["played"] = function()
+	Rested.reportName="Time Played"
+	Rested.ShowReport( Rested.ShowPlayed )
+end
+function Rested.PLAYER_LEAVING_WORLD()
+	RequestTimePlayed()
+end
+function Rested.TIME_PLAYED_MSG( total, currentLvl )
+	print("Rested.TIME_PLAYED_MSG: "..total.." - "..currentLvl )
+	Rested_restedState[Rested.realm][Rested.name].totalPlayed = total
+end
+function Rested.ShowPlayed( realm, name, charStruct )
+	local rn = realm..":"..name
+	if (realm == Rested.realm and name == Rested.name) then
+		rn = COLOR_GREEN..rn..COLOR_END;
+	end
+	local lineCount = 0
+	if charStruct.totalPlayed then
+		lineCount = 1
+		Rested.maxPlayed = max( Rested.maxPlayed or 0, charStruct.totalPlayed )
+
+		Rested.strOut = string.format("%s :: %s",
+				SecondsToTime( charStruct.totalPlayed ),
+				rn)
+		table.insert( Rested.charList,
+				{ ( charStruct.totalPlayed / Rested.maxPlayed ) * 150,
 					Rested.strOut
 				}
 		)
