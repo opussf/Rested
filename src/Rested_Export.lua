@@ -36,7 +36,7 @@ function MakeCharTable( realm, name, c )
 	charStruct = {}
 	charStruct.rn = realm
 	charStruct.cn = name
-	charStruct.isResting = (c.isResting and "1" or "0")
+	charStruct.isResting = (c.isResting and 1 or 0)
 	charStruct.class = c.class
 	charStruct.initAt = c.initAt
 	charStruct.updated = c.updated
@@ -63,6 +63,7 @@ function ExportXML()
 	strOut = strOut .. "\t<resting>"..restingRate[1].."</resting>\n";
 	strOut = strOut .. "\t<notresting>"..restingRate[0].."</notresting>\n";
 	strOut = strOut .. "\t<maxLevel>"..Rested_options.maxLevel.."</maxLevel>\n";
+	strOut = strOut .. "\t<maxiLvl>"..Rested_options.maxiLvl.."</maxiLvl>\n";
 	strOut = strOut .. "\t<cacheRate>6</cacheRate>\n"
 
 	for realm, chars in pairs(Rested_restedState) do
@@ -88,7 +89,8 @@ function ExportJSON()
 	strOut = "{\"restedToons\": {\n"
 	strOut = strOut .. "\t\"resting\": \""..restingRate[1].."\",\n"
 	strOut = strOut .. "\t\"notresting\": \""..restingRate[0].."\",\n"
-	strOut = strOut .. "\t\"maxLevel\": \""..Rested_options.maxLevel.."\",\n"
+	strOut = strOut .. "\t\"maxLevel\": "..Rested_options.maxLevel..",\n"
+	strOut = strOut .. "\t\"maxiLvl\": "..Rested_options.maxiLvl..",\n"
 	strOut = strOut .. "\t\"chars\": [\n"
 
 	outTable = {}
@@ -98,7 +100,11 @@ function ExportJSON()
 				charStruct = MakeCharTable( realm, name, c )
 				charOut = {}
 				for k,v in pairs(charStruct) do
-					table.insert(charOut, string.format('"%s":"%s"', k, v))
+					if type(v) == "number" then
+						table.insert(charOut, string.format('"%s":%s', k, v))
+					else
+						table.insert(charOut, string.format('"%s":"%s"', k, v))
+					end
 				end
 				charLine = '\t\t{'..table.concat( charOut, ", " )..'}'
 				table.insert(outTable, charLine)
@@ -140,6 +146,7 @@ else
 	io.stderr:write( "Data file exists  : "..( FileExists( dataFile ) and " True" or "False" ).."\n" )
 	io.stderr:write( "ExportType given  : "..( exportType and " True" or "False" ).."\n" )
 	io.stderr:write( "ExportType valid  : "..( func and " True" or "False" ).."\n" )
+	m = tt or "nil"
 end
 
 
