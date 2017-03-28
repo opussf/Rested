@@ -146,7 +146,6 @@ else
 	io.stderr:write( "Data file exists  : "..( FileExists( dataFile ) and " True" or "False" ).."\n" )
 	io.stderr:write( "ExportType given  : "..( exportType and " True" or "False" ).."\n" )
 	io.stderr:write( "ExportType valid  : "..( func and " True" or "False" ).."\n" )
-	m = tt or "nil"
 end
 
 
