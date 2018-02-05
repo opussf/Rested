@@ -20,7 +20,8 @@ MAX_PLAYER_LEVEL_TABLE={
 	[3]=85,
 	[4]=(time()>1348531200 and 90 or 85),   -- Mists
 	[5]=(time()>1415750400 and 100 or 90),
-	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016
+	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
+	[7]=(time()>2000000000 and 120 or 110), -- find this
 }
 
 -- Saved Variables

@@ -1,4 +1,5 @@
 <project name="Rested" default="package">
+	<!-- version 7.1 -->
 
 	<tstamp/>
 	<property file="build.properties"/>
@@ -98,7 +99,6 @@
 		</copy>
 		<zip 	destfile="${target.dir}/${project.zip}"
 				basedir="${working.dir}"
-				encoding="UTF-8"
 				includes="${ant.project.name}/**"/>
 		<checksum file="${target.dir}/${project.zip}"
 				  property="zip.md5" />
@@ -108,7 +108,7 @@
 	<target name="web.deploy" description="deploys the web site">
 		<mkdir	dir="${target.dir}/web"/>
 		<zip	destfile="${target.dir}/${ant.project.name}-web.zip"
-				basedir="site"
+				basedir="src/web"
 				includes="**"/>
 
 		<exec executable="rsync" dir="src/web" failonerror="true">
@@ -160,14 +160,4 @@
 			<arg line="status" />
 		</exec>
 	</target>
-
-	<target name="deploy.check">
-		<condition property="deploy.run">
-			<and>
-				<available file="${deploy.from}" type="dir"/>
-				<available file="${deploy.dir}" type="dir"/>
-			</and>
-		</condition>
-	</target>
-
 </project>
