@@ -2,3 +2,22 @@
 
 # Rested
 
+# Features
+
+## rewrite
+
+Rewrite to make this more modular.
+
+Things to make this happen:
+* Base code handles:
+	* UI
+	* Options
+	* process init for all modules
+	* create event function, calls each module's code for that event
+* Each module handles:
+	* provide an init function
+	* provide a function to populate the table needed for display
+
+* How to handle?
+	* export of data
+
