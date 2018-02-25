@@ -1,17 +1,18 @@
-RESTED_MSG_VERSION = GetAddOnMetadata("Rested","Version");
-RESTED_MSG_ADDONNAME = "Rested Reporter";
+RESTED_MSG_ADDONNAME = "Rested Reporter"
+RESTED_MSG_VERSION   = GetAddOnMetadata("Rested","Version")
+RESTED_MSG_AUTHOR    = GetAddOnMetadata("Rested","Author")
 
 -- Colours
-COLOR_RED = "|cffff0000";
-COLOR_GREEN = "|cff00ff00";
-COLOR_BLUE = "|cff0000ff";
-COLOR_PURPLE = "|cff700090";
-COLOR_YELLOW = "|cffffff00";
-COLOR_ORANGE = "|cffff6d00";
-COLOR_GREY = "|cff808080";
-COLOR_GOLD = "|cffcfb52b";
-COLOR_NEON_BLUE = "|cff4d4dff";
-COLOR_END = "|r";
+COLOR_RED = "|cffff0000"
+COLOR_GREEN = "|cff00ff00"
+COLOR_BLUE = "|cff0000ff"
+COLOR_PURPLE = "|cff700090"
+COLOR_YELLOW = "|cffffff00"
+COLOR_ORANGE = "|cffff6d00"
+COLOR_GREY = "|cff808080"
+COLOR_GOLD = "|cffcfb52b"
+COLOR_NEON_BLUE = "|cff4d4dff"
+COLOR_END = "|r"
 
 MAX_PLAYER_LEVEL_TABLE={
 	[0]=60,
@@ -21,22 +22,128 @@ MAX_PLAYER_LEVEL_TABLE={
 	[4]=(time()>1348531200 and 90 or 85),   -- Mists
 	[5]=(time()>1415750400 and 100 or 90),
 	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
-	[7]=(time()>2000000000 and 120 or 110), -- find this
+	[7]=(time()>1537488000 and 120 or 110), -- find this
 }
 
 -- Saved Variables
-Rested_restedState = {};
-Rested_options = {
-	["maxStale"] = 10,
-	["maxCutOff"] = 7,
-	["ignoreTime"] = 5*24*3600,
-	["maxiLvl"] = 1,
-	["maxDeaths"] = 1,
-	["iLvlMaxAge"] = 3600,
-}
+Rested_restedState = {}
 
-Rested = {};
+Rested = {}
 Rested.maxLevel = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()];
+Rested.commandList = {}  -- ["func"] = reference, ["help"] = help string
+Rested.initFunctions = {}
+Rested.eventFunctions = {} -- [event] = {}, [event] = {}, ...
+
+-- Load / init functions
+function Rested.OnLoad()
+	RestedFrame:RegisterEvent( "ADDON_LOADED" )
+	SLASH_RESTED1 = "/rested"
+	SlashCmdList["RESTED"] = function( msg ) Rested.Command( msg ); end
+end
+
+function Rested.Print( msg, showName )
+	-- print to the chat frame
+	-- set showName to false to suppress the addon name printing
+	if (showName == nil) or (showName) then
+		msg = COLOR_RED..RESTED_MSG_ADDONNAME.."> "..COLOR_END..msg
+	end
+	DEFAULT_CHAT_FRAME:AddMessage( msg )
+end
+function Rested.PrintHelp()
+	Rested.Print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") by "..RESTED_MSG_AUTHOR )
+	for cmd, info in pairs( Rested.commandList ) do
+		Rested.Print( string.format( "%s %s %s -> %s",
+			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
+	end
+end
+--Rested.CommandList["help"]
+
+function Rested.ParseCmd( msg )
+	msg = string.lower( msg )
+	if msg then
+		local a,b,c = strfind(msg, "(%S+)")  --contiguous string of non-space characters
+		if a then
+			return c, strsub(msg, b+2)
+		else
+			return ""
+		end
+	end
+end
+function Rested.Command( msg )
+	local cmd, param = Rested.ParseCmd( msg )
+	local cmdFunc = Rested.commandList[ cmd ]
+	if cmdFunc then
+		cmdFunc.func( param )
+		return( cmd )
+	else
+		Rested.PrintHelp()
+		return( "help" )
+	end
+end
+function Rested.InitCallback( callback )
+	table.insert( Rested.initFunctions, callback )
+end
+function Rested.EventCallback( event, callback )
+	if( event == "ADDON_LOADED" ) then  -- use InitCallback to modify the ADDON_LOADED event
+		return
+	end
+	if not Rested.eventFunctions[ event ] then
+		Rested.eventFunctions[ event ] = {}
+	end
+	table.insert( Rested.eventFunctions[event], callback )
+
+	Rested[event] = function( ... )
+		for k, func in pairs( Rested.eventFunctions[event] ) do
+			func( ... )
+		end
+	end
+	RestedFrame:RegisterEvent( event )
+end
+
+-- Events
+------------------------------------------
+function Rested.ADDON_LOADED()
+	-- core init:
+	Rested.name = UnitName("player");
+	Rested.realm = GetRealmName();
+
+	-- find or init the realm
+	if not Rested_restedState[Rested.realm] then
+		Rested_restedState[ Rested.realm ] = {}
+	end
+
+	if not Rested_restedState[Rested.realm][Rested.name] then
+		Rested_restedState[ Rested.realm ][ Rested.name ] = {
+			["initAt"] = time()
+		}
+	end
+
+	-- init other modules
+	for _,func in pairs( Rested.initFunctions ) do
+		func()
+	end
+	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
+end
+
+
+--[[
+	func = Rested.commandList[cmd];
+	if func then
+		func(param);
+	else
+		if (cmd ~= nil) and (string.sub(cmd,1,1) == "-") then
+			Rested.RemoveFromRested( string.sub(cmd,2) );
+			return;
+		end
+		Rested.commandList["resting"]();
+	end
+end
+]]
+
+
+
+
+--[[
 Rested.charList = {};
 Rested.lastUpdate = 0;
 Rested.lastReminderUpdate = 0;
@@ -290,11 +397,11 @@ function Rested.VIGNETTE_REMOVED( arg1 )
 end
 function Rested.SHOW_LOOT_TOAST( ... )
 	local typeIdentifier, itemLink, quantity, specID, sex, isPersonal, lootSource = ...;
-	--[[
-	Rested.Print(string.format("Looted %s (amount: %s) of %s from %s",
-			tostring(typeIdentifier), tostring(quantity), tostring(itemLink), tostring(lootSource))
-	)
-	]]
+	--
+	-- Rested.Print(string.format("Looted %s (amount: %s) of %s from %s",
+	-- 		tostring(typeIdentifier), tostring(quantity), tostring(itemLink), tostring(lootSource))
+	-- )
+	--
 	if lootSource == 10 then -- Garrison Cache
 		Rested_restedState[Rested.realm][Rested.name].garrisonCache = time()
 	end
@@ -337,16 +444,7 @@ function Rested_Debug( msg )
 		Rested.Print( msg );
 	end
 end
-function Rested.ParseCmd(msg)
-	if msg then
-		local a,b,c = strfind(msg, "(%S+)");  --contiguous string of non-space characters
-		if a then
-			return c, strsub(msg, b+2);
-		else
-			return "";
-		end
-	end
-end
+
 Rested.commandList = {
 	["help"] = function() Rested.PrintHelp(); end,
 	["status"] = function() Rested.PrintStatus(); end,
@@ -493,20 +591,7 @@ function Rested.GetColorFromRange(value, average, range)
 	end
 end
 
-function Rested.Command(msg)
-	local cmd, param = Rested.ParseCmd(msg);
-	cmd = string.lower(cmd);
-	func = Rested.commandList[cmd];
-	if func then
-		func(param);
-	else
-		if (cmd ~= nil) and (string.sub(cmd,1,1) == "-") then
-			Rested.RemoveFromRested( string.sub(cmd,2) );
-			return;
-		end
-		Rested.commandList["resting"]();
-	end
-end
+
 -- slash function handle
 function Rested.Command_old(msg)
 	--cmd will be nothing
@@ -1239,11 +1324,11 @@ function Rested.Missions( realm, name, charStruct )
 			if Rested.firstCompleted == time() then Rested.firstCompleted = nil end
 			if Rested.firstCompleted == completedAtSeconds then
 				Rested.firstCompletedWho = rn
-				--[[
-				table.insert( Rested.charList,
-						{ time(), "--> "..rn.." :: "..m.name } )
-				lineCount = lineCount + 1
-				]]
+				--
+				-- table.insert( Rested.charList,
+				-- 		{ time(), "--> "..rn.." :: "..m.name } )
+				-- lineCount = lineCount + 1
+				--
 			end
 			--
 		end
@@ -1421,3 +1506,4 @@ function Rested.ShowPlayed( realm, name, charStruct )
 	end
 	return lineCount
 end
+]]
