@@ -33,6 +33,7 @@ Rested.maxLevel = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()];
 Rested.commandList = {}  -- ["func"] = reference, ["help"] = help string
 Rested.initFunctions = {}
 Rested.eventFunctions = {} -- [event] = {}, [event] = {}, ...
+Rested.genders={ "", "Male", "Female" }
 
 -- Load / init functions
 function Rested.OnLoad()
@@ -117,6 +118,14 @@ function Rested.ADDON_LOADED()
 			["initAt"] = time()
 		}
 	end
+	-- core data that will always be a part of the records
+	Rested_restedState[Rested.realm][Rested.name].class = UnitClass( "player" )
+	Rested_restedState[Rested.realm][Rested.name].faction = select( 2, UnitFactionGroup( "player" ) )  -- localized string
+	Rested_restedState[Rested.realm][Rested.name].race = UnitRace( "player" )
+	Rested_restedState[Rested.realm][Rested.name].gender = Rested.genders[( UnitSex( "player" ) or 0 )]
+	Rested_restedState[Rested.realm][Rested.name].updated = time()
+
+
 
 	-- init other modules
 	for _,func in pairs( Rested.initFunctions ) do
