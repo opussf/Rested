@@ -125,8 +125,6 @@ function Rested.ADDON_LOADED()
 	Rested_restedState[Rested.realm][Rested.name].gender = Rested.genders[( UnitSex( "player" ) or 0 )]
 	Rested_restedState[Rested.realm][Rested.name].updated = time()
 
-
-
 	-- init other modules
 	for _,func in pairs( Rested.initFunctions ) do
 		func()
