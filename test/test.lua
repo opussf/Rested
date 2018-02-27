@@ -114,6 +114,12 @@ function test.test_CoreData_updated_isSet()
 	Rested.ADDON_LOADED()
 	assertEquals( now, Rested_restedState["testRealm"]["testPlayer"]["updated"] )
 end
+function test.test_CoreData_ignore_isCleared()
+	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
+	Rested.ADDON_LOADED()
+	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+end
+
 -- base data
 function test.test_BaseData_lvlNow()
 	-- lvlNow always gets set
