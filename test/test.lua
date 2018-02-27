@@ -11,7 +11,9 @@ RestedFrame = CreateFrame()
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
 require "Rested"
+require "RestedOptions"
 require "RestedBase"
+require "RestedDeaths"
 
 
 test.outFileName = "testOut.xml"
@@ -178,6 +180,13 @@ function test.test_BaseData_restedPC_PLAYER_ENTERING_WORLD()
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertEquals( 361.8, Rested_restedState["testRealm"]["testPlayer"]["restedPC"] )
+end
+-- RestedDeaths
+function test.test_RestedDeaths_deaths_PLAYER_ENTERING_WORLD()
+	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["deaths"] = 918273987 } }
+	Rested.ADDON_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	assertEquals( 42, Rested_restedState["testRealm"]["testPlayer"]["deaths"] )
 end
 
 
