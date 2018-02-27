@@ -85,6 +85,7 @@ function Rested.InitCallback( callback )
 	table.insert( Rested.initFunctions, callback )
 end
 function Rested.EventCallback( event, callback )
+	--print( "EventCallback( "..event..", )" )
 	if( event == "ADDON_LOADED" ) then  -- use InitCallback to modify the ADDON_LOADED event
 		return
 	end
