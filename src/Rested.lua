@@ -94,8 +94,13 @@ function Rested.EventCallback( event, callback )
 	table.insert( Rested.eventFunctions[event], callback )
 
 	Rested[event] = function( ... )
-		for k, func in pairs( Rested.eventFunctions[event] ) do
-			func( ... )
+		if Rested.eventFunctions[event] then
+			for k, func in pairs( Rested.eventFunctions[event] ) do
+				print( event..": #"..k )
+				func( ... )
+			end
+		else
+			Rested.Print( "There are no function callbacks registered for this event: ("..event..")" )
 		end
 	end
 	RestedFrame:RegisterEvent( event )
