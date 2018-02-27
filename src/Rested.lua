@@ -1268,25 +1268,7 @@ function Rested.iLevel( realm, name, charStruct )
 --	end
 --	return 0;
 end
-Rested.dropDownMenuTable["Deaths"] = "deaths";
-Rested.commandList["deaths"] = function()
-	Rested.reportName = "Deaths";
-	Rested.ShowReport( Rested.Deaths );
-end
-function Rested.Deaths( realm, name, charStruct )
-	-- lvl
-	local rn = realm..":"..name;
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
-	end
-	Rested.strOut = string.format("%s :: %s",
-			charStruct.deaths or "Unscanned",
-			rn);
-	table.insert( Rested.charList, {((charStruct.deaths or -1) / Rested_options["maxDeaths"]) * 150, Rested.strOut} );
-	return 1;
---	end
---	return 0;
-end
+
 
 Rested.maxTimeLeftSecondsTable = {}
 Rested.dropDownMenuTable["Missions"] = "missions"
