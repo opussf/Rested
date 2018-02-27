@@ -1,10 +1,10 @@
 ## Interface: @INTERFACE@
 ## Title: Rested Reporter
-## Notes: Rested Tracker for alts @VERSION@
-## Author: sistersally of hyjal
+## Notes: Rested Tracker for alts v@VERSION@
+## Author: opussf
 ## Version: @VERSION@
 ## Description: Slash command function to output rested status of alts.
 ## SavedVariables: Rested_restedState Rested_options
 Rested.lua
 Rested.xml
-
+RestedBase.lua
