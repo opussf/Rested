@@ -33,6 +33,8 @@ Rested.maxLevel = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()];
 Rested.commandList = {}  -- ["func"] = reference, ["help"] = help string
 Rested.initFunctions = {}
 Rested.eventFunctions = {} -- [event] = {}, [event] = {}, ...
+Rested.reminderFunctions = {}  -- the functions to call for each alt ( realm, name, struct )
+Rested.reminders = {}
 Rested.genders={ "", "Male", "Female" }
 
 -- Load / init functions
@@ -81,6 +83,10 @@ function Rested.Command( msg )
 		return( "help" )
 	end
 end
+function Rested.MakeReminderSchedule()
+	Rested.reminders = {} -- clear this
+
+end
 function Rested.InitCallback( callback )
 	table.insert( Rested.initFunctions, callback )
 end
@@ -97,7 +103,7 @@ function Rested.EventCallback( event, callback )
 	Rested[event] = function( ... )
 		if Rested.eventFunctions[event] then
 			for k, func in pairs( Rested.eventFunctions[event] ) do
-				print( event..": #"..k )
+				--print( event..": #"..k )
 				func( ... )
 			end
 		else
@@ -105,6 +111,9 @@ function Rested.EventCallback( event, callback )
 		end
 	end
 	RestedFrame:RegisterEvent( event )
+end
+function Rested.ReminderCallback( callback )
+	table.insert( Rested.reminderFunctions , callback )
 end
 
 -- Events
@@ -129,6 +138,7 @@ function Rested.ADDON_LOADED()
 	Rested_restedState[Rested.realm][Rested.name].faction = select( 2, UnitFactionGroup( "player" ) )  -- localized string
 	Rested_restedState[Rested.realm][Rested.name].race = UnitRace( "player" )
 	Rested_restedState[Rested.realm][Rested.name].gender = Rested.genders[( UnitSex( "player" ) or 0 )]
+	Rested_restedState[Rested.realm][Rested.name].ignore = nil  -- clear any ignore value once visited
 	Rested_restedState[Rested.realm][Rested.name].updated = time()
 
 	-- init other modules
@@ -137,6 +147,9 @@ function Rested.ADDON_LOADED()
 	end
 	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
 end
+
+
+
 
 
 --[[

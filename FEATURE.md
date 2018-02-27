@@ -1,5 +1,40 @@
 # Feature document for Rested
 
+## Reminder system
+
+The reminder system allows this addon to register reminders to be displayed to the user.
+
+The format of the generated reminder structure is:
+```lua
+Rested.reminders[ TimeStamp ] = { "<string to display>", "<string to display>", ... }
+```
+
+The display portion of this loops over the TimeStamp keys, looks for any that are less than now, and prints the strings.
+It also then removes those from the structure.
+
+This reminder structure is only generated at ADDON_LOADED.
+It takes structures like:
+```lua
+{}[<matched value>] = "formatted str"
+```
+
+The current system is very limited in what can be a reminder.
+Adding a new reminder means that the function that creates the structure has to be modified.
+
+To make this as generic as possible, either have a callback registration system for functions to call, or create a data structure to register.
+I think the callback system may be most flexible at this point.
+
+The callback function would take a realm, name, and player data table.
+It would return a table:
+```lua
+{}[ TimeStemp ] = { "<string to display>", "<string to display>", ... }
+```
+
+
+
+
+
+
 ## guildInfo
 
 ┌─────────────────────────────────────────────────────┐

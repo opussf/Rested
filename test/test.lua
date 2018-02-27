@@ -21,6 +21,7 @@ test.outFileName = "testOut.xml"
 -- addon setup
 function test.before()
 	--Rested.eventFunctions = {}
+	Rested.reminders = {}
 end
 function test.after()
 end
@@ -119,6 +120,41 @@ function test.test_CoreData_ignore_isCleared()
 	Rested.ADDON_LOADED()
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+-- Reminders
+function test.test_Reminders_registerCallBack()
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback( function() return( { [0] = { "0 reminder", } } ) end )
+	assertEquals( 1, #Rested.reminderFunctions )
+end
+function test.test_Reminders_makeReminderSchedule_noChars()
+	-- this really should not happen, as the system is guaranteed to have at least the current alt
+	Rested_restedState = {}
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback( function() return( { [0] = { "0 reminder", } } ) end )
+	Rested.MakeReminderSchedule()
+	assertEquals( 0, #Rested.reminders )
+end
+function test.test_Reminders_makeReminderSchedule_oneChar()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is "..( struct.isResting and "" or "not ").." resting." } } )
+		end
+	)
+
+	Rested.MakeReminderSchedule()
+	assertEquals( "testPlayer-testRealm is resting." )
+end
+--function Rested.
+--[[
+
+	Rested.ReminderCallback( )
+	Rested.ADDON_LOADED()
+	assertEquals( {"yaya"}, Rested.reminders[0] )
+end
+]]
 
 -- base data
 function test.test_BaseData_lvlNow()
