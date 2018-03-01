@@ -1099,25 +1099,8 @@ Rested.reminderValues = {
 	[172800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 days until %s:%s is fully rested.",
 	[432000] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 days until %s:%s is fully rested.",
 }
-Rested.missionReminderValues = {
-	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
-	[300] = COLOR_RED.."MISSION:"..COLOR_END.." 5 minutes until a mission finishes for %s-%s.",
-	[600] = COLOR_RED.."MISSION:"..COLOR_END.." 10 minutes until a mission finishes for %s-%s.",
-	[900] = COLOR_RED.."MISSION:"..COLOR_END.." 15 minutes until a mission finishes for %s-%s.",
-	[1800] = COLOR_RED.."MISSION:"..COLOR_END.." 30 minutes until a mission finishes for %s-%s.",
-}
-Rested.cacheReminderValues = {
-	[5] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." Garrison cache is ready for %s-%s.",
-	[12] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 12 resources for %s-%s.",
-	[100] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 100 resources for %s-%s.",
-	[144] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 144 resources for %s-%s.", -- 1 day
-	[200] = COLOR_GREEN.."G-CACHE:"..COLOR_END.." 200 resources for %s-%s.",
-	[288] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 288 resources for %s-%s.", -- 2 days
-	[300] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 300 resources for %s-%s.",
-	[400] = COLOR_ORANGE.."G-CACHE:"..COLOR_END.." 400 resources for %s-%s.",
-	[432] = COLOR_RED.."G-CACHE:"..COLOR_END.." 432 resources for %s-%s.", -- 3 days
-	[500] = COLOR_RED.."G-CACHE:"..COLOR_END.." Is full for %s-%s.", -- Full
-}
+
+
 function Rested.MakeReminderSchedule()
 	Rested.reminders = {};
 	for realm in pairs(Rested_restedState) do

@@ -1,5 +1,12 @@
 -- RestedGarrisonMissions.lua
 
+Rested.missionReminderValues = {
+	[0] = COLOR_RED.."MISSION:"..COLOR_END.." A mission has finished for %s-%s.",
+	[300] = COLOR_RED.."MISSION:"..COLOR_END.." 5 minutes until a mission finishes for %s-%s.",
+	[600] = COLOR_RED.."MISSION:"..COLOR_END.." 10 minutes until a mission finishes for %s-%s.",
+	[900] = COLOR_RED.."MISSION:"..COLOR_END.." 15 minutes until a mission finishes for %s-%s.",
+	[1800] = COLOR_RED.."MISSION:"..COLOR_END.." 30 minutes until a mission finishes for %s-%s.",
+}
 
 Rested.maxTimeLeftSecondsTable = {}
 Rested.dropDownMenuTable["Missions"] = "missions"
