@@ -23,6 +23,7 @@ function test.before()
 	--Rested.eventFunctions = {}
 	Rested.reminders = {}
 	Rested.lastReminderUpdate = nil
+	Rested.OnLoad()
 end
 function test.after()
 end
@@ -187,6 +188,14 @@ function test.test_Reminders_ReminderOnUpdate_printsCurrentReminder()
 	assertIsNil( Rested.reminders[now] )   -- primary test
 	assertTrue( Rested.reminders[now-5] )  -- These are secondary tests only
 	assertTrue( Rested.reminders[now+5] )
+end
+
+-- status code
+function test.test_Status_status()
+	Rested.Status()
+end
+function test.test_Status_command()
+	Rested.Command( "status" )
 end
 --function Rested.
 --[[

@@ -30,7 +30,7 @@ Rested_restedState = {}
 
 Rested = {}
 Rested.maxLevel = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()];
-Rested.commandList = {}  -- ["func"] = reference, ["help"] = help string
+Rested.commandList = {}  -- ["cmd"] = { ["func"] = reference, ["help"] = {"parameters", "help string"} }
 Rested.initFunctions = {}
 Rested.eventFunctions = {} -- [event] = {}, [event] = {}, ...
 Rested.reminderFunctions = {}  -- the functions to call for each alt ( realm, name, struct )
@@ -230,6 +230,22 @@ function Rested.PrintReminders()
 		Rested.reminders[time()] = nil
 	end
 end
+
+-- Status
+function Rested.Status()
+	Rested.Print( "Version: "..RESTED_MSG_VERSION )
+	Rested.Print( string.format( "Memory usage: %0.2f kB", collectgarbage( "count" ) ) )
+	local rCount, nCount = 0, 0
+	for r, v in pairs( Rested_restedState ) do
+		for n, _ in pairs( v ) do
+			nCount = nCount + 1
+		end
+		rCount = rCount + 1
+	end
+	Rested.Print( nCount.." toons found on "..rCount.." realms." )
+end
+Rested.commandList["status"] = { ["func"] = Rested.Status, ["help"] = {"", "Shows status info" } }
+
 
 --[[
 Rested.charList = {};
@@ -495,43 +511,6 @@ function Rested.SHOW_LOOT_TOAST( ... )
 	end
 end
 
-function Rested.Print( msg, showName)
-	-- print to the chat frame
-	-- set showName to false to suppress the addon name printing
-	if (showName == nil) or (showName) then
-		msg = COLOR_RED..RESTED_MSG_ADDONNAME.."> "..COLOR_END..msg;
-	end
-	DEFAULT_CHAT_FRAME:AddMessage( msg );
-end
-function Rested.PrintStatus()
-	Rested.Print("Version: "..RESTED_MSG_VERSION);
-	Rested.Print("Memory usage: "..collectgarbage("count").." kB");
-	--Rested.Print("Max Level nagtime: "..COLOR_GREEN..Rested_options.maxCutOff..COLOR_END.." Days.");
-	--Rested.Print("Max Level stale time: "..COLOR_GREEN..Rested_options.maxStale..COLOR_END.." Days.");
-	Rested.PrintToonCount();
-end
-function Rested.GetToonCount()
-	local realmCount = 0;
-	local nameCount = 0;
-	for r, v in pairs(Rested_restedState) do
-		for n, _ in pairs(v) do
-			nameCount = nameCount + 1;
-		end
-		realmCount = realmCount + 1;
-	end
-	return nameCount, realmCount;
-end
-function Rested.PrintToonCount()
-	local nameCount, realmCount = Rested.GetToonCount();
-	Rested.Print(nameCount .." toons found on ".. realmCount .." realms.");
-end
-function Rested_Debug( msg )
-	-- Print Debug Messages
-	if Rested.debug then
-		msg = "debug-"..msg;
-		Rested.Print( msg );
-	end
-end
 
 Rested.commandList = {
 	["help"] = function() Rested.PrintHelp(); end,
