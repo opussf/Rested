@@ -42,10 +42,10 @@ function Rested.RestedReminderValues( realm, name, struct )
 	restAdded = restRate * timeSince
 	restedVal = struct.restedPC + restAdded
 	restedAt = now + ( ( 150 - restedVal ) / restRate )
-	print( restedAt )
+	--print( restedAt )
 	for diff, format in pairs( Rested.reminderValues ) do
 		reminderTime = tonumber( restedAt - diff )
-		print( ".."..reminderTime..( reminderTime > now and " > " or " <= " )..now )
+		--print( ".."..reminderTime..( reminderTime > now and " > " or " <= " )..now )
 		if( reminderTime > now ) then
 			if( not returnStruct[reminderTime] ) then
 				returnStruct[reminderTime] = {}

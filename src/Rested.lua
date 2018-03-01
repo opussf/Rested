@@ -121,13 +121,12 @@ function Rested.MakeReminderSchedule()
 				for _, func in pairs( Rested.reminderFunctions ) do
 					local msgstruct = func( realm, name, struct )
 					for ts, msgs in pairs( msgstruct ) do
-						print( ts..": ("..ts - now..") " )
+						--print( ts..": ("..ts - now..") " )
 						for _, m in pairs( msgs ) do
-							print( "..:"..m )
+							--print( "..:"..m )
 							if( Rested.reminders[ts] ) then
-								print( "--> Inserting ")
+								--print( "--> Inserting ")
 								table.insert( Rested.reminders[ts], m )
-
 							else
 								Rested.reminders[ts] = { m }
 							end
@@ -212,23 +211,47 @@ function Rested.ADDON_LOADED()
 	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
 end
 
+-- Events from frames
+------------------------------------------
+function Rested.ReminderOnUpdate()
+	if( Rested.lastReminderUpdate == nil ) or ( Rested.lastReminderUpdate < time() ) then
+		Rested.PrintReminders()
+		Rested.lastReminderUpdate = time()
+	end
+end
 
-
-
+-- Reminders
+function Rested.PrintReminders()
+	-- print the current reminders, removing the reminders is just nice
+	if( Rested.reminders[time()]) then
+		for _, msg in ipairs( Rested.reminders[time()] ) do
+			Rested.Print( msg, false )   -- print, do not prepend addon info
+		end
+		Rested.reminders[time()] = nil
+	end
+end
 
 --[[
-	func = Rested.commandList[cmd];
-	if func then
-		func(param);
-	else
-		if (cmd ~= nil) and (string.sub(cmd,1,1) == "-") then
-			Rested.RemoveFromRested( string.sub(cmd,2) );
-			return;
+function Rested.PrintReminders()
+	if (Rested.reminders[time()]) then
+		--Rested.Print("=+=+=+=+=+=+=+=+=+=+", false);
+		for i, struct in ipairs(Rested.reminders[time()]) do
+			Rested.Print(struct.msg, false);
 		end
-		Rested.commandList["resting"]();
+		Rested.reminders[time()] = nil;
+	end
+end
+function Rested.ReminderOnUpdate()
+	if Rested.lastReminderUpdate + 1 <= time() then
+		Rested.lastReminderUpdate = time();
+		Rested.PrintReminders();
 	end
 end
 ]]
+
+
+
+
 
 
 
@@ -1194,21 +1217,10 @@ function Rested.MakeReminderSchedule()
 		end -- Name Loop
 	end -- Realm loop
 end
-function Rested.PrintReminders()
-	if (Rested.reminders[time()]) then
-		--Rested.Print("=+=+=+=+=+=+=+=+=+=+", false);
-		for i, struct in ipairs(Rested.reminders[time()]) do
-			Rested.Print(struct.msg, false);
-		end
-		Rested.reminders[time()] = nil;
-	end
-end
-function Rested.ReminderOnUpdate()
-	if Rested.lastReminderUpdate + 1 <= time() then
-		Rested.lastReminderUpdate = time();
-		Rested.PrintReminders();
-	end
-end
+
+
+
+
 function Rested.OptionsPanel_OnLoad(panel)
 	panel.name = RESTED_MSG_ADDONNAME;
 	RestedOptionsFrame_Title:SetText(RESTED_MSG_ADDONNAME.." "..RESTED_MSG_VERSION);

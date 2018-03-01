@@ -22,6 +22,7 @@ test.outFileName = "testOut.xml"
 function test.before()
 	--Rested.eventFunctions = {}
 	Rested.reminders = {}
+	Rested.lastReminderUpdate = nil
 end
 function test.after()
 end
@@ -46,12 +47,14 @@ end
 function test.test_EventCallback_2Events()
 	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.bleh3=42; end )
 	Rested.EventCallback( "LICK_THE_BEAR", function() Rested.bleh4=43; end )
+	Rested.ADDON_LOADED()
 	Rested.LICK_THE_BEAR()
 	assertEquals( 43, Rested.bleh4 )
 end
 function test.test_EventCallback_2functions()
 	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.bleh5=48; end )
 	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.yonks=49; end )
+	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertEquals( 49, Rested.yonks )
 end
@@ -162,6 +165,29 @@ function test.test_Reminders_makeReminderSchedule_twoChar()
 	Rested.MakeReminderSchedule()
 	assertEquals( 2, #Rested.reminders[0] )
 end
+function test.test_Reminders_ReminderOnUpdate()
+	-- make sure that this sets Rested.lastReminderUpdate
+	Rested.ReminderOnUpdate()
+	assertEquals( time(), Rested.lastReminderUpdate )
+end
+function test.test_Reminders_PrintReminders()
+	-- test that the current reminder is processed
+	-- the reminders that are printed are removed from the table
+	now = time()
+	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
+	Rested.PrintReminders()
+	assertIsNil( Rested.reminders[now] )   -- primary test
+	assertTrue( Rested.reminders[now-5] )  -- These are secondary tests only
+	assertTrue( Rested.reminders[now+5] )
+end
+function test.test_Reminders_ReminderOnUpdate_printsCurrentReminder()
+	now = time()
+	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
+	Rested.ReminderOnUpdate()
+	assertIsNil( Rested.reminders[now] )   -- primary test
+	assertTrue( Rested.reminders[now-5] )  -- These are secondary tests only
+	assertTrue( Rested.reminders[now+5] )
+end
 --function Rested.
 --[[
 
@@ -248,14 +274,6 @@ function test.test_BaseData_RestedReminder()
 	Rested.ReminderCallback( Rested.RestedReminderValues )
 	Rested.MakeReminderSchedule()
 	assertEquals( "|cff00ff00RESTED:|r 5 days until testRealm:testPlayer is fully rested.", Rested.reminders[now+428400][1] )
-
-
-	for k,msgs in pairs( Rested.reminders ) do
-		print( k-now )
-	end
-
-
-
 end
 -- RestedDeaths
 function test.test_RestedDeaths_deaths_PLAYER_ENTERING_WORLD()
