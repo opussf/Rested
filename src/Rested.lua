@@ -83,10 +83,6 @@ function Rested.Command( msg )
 		return( "help" )
 	end
 end
-function Rested.MakeReminderSchedule()
-	Rested.reminders = {} -- clear this
-
-end
 function Rested.InitCallback( callback )
 	table.insert( Rested.initFunctions, callback )
 end
@@ -115,6 +111,74 @@ end
 function Rested.ReminderCallback( callback )
 	table.insert( Rested.reminderFunctions , callback )
 end
+function Rested.MakeReminderSchedule()
+	Rested.reminders = {} -- clear this
+	for realm in pairs( Rested_restedState ) do
+		for name, struct in pairs( Rested_restedState[realm] ) do
+			if( struct.ignore ) then -- character is bing ignored
+				-- Rested.updateIgnore( struct )
+			else  -- not ignored
+				for _, func in pairs( Rested.reminderFunctions ) do
+					local msgstruct = func( realm, name, struct )
+					for ts, msgs in pairs( msgstruct ) do
+						print( ts..": ("..ts - now..") " )
+						for _, m in pairs( msgs ) do
+							print( "..:"..m )
+							if( Rested.reminders[ts] ) then
+								print( "--> Inserting ")
+								table.insert( Rested.reminders[ts], m )
+
+							else
+								Rested.reminders[ts] = { m }
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+--[[
+function Rested.ForAllAlts( action, processIgnored )
+	-- loops through all the alts, using the action to return count and to build
+	-- param: action -- function to pass (realm, name, charStruct)
+	-- param: processIgnored -- boolean (true to include ignored toons)
+	-- returns: integer -- count of entries in the table
+	-- Rested.charList
+	Rested.charList = {};
+	count = 0;
+	for realm in pairs(Rested_restedState) do
+		for name,vals in pairs(Rested_restedState[realm]) do
+			if (vals.ignore) then  -- character is being ignored
+				Rested.updateIgnore(vals);
+				if processIgnored then
+					count = count + action( realm, name, vals );
+				end
+			elseif (Rested.filter) then -- there is a filter value
+
+				if (string.find(string.upper(realm), Rested.filter)  or        -- match realm
+					string.find(string.upper(name), Rested.filter)) then      -- match name
+					count = count + action( realm, name, vals );
+				else  -- search the keys that exist that I'm searching
+					match = false;
+					for _, key in pairs( Rested.searchKeys ) do
+						if (vals[key] and string.find(string.upper(vals[key]), Rested.filter)) then
+							match = true;
+						end
+					end
+					if match then
+						count = count + action( realm, name, vals );
+					end
+				end
+			else  -- no filter class, not ignored
+				count = count + action(realm, name, vals);
+			end
+		end
+	end
+	return count;
+end
+]]
 
 -- Events
 ------------------------------------------
@@ -700,44 +764,6 @@ function Rested.FormatRested(charStruct)
 	end
 	return Rested.formatRestedStruct.restedOutStr, Rested.formatRestedStruct.restedVal,
 		Rested.formatRestedStruct.code, Rested.formatRestedStruct.timeTillRested;
-end
-function Rested.ForAllAlts( action, processIgnored )
-	-- loops through all the alts, using the action to return count and to build
-	-- param: action -- function to pass (realm, name, charStruct)
-	-- param: processIgnored -- boolean (true to include ignored toons)
-	-- returns: integer -- count of entries in the table
-	-- Rested.charList
-	Rested.charList = {};
-	count = 0;
-	for realm in pairs(Rested_restedState) do
-		for name,vals in pairs(Rested_restedState[realm]) do
-			if (vals.ignore) then  -- character is being ignored
-				Rested.updateIgnore(vals);
-				if processIgnored then
-					count = count + action( realm, name, vals );
-				end
-			elseif (Rested.filter) then -- there is a filter value
-
-				if (string.find(string.upper(realm), Rested.filter)  or        -- match realm
-					string.find(string.upper(name), Rested.filter)) then      -- match name
-					count = count + action( realm, name, vals );
-				else  -- search the keys that exist that I'm searching
-					match = false;
-					for _, key in pairs( Rested.searchKeys ) do
-						if (vals[key] and string.find(string.upper(vals[key]), Rested.filter)) then
-							match = true;
-						end
-					end
-					if match then
-						count = count + action( realm, name, vals );
-					end
-				end
-			else  -- no filter class, not ignored
-				count = count + action(realm, name, vals);
-			end
-		end
-	end
-	return count;
 end
 function Rested.RestingCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct

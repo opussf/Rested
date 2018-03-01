@@ -120,6 +120,8 @@ function test.test_CoreData_ignore_isCleared()
 	Rested.ADDON_LOADED()
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+-- ForAllAlts
+
 -- Reminders
 function test.test_Reminders_registerCallBack()
 	Rested.reminderFunctions = {}
@@ -140,12 +142,25 @@ function test.test_Reminders_makeReminderSchedule_oneChar()
 	Rested.reminderFunctions = {}
 	Rested.ReminderCallback(
 		function( realm, name, struct )
-			return( { [0] = { name.."-"..realm.." is "..( struct.isResting and "" or "not ").." resting." } } )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
 		end
 	)
-
 	Rested.MakeReminderSchedule()
-	assertEquals( "testPlayer-testRealm is resting." )
+	assertEquals( "testPlayer-testRealm is resting.", Rested.reminders[0][1] )
+end
+function test.test_Reminders_makeReminderSchedule_twoChar()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
+		end
+	)
+	Rested.MakeReminderSchedule()
+	assertEquals( 2, #Rested.reminders[0] )
 end
 --function Rested.
 --[[
@@ -222,6 +237,25 @@ function test.test_BaseData_restedPC_PLAYER_ENTERING_WORLD()
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertEquals( 361.8, Rested_restedState["testRealm"]["testPlayer"]["restedPC"] )
+end
+function test.test_BaseData_RestedReminder()
+	now = time()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback( Rested.RestedReminderValues )
+	Rested.MakeReminderSchedule()
+	assertEquals( "|cff00ff00RESTED:|r 5 days until testRealm:testPlayer is fully rested.", Rested.reminders[now+428400][1] )
+
+
+	for k,msgs in pairs( Rested.reminders ) do
+		print( k-now )
+	end
+
+
+
 end
 -- RestedDeaths
 function test.test_RestedDeaths_deaths_PLAYER_ENTERING_WORLD()
