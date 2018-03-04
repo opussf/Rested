@@ -197,14 +197,92 @@ end
 function test.test_Status_command()
 	Rested.Command( "status" )
 end
---function Rested.
---[[
-
-	Rested.ReminderCallback( )
-	Rested.ADDON_LOADED()
-	assertEquals( {"yaya"}, Rested.reminders[0] )
+-- ignore code
+function test.test_Ignore_SetIgnore_name()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore testplayer" )
+	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-]]
+function test.test_Ignore_SetIgnore_realm()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore otherrealm" )
+	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+end
+function test.test_Ignore_SetIgnore_partial()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore rp" )
+	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+end
+function test.test_Ignore_SetIgnore_dot()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore ." )
+	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+end
+function test.test_Ignore_SetIgnore_noParam()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore" )
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+end
+-- remove
+function test.test_Remove_oneAlt()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["testRealm"]["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 }
+	Rested.Command( "rm otherPlayer" )
+	assertIsNil( Rested_restedState["testRealm"]["otherPlayer"] )
+end
+function test.test_Remove_pruneEmptyRealm()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "rm otherPlayer" )
+	assertIsNil( Rested_restedState["otherRealm"] )
+end
+function test.test_Remove_notCurrentToon()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "rm testPlayer" )
+	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+end
+function test.test_Remove_withRealm()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"]["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
+	Rested.Command( "rm testPlayer-otherRealm" )
+	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
+end
+
+
 
 -- base data
 function test.test_BaseData_lvlNow()
