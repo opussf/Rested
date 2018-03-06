@@ -244,7 +244,41 @@ function Rested.Status()
 	end
 	Rested.Print( nCount.." toons found on "..rCount.." realms." )
 end
-Rested.commandList["status"] = { ["func"] = Rested.Status, ["help"] = {"", "Shows status info" } }
+Rested.commandList["status"] = { ["func"] = Rested.Status, ["help"] = { "", "Shows status info" } }
+
+-- ignore
+-- allows the user to ignore an alt for a bit of time (set with options)
+-- sets 'ignore' which is a timestamp for when to stop ignoring.
+-- absence of 'ignore' means to not ignore alt.
+function Rested.SetIgnore( param )
+	--print( "SetIgnore( "..param.." )" )
+	if( param and strlen( param ) > 0 ) then
+		param = string.upper( param )
+		Rested.Print( "SetIgnore: "..param )
+		for realm in pairs( Rested_restedState ) do
+			for name, struct in pairs( Rested_restedState[realm] ) do
+				if( ( string.find( string.upper( realm ), param ) ) or ( string.find( string.upper( name ), param ) ) ) then
+					struct.ignore = time() + Rested_options.ignoreTime
+					Rested.Print( string.format( "Ignoring %s:%s for %s", realm, name, SecondsToTime( Rested_options.ignoreTime ) ) )
+				end
+			end
+		end
+	else
+		-- show the report here
+	end
+end
+Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = { "<search>", "Ignore matched chars, or show ignored." } }
+-- TODO: determine if there is an event to use to unignore toons
+-- TODO: make this report
+-- TODO: connect the report with SetIgnore
+--[[
+function Rested.updateIgnore( alt )
+	if (alt.ignore and time()>=alt.ignore) then
+		alt.ignore = nil;
+	end
+end
+]]
+
 
 
 --[[
@@ -1006,23 +1040,7 @@ function Rested.OnUpdate()
 		-- if (Rested.maxTimeLeftSeconds) then Rested.Print(Rested.maxTimeLeftSeconds) end
 	end
 end
-function Rested.SetIgnore(param)
-	param = string.upper(param);
-	Rested.Print("SetIgnore: "..param);
-	for realm in pairs( Rested_restedState ) do
-		for name,vals in pairs( Rested_restedState[realm] ) do
-			if ((string.find(string.upper(realm), param)) or (string.find(string.upper(name), param))) then
-				vals.ignore = time() + Rested_options.ignoreTime;
-				Rested.Print(format("Ignoring %s:%s for %s", realm, name, SecondsToTime(Rested_options.ignoreTime)));
-			end
-		end
-	end
-end
-function Rested.updateIgnore( alt )
-	if (alt.ignore and time()>=alt.ignore) then
-		alt.ignore = nil;
-	end
-end
+
 function Rested.updateFilter()
 	if RestedEditBox:GetNumLetters() then
 		Rested.filter = string.upper(RestedEditBox:GetText());
