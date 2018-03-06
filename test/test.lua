@@ -281,8 +281,39 @@ function test.test_Remove_withRealm()
 	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
-
-
+function test.test_Remove_realmWithSpace()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["other Realm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["other Realm"]["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
+	Rested.Command( "rm testPlayer-other Realm" )
+	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertIsNil( Rested_restedState["other Realm"]["testPlayer"] )
+end
+function test.test_Remove_realmWithPunc()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["Blade's Edge"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["Blade's Edge"]["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
+	Rested.Command( "rm testPlayer-blade's edge" )
+	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertIsNil( Rested_restedState["Blade's Edge"]["testPlayer"] )
+end
+function test.test_Remove_realmWithPunc_incomplete()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["Blade's Edge"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["Blade's Edge"]["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
+	Rested.Command( "rm testPlayer-blade" )
+	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertIsNil( Rested_restedState["Blade's Edge"]["testPlayer"] )
+end
 
 -- base data
 function test.test_BaseData_lvlNow()
