@@ -279,6 +279,102 @@ function Rested.updateIgnore( alt )
 end
 ]]
 
+-- remove
+-- There is always the requirement to remove alts no longer being tracked
+function Rested.RemoveCharacter( param )
+	param = string.upper( param )
+	print( "RemoveCharacter( "..param.." )" )
+	-- character name can only be letters, which have been uppered.... staying consistent
+	-- realm name just needs to be seperated with a '-', but is the rest of the line
+	_, _, dname, drealm = strfind( param, "(%u+)[-]*(.*)" )
+	if( strlen( drealm ) == 0 ) then drealm = nil end
+	--print( "charName: "..dname.." realmName: "..( drealm or "nil" ) )
+
+	for realm, v in pairs( Rested_restedState ) do
+		local realmCharCount = 0
+		local realmCharRemoved = 0
+		for name, _ in pairs( Rested_restedState[realm] ) do
+			-- check to see if the name matches, with a possible partial realm name match
+			realmCharCount = realmCharCount + 1
+			print( "=========" )
+			print( dname.." ==? "..name )
+			print( ( drealm or "any" ).." ==? "..realm )
+			print( string.find( string.upper( realm ), ( drealm or "" ) ) )
+			if( dname == string.upper( name ) and ( string.find( string.upper( realm ), ( drealm or "" ) ) ) )  then
+				-- make sure it is not the current character
+				print( "matched names, and "..(drealm or "'any'").." has been found in "..realm )
+				print( "-- possible delete" )
+				print( "\t"..Rested.name.." ==? "..name )
+				if( ( dname == string.upper( Rested.name ) and realm == Rested.realm ) ) then
+					print( "\t\tDelete name is current name, AND delete realm is current realm." )
+					print( "\t\t---- NO NOT DELETE" )
+				else
+					print( "\t\tGood match, and not current." )
+					print( "\t\t---- OK to delete" )
+					Rested.Print( COLOR_RED.."Removing "..name.."-"..realm.." from Rested."..COLOR_END, false )
+					Rested_restedState[realm][name] = nil
+					realmCharRemoved = realmCharRemoved + 1
+				end
+			end
+		end
+		print( "There are "..realmCharCount - realmCharRemoved.." chars now in "..realm )
+		if( realmCharCount - realmCharRemoved == 0 ) then
+			Rested.Print( COLOR_RED.."Pruning realm: "..realm..COLOR_END )
+			Rested_restedState[realm] = nil
+		end
+	end
+
+end
+
+
+Rested.commandList["rm"] = { ["func"] = Rested.RemoveCharacter, ["help"] = { "name[-realm]", "Remove name[-realm] from Rested." } }
+
+
+--[[
+
+function Rested.RemoveFromRested( cName )
+	cName = string.upper( cName );
+	if (cName == string.upper(Rested.name)) then
+		Rested.Print("Cannot remove current toon from rested list");
+		return
+	end
+	local numRemoved = 0;
+	for r,v in pairs( Rested_restedState ) do
+		for n,v in pairs( Rested_restedState[r] ) do
+			if (string.upper( n ) == cName) then
+				Rested.Print(COLOR_RED.."Removing "..r..":"..n.." from the rested list"..COLOR_END);
+				Rested_restedState[r][n] = nil;
+				numRemoved = numRemoved + 1;
+			end
+		end
+		local count = 0;
+		for n,v in pairs( Rested_restedState[r] ) do
+			count = count + 1;
+		end
+		if (count == 0) then
+			Rested.Print(COLOR_RED.."Pruning realm "..r..COLOR_END);
+			Rested_restedState[r] = nil;
+		end
+	end
+	if ( numRemoved == 0 ) then
+		Rested.Print("No rested record was removed");
+	end
+	Rested.PrintToonCount();
+end
+
+function Rested.PrintHelp()
+	Rested.Print("/Rested           -> Rested Report");
+	Rested.Print("/Rested -name     -> Remove name from tracking");
+	Rested.Print("/Rested help      -> Shows this menu");
+	Rested.Print("/Rested status    -> Shows status info");
+	Rested.Print("/Rested max       -> Shows list of max level toons");
+	Rested.Print("/Rested stale     -> Shows list of stale toons");
+--	Rested.Print("/Rested nagtime # -> Set # of nag days for max lvl toons");
+	Rested.Print("/Rested ignore name -> Ignore for "..SecondsToTime(Rested_options.ignoreTime));
+end
+
+]]
+
 
 
 --[[
