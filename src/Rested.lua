@@ -319,45 +319,9 @@ Rested.commandList["rm"] = { ["func"] = Rested.RemoveCharacter, ["help"] = { "na
 
 --[[
 
-function Rested.RemoveFromRested( cName )
-	cName = string.upper( cName );
-	if (cName == string.upper(Rested.name)) then
-		Rested.Print("Cannot remove current toon from rested list");
-		return
-	end
-	local numRemoved = 0;
-	for r,v in pairs( Rested_restedState ) do
-		for n,v in pairs( Rested_restedState[r] ) do
-			if (string.upper( n ) == cName) then
-				Rested.Print(COLOR_RED.."Removing "..r..":"..n.." from the rested list"..COLOR_END);
-				Rested_restedState[r][n] = nil;
-				numRemoved = numRemoved + 1;
-			end
-		end
-		local count = 0;
-		for n,v in pairs( Rested_restedState[r] ) do
-			count = count + 1;
-		end
-		if (count == 0) then
-			Rested.Print(COLOR_RED.."Pruning realm "..r..COLOR_END);
-			Rested_restedState[r] = nil;
-		end
-	end
-	if ( numRemoved == 0 ) then
-		Rested.Print("No rested record was removed");
-	end
-	Rested.PrintToonCount();
-end
-
 function Rested.PrintHelp()
-	Rested.Print("/Rested           -> Rested Report");
-	Rested.Print("/Rested -name     -> Remove name from tracking");
-	Rested.Print("/Rested help      -> Shows this menu");
-	Rested.Print("/Rested status    -> Shows status info");
 	Rested.Print("/Rested max       -> Shows list of max level toons");
 	Rested.Print("/Rested stale     -> Shows list of stale toons");
---	Rested.Print("/Rested nagtime # -> Set # of nag days for max lvl toons");
-	Rested.Print("/Rested ignore name -> Ignore for "..SecondsToTime(Rested_options.ignoreTime));
 end
 
 ]]
