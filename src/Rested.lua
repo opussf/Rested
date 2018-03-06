@@ -283,7 +283,6 @@ end
 -- There is always the requirement to remove alts no longer being tracked
 function Rested.RemoveCharacter( param )
 	param = string.upper( param )
-	print( "RemoveCharacter( "..param.." )" )
 	-- character name can only be letters, which have been uppered.... staying consistent
 	-- realm name just needs to be seperated with a '-', but is the rest of the line
 	_, _, dname, drealm = strfind( param, "(%u+)[-]*(.*)" )
@@ -296,37 +295,25 @@ function Rested.RemoveCharacter( param )
 		for name, _ in pairs( Rested_restedState[realm] ) do
 			-- check to see if the name matches, with a possible partial realm name match
 			realmCharCount = realmCharCount + 1
-			print( "=========" )
-			print( dname.." ==? "..name )
-			print( ( drealm or "any" ).." ==? "..realm )
-			print( string.find( string.upper( realm ), ( drealm or "" ) ) )
 			if( dname == string.upper( name ) and ( string.find( string.upper( realm ), ( drealm or "" ) ) ) )  then
 				-- make sure it is not the current character
-				print( "matched names, and "..(drealm or "'any'").." has been found in "..realm )
-				print( "-- possible delete" )
-				print( "\t"..Rested.name.." ==? "..name )
 				if( ( dname == string.upper( Rested.name ) and realm == Rested.realm ) ) then
-					print( "\t\tDelete name is current name, AND delete realm is current realm." )
-					print( "\t\t---- NO NOT DELETE" )
+					-- matching the positive here
+					-- the inverse boolean would be a bit crazy to follow
+					-- not ( x and y )  == (not x or not y)
 				else
-					print( "\t\tGood match, and not current." )
-					print( "\t\t---- OK to delete" )
 					Rested.Print( COLOR_RED.."Removing "..name.."-"..realm.." from Rested."..COLOR_END, false )
 					Rested_restedState[realm][name] = nil
 					realmCharRemoved = realmCharRemoved + 1
 				end
 			end
 		end
-		print( "There are "..realmCharCount - realmCharRemoved.." chars now in "..realm )
 		if( realmCharCount - realmCharRemoved == 0 ) then
 			Rested.Print( COLOR_RED.."Pruning realm: "..realm..COLOR_END )
 			Rested_restedState[realm] = nil
 		end
 	end
-
 end
-
-
 Rested.commandList["rm"] = { ["func"] = Rested.RemoveCharacter, ["help"] = { "name[-realm]", "Remove name[-realm] from Rested." } }
 
 
@@ -789,18 +776,6 @@ function Rested.GetColorFromRange(value, average, range)
 end
 
 
--- slash function handle
-function Rested.Command_old(msg)
-	--cmd will be nothing
-	local cmd, param = Rested.ParseCmd(msg);
-	cmd = string.lower(cmd);
-
-	if (cmd == "skills") then
-		Rested.PrintSkills();
-	elseif (cmd == "friend") then
-		Rested.Friend();
-	end
-end
 function Rested.PrintHelp()
 	Rested.Print("/Rested           -> Rested Report");
 	Rested.Print("/Rested -name     -> Remove name from tracking");
