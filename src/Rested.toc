@@ -10,4 +10,6 @@ Rested.xml
 RestedOptions.lua
 RestedOptions.xml
 RestedBase.lua
+
 RestedDeaths.lua
+RestediLvl.lua
