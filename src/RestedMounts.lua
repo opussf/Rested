@@ -41,6 +41,8 @@ function Rested.GetCurrentMount( ... )
 						end
 					end
 					--print( string.format( "Aura %s: %s (%s) (id=%s)", an, aName, aType, aId ) )
+				else
+					break
 				end
 			end
 		else   -- not mounted, clear the currentMount
