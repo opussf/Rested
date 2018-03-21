@@ -16,3 +16,4 @@ RestedBase.lua
 RestedDeaths.lua
 RestediLvl.lua
 RestedArtifactInfo.lua
+RestedMounts.lua
