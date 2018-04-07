@@ -245,6 +245,18 @@ function test.test_Ignore_SetIgnore_noParam()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+function test.test_Ignore_clearIgnore()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = now-5 } }
+	for realm in pairs( Rested_restedState ) do
+		for name, charStruct in pairs( Rested_restedState[realm] ) do
+			Rested.UpdateIgnore( charStruct )
+		end
+	end
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+end
 -- remove
 function test.test_Remove_oneAlt()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
@@ -400,6 +412,106 @@ function test.test_RestedDeaths_deaths_PLAYER_ENTERING_WORLD()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertEquals( 42, Rested_restedState["testRealm"]["testPlayer"]["deaths"] )
 end
+-- FormatName
+function test.test_FormatName_CurrentToon()
+	Rested.ADDON_LOADED()
+	rn = Rested.FormatName( "testRealm", "testPlayer" )
+	assertEquals( COLOR_GREEN.."testRealm:testPlayer"..COLOR_END, rn )
+end
+function test.test_FormatName_DiffRealm()
+	Rested.ADDON_LOADED()
+	rn = Rested.FormatName( "otherRealm", "testPlayer" )
+	assertEquals( "otherRealm:testPlayer", rn )
+end
+function test.test_FormatName_DiffName()
+	Rested.ADDON_LOADED()
+	rn = Rested.FormatName( "testRealm", "otherPlayer" )
+	assertEquals( "testRealm:otherPlayer", rn )
+end
+function test.test_FormatName_DiffRealm_DiffName()
+	Rested.ADDON_LOADED()
+	rn = Rested.FormatName( "otherRealm", "otherPlayer" )
+	assertEquals( "otherRealm:otherPlayer", rn )
+end
+-- ForAllChars
+function test.returnOne( realm, name, cstruct )
+	return 1
+end
+function test.test_ForAllChars_returnsCount()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.filter = nil
+	result = Rested.ForAllChars( test.returnOne )
+	assertEquals( 2, result )
+end
+function test.test_ForAllChars_returnsCount_ignoreChar()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
+	Rested.filter = nil
+	result = Rested.ForAllChars( test.returnOne )
+	assertEquals( 1, result )
+end
+function test.test_ForAllChars_returnsCount_includeIgnoreChar()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
+	Rested.filter = nil
+	result = Rested.ForAllChars( test.returnOne, true )
+	assertEquals( 2, result )
+end
+-- Filter
+function test.test_ForAllChars_filter_lvlNow_ignored()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
+	Rested.filter = 10
+	result = Rested.ForAllChars( test.returnOne )
+	assertEquals( 0, result )
+end
+function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
+	Rested.filter = 10
+	result = Rested.ForAllChars( test.returnOne, true )
+	assertEquals( 1, result )
+end
+function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
+	Rested.filter = 2
+	result = Rested.ForAllChars( test.returnOne )
+	assertEquals( 1, result )
+end
+--
+function test.test_PruneByAge_noPrune()
+	now = time()
+	tableWithSubTable = { ["subTable"] = { [now-30] = "-30", [now] = "0", [now-60] = "-60", [now-180] = "-180" } }
+	Rested.PruneByAge( tableWithSubTable["subTable"], 240 )
+	assertEquals( "-180", tableWithSubTable["subTable"][now-180] )
+end
+function test.test_PruneByAge_pruneOne()
+	now = time()
+	tableWithSubTable = { ["subTable"] = { [now-30] = "-30", [now] = "0", [now-60] = "-60", [now-180] = "-180" } }
+	Rested.PruneByAge( tableWithSubTable["subTable"], 120 )
+	assertIsNil( tableWithSubTable["subTable"][now-180] )
+end
+
 
 
 test.run()
