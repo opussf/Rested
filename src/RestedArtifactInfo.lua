@@ -33,22 +33,25 @@
 
 function Rested.CaptureArtifactInfo()
 	local artifactItemID, _, artifactName, _, artifactTotalXP, artifactPointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
-	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank( artifactPointsSpent, artifactTier )
+	if( artifactItemID ) then
+		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank( artifactPointsSpent, artifactTier )
 
-	Rested_restedState[Rested.realm][Rested.name].artifact =
-			Rested_restedState[Rested.realm][Rested.name].artifact or {}
-	Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID] =
-			Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID] or {}
-	Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].name = artifactName
-	Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].level = artifactPointsSpent
-	Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].tier = artifactTier
-	Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].currentXP = artifactTotalXP
-	Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].maxLvlXP = xpForNextPoint
+		Rested_restedState[Rested.realm][Rested.name].artifact =
+				Rested_restedState[Rested.realm][Rested.name].artifact or {}
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID] =
+				Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID] or {}
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].name = artifactName
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].level = artifactPointsSpent
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].tier = artifactTier
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].currentXP = artifactTotalXP
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].maxLvlXP = xpForNextPoint
+		Rested_restedState[Rested.realm][Rested.name].artifact[artifactItemID].canUpgrade = ( artifactTotalXP > xpForNextPoint or nil )
 
-	if( not Rested.updateArtifactTS or Rested.updateArtifactTS <= time() ) then
-		print( string.format( "Your weapon (%s) is level: %i.", artifactName, artifactPointsSpent ) )
-		print( artifactTotalXP.." / "..xpForNextPoint )
-		Rested.updateArtifactTS = time() + 1
+		if( not Rested.updateArtifactTS or Rested.updateArtifactTS <= time() ) then
+			--print( string.format( "Your weapon (%s) is level: %i, tier: %i (%0.2f%%)",
+			--		artifactName, artifactPointsSpent, artifactTier, artifactTotalXP / xpForNextPoint * 100  ) )
+			Rested.updateArtifactTS = time() + 5
+		end
 	end
 end
 
