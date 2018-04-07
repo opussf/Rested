@@ -1,15 +1,4 @@
 -- RestedMounts.lua
-
--- Event...
---[[
-
-"PLAYER_AURAS_CHANGED"
-
-
-name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId
- = UnitAura("unit", index or "name"[, "rank"[, "filter"] ] )
-
- ]]
 function Rested.BuildMountSpells( )
 	-- Build a table of [spellID] = "mountName"
 	Rested.mountSpells = {}
@@ -20,7 +9,6 @@ function Rested.BuildMountSpells( )
 		Rested.mountSpells[ mSpellID ] = mName
 	end
 end
-
 function Rested.GetCurrentMount( ... )
 	arg1 = ...
 	if( arg1 == "player" ) then  -- only look if the event is for the player
@@ -38,6 +26,9 @@ function Rested.GetCurrentMount( ... )
 							print( "You have mounted: "..aName.." at "..date() )
 							Rested.currentMount = aID
 							Screenshot()
+							Rested_options.mountHistory = Rested_options.mountHistory or {}
+							Rested_options.mountHistory[time()] = aName
+							Rested.PruneByAge( Rested_options.mountHistory, 7200 )
 						end
 					end
 					--print( string.format( "Aura %s: %s (%s) (id=%s)", an, aName, aType, aId ) )
@@ -51,6 +42,4 @@ function Rested.GetCurrentMount( ... )
 		end
 	end
 end
-
---Rested.InitCallback( Rested.BuildMountSpells )
 Rested.EventCallback( "UNIT_AURA", Rested.GetCurrentMount )
