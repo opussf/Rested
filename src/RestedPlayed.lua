@@ -2,6 +2,17 @@
 -- Played Info
 --=================
 
+function Rested.StoreTimePlayed( total, currentLvl )
+	--print( "Rested.StoreTimePlayed: "..total.." - "..currentLvl )
+	Rested_restedState[Rested.realm][Rested.name].totalPlayed = total
+end
+
+Rested.EventCallback( "PLAYER_LEAVING_WORLD", function() RequestTimePlayed(); end )
+Rested.EventCallback( "TIME_PLAYED_MSG", Rested.StoreTimePlayed )
+
+
+--[[
+
 Rested.dropDownMenuTable["Played"] = "played"
 Rested.commandList["played"] = function()
 	Rested.reportName="Time Played"
@@ -35,3 +46,5 @@ function Rested.ShowPlayed( realm, name, charStruct )
 	end
 	return lineCount
 end
+
+]]
