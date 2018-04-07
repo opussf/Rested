@@ -28,7 +28,7 @@ function Rested.GetCurrentMount( ... )
 							Screenshot()
 							Rested_options.mountHistory = Rested_options.mountHistory or {}
 							Rested_options.mountHistory[time()] = aName
-							Rested.PruneByAge( Rested_options.mountHistory, 7200 )
+							Rested.PruneByAge( Rested_options.mountHistory, Rested_options.mountHistoryAge )
 						end
 					end
 					--print( string.format( "Aura %s: %s (%s) (id=%s)", an, aName, aType, aId ) )
@@ -42,4 +42,6 @@ function Rested.GetCurrentMount( ... )
 		end
 	end
 end
+Rested.InitCallback( function() Rested_options.mountHistoryAge = Rested_options.mountHistoryAge or 7200; end )
+-- set the history age to 2 hours
 Rested.EventCallback( "UNIT_AURA", Rested.GetCurrentMount )
