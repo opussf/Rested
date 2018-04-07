@@ -36,6 +36,7 @@ Rested.eventFunctions = {} -- [event] = {}, [event] = {}, ...
 Rested.reminderFunctions = {}  -- the functions to call for each alt ( realm, name, struct )
 Rested.reminders = {}
 Rested.genders={ "", "Male", "Female" }
+Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 
 -- Load / init functions
 function Rested.OnLoad()
@@ -137,54 +138,78 @@ function Rested.MakeReminderSchedule()
 		end
 	end
 end
+function Rested.FormatName( realm, name )
+	-- format realm:name
+	-- color it green if it is the current toon  <-- Confgure the color?
+	isSelf = ( realm == Rested.realm and name == Rested.name )
+	return string.format( "%s%s:%s%s",
+			( isSelf and COLOR_GREEN or "" ), realm, name, ( isSelf and COLOR_END or "" ) )
+end
+function Rested.ForAllChars( action, processIgnored )
+	-- loops though all the chars, using action to return count, and build the reporting table
+	-- include chars that:
+	--     are not ignored
+	--     match the filter
+	--     are ignored, and processIgnored is true
+	--     are ignored, processIgnored is true, and matches the filter
+	-- param: action -- function to call with params ( realm, name, charStruct )
+	--               -- This should also insert into Rested.displayList
+	--               -- And return the number of lines / chars added to the struct
+	-- param: processIgnored -- boolean ( true to include ignored toons )
+	-- returns: integer -- the sum of the values returned by action
+	-- Rested.displayList = {}  -- force this clear
+	-- print( "ForAllChars( fn, "..( processIgnored and "true" or "nil" ).." )" )
+	local count = 0
+	for realm in pairs( Rested_restedState ) do
+		for name, charStruct in pairs( Rested_restedState[realm] ) do
+			local match = true
+			if( Rested.filter ) then  -- there is a filter value
+				match = false  -- default to false if a filter is given
+				-- print( "filter set: "..Rested.filter )
+				if( string.find( string.upper( realm ), Rested.filter ) or      -- match realm
+					string.find( string.upper( name ), Rested.filter ) ) then   -- match name
+					match = true
+				else  -- does not match name or realm, search the keys
 
---[[
-function Rested.ForAllAlts( action, processIgnored )
-	-- loops through all the alts, using the action to return count and to build
-	-- param: action -- function to pass (realm, name, charStruct)
-	-- param: processIgnored -- boolean (true to include ignored toons)
-	-- returns: integer -- count of entries in the table
-	-- Rested.charList
-	Rested.charList = {};
-	count = 0;
-	for realm in pairs(Rested_restedState) do
-		for name,vals in pairs(Rested_restedState[realm]) do
-			if (vals.ignore) then  -- character is being ignored
-				Rested.updateIgnore(vals);
-				if processIgnored then
-					count = count + action( realm, name, vals );
-				end
-			elseif (Rested.filter) then -- there is a filter value
-
-				if (string.find(string.upper(realm), Rested.filter)  or        -- match realm
-					string.find(string.upper(name), Rested.filter)) then      -- match name
-					count = count + action( realm, name, vals );
-				else  -- search the keys that exist that I'm searching
-					match = false;
-					for _, key in pairs( Rested.searchKeys ) do
-						if (vals[key] and string.find(string.upper(vals[key]), Rested.filter)) then
-							match = true;
+					for _, key in pairs( Rested.filterKeys ) do
+						if( charStruct[key] and string.find( string.upper( charStruct[key] ), Rested.filter ) ) then
+							match = true
+							--print( "matched "..key )
 						end
 					end
-					if match then
-						count = count + action( realm, name, vals );
-					end
 				end
-			else  -- no filter class, not ignored
-				count = count + action(realm, name, vals);
+			end
+			if( charStruct.ignore ) then  -- char is being ignored
+				--print( "isIgnored" )
+				Rested.UpdateIgnore( charStruct )  -- update ignored
+				match = match and processIgnored
+			end
+
+			--print( match )
+			if( match ) then
+				count = count + action( realm, name, charStruct )
 			end
 		end
 	end
-	return count;
+	return count
 end
-]]
+function Rested.PruneByAge( struct, ageSeconds )
+	-- works with a table in the structure of { [ts] = value, ... }
+	-- it will remove any ts that is older than ageSeconds
+	local timeCutOff = time() - ageSeconds
+	for ts in pairs( struct ) do
+		if( ts <= timeCutOff ) then
+			struct[ts] = nil
+		end
+	end
+end
 
 -- Events
 ------------------------------------------
-function Rested.ADDON_LOADED()
+function Rested.ADDON_LOADED( ... )
 	-- core init:
-	Rested.name = UnitName("player");
-	Rested.realm = GetRealmName();
+	Rested.name = UnitName("player")
+	Rested.realm = GetRealmName()
 
 	-- find or init the realm
 	if not Rested_restedState[Rested.realm] then
@@ -208,7 +233,12 @@ function Rested.ADDON_LOADED()
 	for _,func in pairs( Rested.initFunctions ) do
 		func()
 	end
-	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
+	Rested.MakeReminderSchedule()
+
+	if( ... == "Rested" ) then
+		RestedFrame:UnregisterEvent( "ADDON_LOADED" )
+	end
+
 end
 
 -- Events from frames
@@ -267,17 +297,16 @@ function Rested.SetIgnore( param )
 		-- show the report here
 	end
 end
+function Rested.UpdateIgnore( charStruct )
+	if( charStruct.ignore  and time() >= charStruct.ignore ) then
+		charStruct.ignore = nil
+	end
+end
 Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = { "<search>", "Ignore matched chars, or show ignored." } }
 -- TODO: determine if there is an event to use to unignore toons
 -- TODO: make this report
 -- TODO: connect the report with SetIgnore
---[[
-function Rested.updateIgnore( alt )
-	if (alt.ignore and time()>=alt.ignore) then
-		alt.ignore = nil;
-	end
-end
-]]
+-- TODO: command to unignore toon
 
 -- remove
 -- There is always the requirement to remove alts no longer being tracked
@@ -592,8 +621,6 @@ end
 
 
 Rested.commandList = {
-	["help"] = function() Rested.PrintHelp(); end,
-	["status"] = function() Rested.PrintStatus(); end,
 	["max"] = function()
 			Rested.reportName = "Level "..Rested.maxLevel;
 			Rested.ShowReport( Rested.MaxCharacters );
@@ -826,35 +853,6 @@ function Rested.AllCharacters( realm, name, charStruct )
 	table.insert( Rested.charList, {(charStruct.lvlNow / Rested.maxLevel) * 150, Rested.strOut} );
 	return 1;
 end
-function Rested.RemoveFromRested( cName )
-	cName = string.upper( cName );
-	if (cName == string.upper(Rested.name)) then
-		Rested.Print("Cannot remove current toon from rested list");
-		return
-	end
-	local numRemoved = 0;
-	for r,v in pairs( Rested_restedState ) do
-		for n,v in pairs( Rested_restedState[r] ) do
-			if (string.upper( n ) == cName) then
-				Rested.Print(COLOR_RED.."Removing "..r..":"..n.." from the rested list"..COLOR_END);
-				Rested_restedState[r][n] = nil;
-				numRemoved = numRemoved + 1;
-			end
-		end
-		local count = 0;
-		for n,v in pairs( Rested_restedState[r] ) do
-			count = count + 1;
-		end
-		if (count == 0) then
-			Rested.Print(COLOR_RED.."Pruning realm "..r..COLOR_END);
-			Rested_restedState[r] = nil;
-		end
-	end
-	if ( numRemoved == 0 ) then
-		Rested.Print("No rested record was removed");
-	end
-	Rested.PrintToonCount();
-end
 function Rested.setNagTime( param )
 	-- need to check for integer value
 	a = strfind( param, "[^0-9]" );
@@ -875,29 +873,6 @@ function Rested.PrintSkills()
 		end
 		if not isHeader and profs then
 			Rested.Print(skillname..": ".. skillRank.."/"..skillMaxRank);
-		end
-	end
-end
-function Rested_Friend()
-	-- adds alts to the friend list
-	for n, v in pairs(Rested_restedState[Rested.realm]) do
-		if (n ~= Rested.name) then
-			found = nil;
-			for i=1, GetNumFriends() do
-				name = GetFriendInfo(i);
-				if n == name then found = true; end
-			end
-			if not found then
-				Rested.Print("Adding: "..n);
-				AddFriend(n);
-			end
-		end
-		for i=1, GetNumFriends() do
-			name, lvl, class, loc, connected, status, note = GetFriendInfo(i);
-			if (name == n) then
---				Rested.Print("Update "..n);
-				SetFriendNotes(i, "Last on: "..COLOR_GREEN..date("%x", v.updated)..COLOR_END);
-			end
 		end
 	end
 end
@@ -925,90 +900,11 @@ function Rested.Search( toFind )
 		Rested.Print("No tracked toons were found.", false);
 	end
 end
-function Rested.BuildBars()
-	Rested.bars = {};
-	for idx = 1,Rested.showNumBars do
-		Rested.bars[idx] = {};
-		local item = CreateFrame("StatusBar", "Rested_ItemBar"..idx, RestedScrollContents, "Rested_RestedBarTemplate");
-		Rested.bars[idx].bar = item;
-		if idx==1 then
-			item:SetPoint("TOPLEFT", "RestedScrollFrame", "TOPLEFT", 5, -5);
-		else
-			item:SetPoint("TOPLEFT", Rested.bars[idx-1].bar, "BOTTOMLEFT", 0, 0);
-		end
-		item:SetMinMaxValues(0, 150);
-		item:SetValue(0);
-		--item:SetScript("OnClick", Rested.BarClick);
-		local text = item:CreateFontString("Rested_ItemText"..idx, "OVERLAY", "Rested_RestedBarTextTemplate");
-		Rested.bars[idx].text = text;
-		text:SetPoint("TOPLEFT", item, "TOPLEFT", 5, 0);
-	end
-end
-function Rested.ShowReport( report )
-	Rested.reportFunction = report;
-	RestedFrame:Show();
-	Rested.ResetFrame();
-	Rested.UpdateFrame();
-	UIDropDownMenu_SetText( RestedFrame.DropDownMenu, Rested.reportName );
-end
-function Rested.OnDragStart()
-	RestedFrame:StartMoving();
-end
-function Rested.OnDragStop()
-	RestedFrame:StopMovingOrSizing();
-end
-function Rested.ResetFrame()
-	for i = 1, Rested.showNumBars do
-		Rested.bars[i].bar:SetValue(0);
-		Rested.bars[i].text:SetText("");
-		Rested.bars[i].bar:Hide();
-	end
-end
-function Rested.UpdateFrame()
-	if (RestedFrame:IsVisible()) then
-		count = Rested.ForAllAlts( Rested.reportFunction, (Rested.reportName == "Ignored") );
-		RestedFrame_TitleText:SetText("Rested - "..Rested.reportName.." - "..count);
-		if count > 0 then
-			table.sort( Rested.charList, function( a,b ) return a[1] > b[1] end );
-			offset = math.floor(RestedScrollFrame_VSlider:GetValue());
-			for i = 1, Rested.showNumBars do
-				idx = i+offset;
-				if idx<=count then
-				--if i<=count then
-				--	idx = i+offset;
-					Rested.bars[i].bar:SetValue(max(0,Rested.charList[idx][1]));
-					Rested.bars[i].text:SetText(Rested.charList[idx][2]);
-					Rested.bars[i].bar:Show();
-				else
-					Rested.bars[i].bar:Hide();
-				end
-			end
-		elseif (Rested.bars and count == 0) then
-			for i = 1, Rested.showNumBars do
-				Rested.bars[i].bar:Hide();
-			end
-		end
-		RestedScrollFrame_VSlider:SetMinMaxValues(0, max(0,count-Rested.showNumBars));
-	end
-end
-function Rested.OnUpdate()
-	-- only gets called when this is shown
-	if Rested.lastUpdate + 1 <= time() then
-		Rested.lastUpdate = time();
-		Rested.UpdateFrame();
-		-- if (Rested.maxTimeLeftSeconds) then Rested.Print(Rested.maxTimeLeftSeconds) end
-	end
-end
 
-function Rested.updateFilter()
-	if RestedEditBox:GetNumLetters() then
-		Rested.filter = string.upper(RestedEditBox:GetText());
-		--Rested.Print("updateFilter ("..RestedEditBox:GetNumLetters().."):"..Rested.filter);
-		Rested.UpdateFrame();
-	else
-		Rested.filter = nil;
-	end
-end
+
+
+
+
 Rested.dropDownMenuTable = {
 	["Resting"] = "resting",
 	["All"] = "all",
@@ -1038,33 +934,7 @@ function Rested.DropDownOnClick( self, func )
 end
 
 
-function Rested.OptionsPanel_OnLoad(panel)
-	panel.name = RESTED_MSG_ADDONNAME;
-	RestedOptionsFrame_Title:SetText(RESTED_MSG_ADDONNAME.." "..RESTED_MSG_VERSION);
-	panel.okay = Rested.OptionsPanel_OKAY;
-	panel.cancel = Rested.OptionsPanel_Cancel;
-	panel.default = Rested.OptionsPanel_Default;
 
-	InterfaceOptions_AddCategory(panel);
-end
-function Rested.OptionsPanel_Reset()
-	RestedOptionsFrame_NagTimeSliderText:SetText("NagTime ("..Rested_options.maxCutOff..")");
-	RestedOptionsFrame_NagTimeSlider:SetValue(Rested_options.maxCutOff);
-
-end
-function Rested.OptionsPanel_OKAY()
-	Rested_options.maxCutOff = RestedOptionsFrame_NagTimeSlider:GetValue();
-	Rested.oldVal = nil;
-end
-function Rested.OptionsPanel_Cancel()
-	Rested_options.maxCutOff = Rested.oldVal or Rested_options.maxCutOff;
-	Rested.OptionsPanel_Reset();
-	Rested.oldVal = nil;
-end
-function Rested.OptionsPanel_Default()
-	Rested_options.maxCutOff = 7;
-	RestedOptionsFrame_NagTimeSlider:SetValue(Rested_options.maxCutOff);
-end
 
 
 
