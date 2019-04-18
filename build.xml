@@ -119,6 +119,9 @@
 
 	<target name="wow" depends="test" description="copy files to currnet wow install">
 		<mkdir dir="${addon.dir}"/>
+		<delete>
+			<fileset dir="${addon.dir}" includes="*.toc"/>
+		</delete>
 		<copy todir="${addon.dir}" filtering="true">
 			<fileset dir="src">
 				<include name="*.lua"/>
