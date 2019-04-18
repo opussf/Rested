@@ -11,10 +11,10 @@ RestedFrame = CreateFrame()
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
 require "Rested"
+require "RestedBase"
+require "RestedDeaths"
+require "RestedGuild"
 --require "RestedOptions"
---require "RestedBase"
---require "RestedDeaths"
-
 
 test.outFileName = "testOut.xml"
 
@@ -25,7 +25,6 @@ function test.before()
 	Rested.lastReminderUpdate = nil
 	Rested_options = {}
 	Rested_restedState = {}
-	Rested.initFunctions = {}
 	Rested.OnLoad()
 end
 function test.after()
@@ -142,13 +141,44 @@ function test.testPlayerIgnoreIsCleared()
 	Rested.VARIABLES_LOADED()
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+-- Event callbacks
+-- InitCallback
+function test.test_InitCallback_RegisterdAndCalledFromVARIABLES_LOADED()
+	Rested.miscVariable = nil
+	Rested.InitCallback( function() Rested.miscVariable = 19; end )
+	assertIsNil( Rested.miscVariable )
+	Rested.ADDON_LOADED()
+	assertIsNil( Rested.miscVariable )
+	Rested.VARIABLES_LOADED()
+	assertEquals( 19, Rested.miscVariable )
+end
+-- EventCallBack
+function test.test_EventCallback_RegistersEvent()
+	-- calling EventCallback registers the event
+	Rested.EventCallback( "NONSENSE_EVENT", function() Rested.nonsense=42; end )
+	assertTrue( RestedFrame.Events["NONSENSE_EVENT"] )
+end
+function test.test_EventCallback_RegistersEvent_notADDON_LOADED()
+	-- don't allow this function / event to be registered
+	assertIsNil( Rested.EventCallback( "ADDON_LOADED", function() Rested.nonsense=19; end ) )
+end
+function test.test_EventCallback_RegisterEvent_notVARIABLES_LOADED()
+	-- don't allow this function / event to be registered
+	assertIsNil( Rested.EventCallback( "VARIABLES_LOADED", function() Rested.nonsense=19; end ) )
+end
+function test.test_EventCallback_EventAddedTo_eventFunctions()
+	Rested.eventFunctions["EVENT_ADDED"] = nil
+	Rested.EventCallback( "EVENT_ADDED", function() return; end )
+	assertTrue( Rested.eventFunctions["EVENT_ADDED"] )
+end
+function test.test_EventCallback_CreatesFunction()
+	Rested.EVENT_FUNCTION = nil
+	Rested.EventCallback( "EVENT_FUNCTION", function() return; end )
+	assertTrue( Rested.EVENT_FUNCTION )
+end
 
 --[[
-function test.test_InitCallback_01()
-	Rested.InitCallback( function() Rested.bleh=19; end )
-	Rested.ADDON_LOADED()
-	assertEquals( 19, Rested.bleh )
-end
+
 function test.test_EventCallback_01()
 	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.bleh1=27; end )
 	Rested.PLAYER_ENTERING_WORLD( )

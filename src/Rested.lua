@@ -42,7 +42,7 @@ Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 function Rested.OnLoad()
 	RestedFrame:RegisterEvent( "ADDON_LOADED" )
 	RestedFrame:RegisterEvent( "VARIABLES_LOADED" )
-	RestedFrame:RegisterEvent( "PLAYER_ENTERING_WORLD" )
+	RestedFrame:RegisterEvent( "PLAYER_ENTERING_WORLD" )  -- remove me
 	SLASH_RESTED1 = "/rested"
 	SlashCmdList["RESTED"] = function( msg ) Rested.Command( msg ); end
 end
@@ -88,7 +88,36 @@ function Rested.Command( msg )
 end
 -- event callback for modules
 function Rested.InitCallback( callback )
+	-- these are called from VARIABLES_LOADED.
+	-- shortcut to registering event for VARIABLES_LOADED
 	table.insert( Rested.initFunctions, callback )
+end
+function Rested.EventCallback( event, callback )
+	-- returns:
+	-- 		true if event registered.
+	--  	nil if event not registered.
+	if( event == "ADDON_LOADED" or event == "VARIABLES_LOADED" ) then
+		return
+	end
+
+	-- record callback function in table
+	if not Rested.eventFunctions[event] then
+		Rested.eventFunctions[event] = {}
+	end
+	table.insert( Rested.eventFunctions[event], callback )
+
+	-- create function
+	Rested[event] = function( ... )
+		if Rested.eventFunctions[event] then
+			for _, func in pairs( Rested.eventFunctions[event] ) do
+				func( ... )
+			end
+		else
+			Rested.Print( "There are no function callbacks registered for this event: ("..event..")" )
+		end
+	end
+	-- register event with the frame
+	RestedFrame:RegisterEvent( event )
 end
 
 -- Events
@@ -132,6 +161,11 @@ function Rested.VARIABLES_LOADED( ... )
 	Rested_restedState[Rested.realm][Rested.name].updated = time()
 	-- ALWAYS remove the ignore timer for the current player
 	Rested_restedState[Rested.realm][Rested.name].ignore = nil
+
+	-- init other modules
+	for _,func in pairs( Rested.initFunctions ) do
+		func()
+	end
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
 end
