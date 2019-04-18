@@ -25,6 +25,7 @@ function test.before()
 	Rested.lastReminderUpdate = nil
 	Rested_options = {}
 	Rested_restedState = {}
+	Rested.initFunctions = {}
 	Rested.OnLoad()
 end
 function test.after()
@@ -135,23 +136,12 @@ function test.testPlayerUpdatedIsUpdated()
 	Rested.VARIABLES_LOADED()
 	assertEquals( time(), Rested_restedState["testRealm"]["testPlayer"].updated )
 end
---[[
-
-
-function test.test_CoreData_updated_isSet()
-	-- faction always gets set
-	Rested_restedState = {}
-	now = time()
-	Rested.ADDON_LOADED()
-	assertEquals( now, Rested_restedState["testRealm"]["testPlayer"]["updated"] )
-end
-function test.test_CoreData_ignore_isCleared()
+function test.testPlayerIgnoreIsCleared()
 	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
 	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-]]
-
 
 --[[
 function test.test_InitCallback_01()

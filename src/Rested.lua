@@ -130,6 +130,8 @@ function Rested.VARIABLES_LOADED( ... )
 	Rested_restedState[Rested.realm][Rested.name].race = UnitRace( "player" )
 	Rested_restedState[Rested.realm][Rested.name].gender = Rested.genders[(UnitSex( "player" ) or 0 )]
 	Rested_restedState[Rested.realm][Rested.name].updated = time()
+	-- ALWAYS remove the ignore timer for the current player
+	Rested_restedState[Rested.realm][Rested.name].ignore = nil
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
 end
