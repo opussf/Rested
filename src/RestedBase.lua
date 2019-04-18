@@ -1,4 +1,6 @@
 -- RestedBase.lua
+-- Track 'base' data.
+
 
 Rested.restedRates = { [ true ] = 5/(8*3600), [ false ] = 5/(32*3600) }  -- 5% every 8 hours
 function Rested.SaveRestedState()
@@ -14,8 +16,23 @@ function Rested.SaveRestedState()
 	Rested_restedState[Rested.realm][Rested.name].isResting = IsResting()
 	Rested_restedState[Rested.realm][Rested.name].rested = Rested.rested
 	Rested_restedState[Rested.realm][Rested.name].restedPC = Rested.restedPC
-	Rested_restedState[Rested.realm][Rested.name].updated = time()
 end
+
+Rested.InitCallback( Rested.SaveRestedState )
+Rested.InitCallback( Rested.SaveRestedState )
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.SaveRestedState )
+Rested.EventCallback( "PLAYER_XP_UPDATE", Rested.SaveRestedState )
+Rested.EventCallback( "PLAYER_UPDATE_RESTING", Rested.SaveRestedState )
+Rested.EventCallback( "UPDATE_EXHAUSTION", Rested.SaveRestedState )
+Rested.EventCallback( "CHANNEL_UI_UPDATE", Rested.SaveRestedState )  -- what IS this event?
+
+
+--[[
+
+
+
+
+
 Rested.reminderValues = {
 	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
 	[60] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 minute until %s:%s is fully rested.",
@@ -58,13 +75,8 @@ function Rested.RestedReminderValues( realm, name, struct )
 	end
 	return returnStruct
 end
---[[
-Rested.InitCallback( Rested.SaveRestedState )
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.SaveRestedState )
-Rested.EventCallback( "PLAYER_XP_UPDATE", Rested.SaveRestedState )
-Rested.EventCallback( "PLAYER_UPDATE_RESTING", Rested.SaveRestedState )
-Rested.EventCallback( "UPDATE_EXHAUSTION", Rested.SaveRestedState )
-Rested.EventCallback( "CHANNEL_UI_UPDATE", Rested.SaveRestedState )  -- what IS this event?
+
+
 Rested.ReminderCallback( Rested.RestedReminderValues )
 ]]
 --[[

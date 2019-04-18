@@ -42,7 +42,6 @@ Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 function Rested.OnLoad()
 	RestedFrame:RegisterEvent( "ADDON_LOADED" )
 	RestedFrame:RegisterEvent( "VARIABLES_LOADED" )
-	RestedFrame:RegisterEvent( "PLAYER_ENTERING_WORLD" )  -- remove me
 	SLASH_RESTED1 = "/rested"
 	SlashCmdList["RESTED"] = function( msg ) Rested.Command( msg ); end
 end
@@ -112,6 +111,7 @@ function Rested.EventCallback( event, callback )
 			for _, func in pairs( Rested.eventFunctions[event] ) do
 				func( ... )
 			end
+			Rested_restedState[Rested.realm][Rested.name].updated = time()
 		else
 			Rested.Print( "There are no function callbacks registered for this event: ("..event..")" )
 		end
@@ -169,6 +169,7 @@ function Rested.VARIABLES_LOADED( ... )
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
 end
+--[[
 function Rested.PLAYER_ENTERING_WORLD()
 	Rested.Print(date("%x %X")..": PLAYER_ENTERING_WORLD" )
 	Rested.SaveRestedState()
@@ -208,3 +209,4 @@ function Rested.SaveRestedState()
 		Rested.Print("Realm and name not known");
 	end
 end
+]]

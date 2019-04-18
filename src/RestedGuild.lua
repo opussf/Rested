@@ -9,7 +9,7 @@ Rested.commandList["guild"] = function()
 end
 ]]
 --table.insert( Rested.seachKeys, "guildName" )
-function Rested.PLAYER_GUILD_UPDATE( ... )
+function Rested.SaveGuildInfo( ... )
 	--Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
 	Rested_restedState[Rested.realm][Rested.name].guildName = gName
@@ -38,6 +38,11 @@ function Rested.GetGuildRep( )
 		end
 	end
 end
+
+Rested.EventCallback( "PLAYER_GUILD_UPDATE", Rested.SaveGuildInfo )
+
+
+--[[
 function Rested.GuildStanding( realm, name, charStruct )
 	local rn = realm..":"..name
 	if (realm == Rested.realm and name == Rested.name) then
@@ -57,3 +62,4 @@ function Rested.GuildStanding( realm, name, charStruct )
 	end
 	return lineCount
 end
+]]
