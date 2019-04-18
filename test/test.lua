@@ -11,9 +11,9 @@ RestedFrame = CreateFrame()
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
 require "Rested"
-require "RestedOptions"
-require "RestedBase"
-require "RestedDeaths"
+--require "RestedOptions"
+--require "RestedBase"
+--require "RestedDeaths"
 
 
 test.outFileName = "testOut.xml"
@@ -23,6 +23,8 @@ function test.before()
 	--Rested.eventFunctions = {}
 	Rested.reminders = {}
 	Rested.lastReminderUpdate = nil
+	Rested_options = {}
+	Rested_restedState = {}
 	Rested.OnLoad()
 end
 function test.after()
@@ -30,6 +32,128 @@ end
 function test.test_Command_Help()
 	assertEquals( "help", Rested.Command( "help" ) )
 end
+-- VARIABLES_LOADED Inits data
+function test.test_maxLevel_set()
+	-- account max level is set
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertTrue( Rested_options["maxLevel"] )
+end
+function test.test_RealmLevelCreated()
+	-- current realm table is added if it does not exist.
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertTrue( Rested_restedState["testRealm"] )
+end
+function test.test_RealmLevelPreserved()
+	-- do not overwrite a previous realm table
+	Rested_restedState["testRealm"] = {["aPlayer"] = {["initAt"]=6372 }}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( 6372, Rested_restedState["testRealm"]["aPlayer"].initAt )
+end
+function test.test_PlayerLevelCreated()
+	-- current player table is added if it does not exist.
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+end
+function test.test_PlayerLevelPreserved()
+	-- do not overwrite a previous player table
+	Rested_restedState["testRealm"] = {["testPlayer"] = {["initAt"]=6372 }}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( 6372, Rested_restedState["testRealm"]["testPlayer"].initAt )
+end
+function test.test_PlayerClassIsSet()
+	-- player class is set
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Warlock", Rested_restedState["testRealm"]["testPlayer"].class )
+end
+function test.test_PlayerClassIsReset()
+	-- player class is reset - always over write this - many paths to this state
+	Rested_restedState["testRealm"] = {["testPlayer"] =
+			{["initAt"]=6372,["class"]="Warrior"}}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Warlock", Rested_restedState["testRealm"]["testPlayer"].class )
+end
+function test.test_PlayerFactionIsSet()
+	-- player class is set
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Alliance", Rested_restedState["testRealm"]["testPlayer"].faction )
+end
+function test.test_PlayerFactionIsReset()
+	-- player class is reset - always over write this - many paths to this state
+	Rested_restedState["testRealm"] = {["testPlayer"] =
+			{["initAt"]=6372,["faction"]="Horde"}}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Alliance", Rested_restedState["testRealm"]["testPlayer"].faction )
+end
+function test.test_PlayerRaceIsSet()
+	-- player class is set
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Human", Rested_restedState["testRealm"]["testPlayer"].race )
+end
+function test.test_PlayerRaceIsReset()
+	-- player class is reset - always over write this - many paths to this state
+	Rested_restedState["testRealm"] = {["testPlayer"] =
+			{["initAt"]=6372,["race"]="Orc"}}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Human", Rested_restedState["testRealm"]["testPlayer"].race )
+end
+function test.test_PlayerGenderIsSet()
+	-- player class is set
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Female", Rested_restedState["testRealm"]["testPlayer"].gender )
+end
+function test.test_PlayerGenderIsReset()
+	-- player class is reset - always over write this - many paths to this state
+	Rested_restedState["testRealm"] = {["testPlayer"] =
+			{["initAt"]=6372,["gender"]="Male"}}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( "Female", Rested_restedState["testRealm"]["testPlayer"].gender )
+end
+function test.testPlayerUpdatedIsSet()
+	-- this should always be updated.
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( time(), Rested_restedState["testRealm"]["testPlayer"].updated )
+end
+function test.testPlayerUpdatedIsUpdated()
+	-- this should always be updated.
+	Rested_restedState["testRealm"] = {["testPlayer"] =
+			{["initAt"]=6372,["updated"]=6372}}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( time(), Rested_restedState["testRealm"]["testPlayer"].updated )
+end
+--[[
+
+
+function test.test_CoreData_updated_isSet()
+	-- faction always gets set
+	Rested_restedState = {}
+	now = time()
+	Rested.ADDON_LOADED()
+	assertEquals( now, Rested_restedState["testRealm"]["testPlayer"]["updated"] )
+end
+function test.test_CoreData_ignore_isCleared()
+	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
+	Rested.ADDON_LOADED()
+	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+end
+]]
+
+
+--[[
 function test.test_InitCallback_01()
 	Rested.InitCallback( function() Rested.bleh=19; end )
 	Rested.ADDON_LOADED()
@@ -65,65 +189,8 @@ function test.test_EventCallback_EventTakesParameter()
 	assertEquals( "ThisParam", Rested.bleh6 )
 end
 -- core data
-function test.test_CoreData_RealmName()
-	Rested.ADDON_LOADED()
-	assertTrue( Rested_restedState["testRealm"], "testRealm has not been recorded." )
-end
-function test.test_CoreData_PlayerName()
-	Rested.ADDON_LOADED()
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"], "testPlayer has not been recorded." )
-end
-function test.test_CoreData_initAt_NoPreviousChar()
-	-- ["initAt"] = 1351452756,
-	-- this should only ever be set / updated if it does not exist
-	Rested_restedState = {}
-	now = time()
-	Rested.ADDON_LOADED()
-	assertEquals( now, Rested_restedState["testRealm"]["testPlayer"]["initAt"] )
-end
-function test.test_CoreData_initAt_PreviousChar()
-	-- ["initAt"] = 1351452756,
-	-- this should only ever be set / updated if it does not exist
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["initAt"] = 37864 } }
-	Rested.ADDON_LOADED()
-	assertEquals( 37864, Rested_restedState["testRealm"]["testPlayer"]["initAt"] )
-end
-function test.test_CoreData_class_isSet()
-	-- class always gets set, incase the player has changed since the last time seen
-	Rested_restedState = {}
-	Rested.ADDON_LOADED()
-	assertEquals( "Warlock", Rested_restedState["testRealm"]["testPlayer"]["class"] )
-end
-function test.test_CoreData_faction_isSet()
-	-- faction always gets set
-	Rested_restedState = {}
-	Rested.ADDON_LOADED()
-	assertEquals( "Alliance", Rested_restedState["testRealm"]["testPlayer"]["faction"] )
-end
-function test.test_CoreData_race_isSet()
-	-- faction always gets set
-	Rested_restedState = {}
-	Rested.ADDON_LOADED()
-	assertEquals( "Human", Rested_restedState["testRealm"]["testPlayer"]["race"] )
-end
-function test.test_CoreData_gender_isSet()
-	-- faction always gets set
-	Rested_restedState = {}
-	Rested.ADDON_LOADED()
-	assertEquals( "Female", Rested_restedState["testRealm"]["testPlayer"]["gender"] )
-end
-function test.test_CoreData_updated_isSet()
-	-- faction always gets set
-	Rested_restedState = {}
-	now = time()
-	Rested.ADDON_LOADED()
-	assertEquals( now, Rested_restedState["testRealm"]["testPlayer"]["updated"] )
-end
-function test.test_CoreData_ignore_isCleared()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
-	Rested.ADDON_LOADED()
-	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
-end
+
+
 -- ForAllAlts
 
 -- Reminders
@@ -165,6 +232,37 @@ function test.test_Reminders_makeReminderSchedule_twoChar()
 	)
 	Rested.MakeReminderSchedule()
 	assertEquals( 2, #Rested.reminders[0] )
+end
+function test.test_Reminders_makeReminders_notIgnored()
+	now = time()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time(), ["ignore"] = now+60 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
+		end
+	)
+	Rested.MakeReminderSchedule()
+	assertEquals( 1, #Rested.reminders[0] )
+end
+function test.notest_Reminders_makeReminders_noMaxLvl()
+	now = time()
+	print( "maxLevel = "..Rested.maxLevel )
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 89, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
+		end
+	)
+	Rested.MakeReminderSchedule()
+	assertEquals( 1, #Rested.reminders[0] )
 end
 function test.test_Reminders_ReminderOnUpdate()
 	-- make sure that this sets Rested.lastReminderUpdate
@@ -511,7 +609,7 @@ function test.test_PruneByAge_pruneOne()
 	Rested.PruneByAge( tableWithSubTable["subTable"], 120 )
 	assertIsNil( tableWithSubTable["subTable"][now-180] )
 end
-
+]]
 
 
 test.run()
