@@ -12,3 +12,4 @@ RestedBase.lua
 RestedDeaths.lua
 RestedPlayed.lua
 RestedGuild.lua
+RestediLvl.lua
