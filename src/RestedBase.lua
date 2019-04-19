@@ -19,7 +19,6 @@ function Rested.SaveRestedState()
 end
 
 Rested.InitCallback( Rested.SaveRestedState )
-Rested.InitCallback( Rested.SaveRestedState )
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.SaveRestedState )
 Rested.EventCallback( "PLAYER_XP_UPDATE", Rested.SaveRestedState )
 Rested.EventCallback( "PLAYER_UPDATE_RESTING", Rested.SaveRestedState )

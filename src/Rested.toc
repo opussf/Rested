@@ -6,8 +6,9 @@
 ## Description: Track stats for your alts.
 ## SavedVariables: Rested_restedState Rested_options
 Rested.lua
+Rested.xml
+
 RestedBase.lua
 RestedDeaths.lua
+RestedPlayed.lua
 RestedGuild.lua
-
-Rested.xml
