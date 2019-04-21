@@ -294,53 +294,6 @@ function test.test_Reminders_PrintReminders()
 	assertIsNil( Rested.reminders[now-5] )
 end
 
-
-
---[[
-
--- core data
-
-
--- ForAllAlts
-
-function test.notest_Reminders_makeReminders_noMaxLvl()
-	now = time()
-	print( "maxLevel = "..Rested.maxLevel )
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
-			{ ["lvlNow"] = 89, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
-	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
-			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
-	Rested.reminderFunctions = {}
-	Rested.ReminderCallback(
-		function( realm, name, struct )
-			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
-		end
-	)
-	Rested.MakeReminderSchedule()
-	assertEquals( 1, #Rested.reminders[0] )
-end
-function test.test_Reminders_ReminderOnUpdate()
-	-- make sure that this sets Rested.lastReminderUpdate
-	Rested.ReminderOnUpdate()
-	assertEquals( time(), Rested.lastReminderUpdate )
-end
-
-function test.test_Reminders_ReminderOnUpdate_printsCurrentReminder()
-	now = time()
-	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
-	Rested.ReminderOnUpdate()
-	assertIsNil( Rested.reminders[now] )   -- primary test
-	assertTrue( Rested.reminders[now-5] )  -- These are secondary tests only
-	assertTrue( Rested.reminders[now+5] )
-end
-
--- status code
-function test.test_Status_status()
-	Rested.Status()
-end
-function test.test_Status_command()
-	Rested.Command( "status" )
-end
 -- ignore code
 function test.test_Ignore_SetIgnore_name()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -400,6 +353,52 @@ function test.test_Ignore_clearIgnore()
 		end
 	end
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+end
+
+--[[
+
+-- core data
+
+
+-- ForAllAlts
+
+function test.notest_Reminders_makeReminders_noMaxLvl()
+	now = time()
+	print( "maxLevel = "..Rested.maxLevel )
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 89, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
+	Rested.reminderFunctions = {}
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
+		end
+	)
+	Rested.MakeReminderSchedule()
+	assertEquals( 1, #Rested.reminders[0] )
+end
+function test.test_Reminders_ReminderOnUpdate()
+	-- make sure that this sets Rested.lastReminderUpdate
+	Rested.ReminderOnUpdate()
+	assertEquals( time(), Rested.lastReminderUpdate )
+end
+
+function test.test_Reminders_ReminderOnUpdate_printsCurrentReminder()
+	now = time()
+	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
+	Rested.ReminderOnUpdate()
+	assertIsNil( Rested.reminders[now] )   -- primary test
+	assertTrue( Rested.reminders[now-5] )  -- These are secondary tests only
+	assertTrue( Rested.reminders[now+5] )
+end
+
+-- status code
+function test.test_Status_status()
+	Rested.Status()
+end
+function test.test_Status_command()
+	Rested.Command( "status" )
 end
 -- remove
 function test.test_Remove_oneAlt()

@@ -193,7 +193,6 @@ function Rested.PrintReminders()
 	end
 end
 
-
 -- Events
 -----------------------------------------
 function Rested.ADDON_LOADED( ... )
@@ -244,44 +243,31 @@ function Rested.VARIABLES_LOADED( ... )
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
 end
 
---[[
-function Rested.PLAYER_ENTERING_WORLD()
-	Rested.Print(date("%x %X")..": PLAYER_ENTERING_WORLD" )
-	Rested.SaveRestedState()
-end
-function Rested.PLAYER_XP_UPDATE()
-	Rested.Print(date("%x %X")..": PLAYER_XP_UPDATE" )
-	Rested.SaveRestedState()
-end
-Rested.PLAYER_UPDATE_RESTING = Rested.PLAYER_XP_UPDATE
-Rested.UPDATE_EXHAUSTION = Rested.PLAYER_XP_UPDATE
-Rested.CHANNEL_UI_UPDATE = Rested.PLAYER_XP_UPDATE
-
---
-function Rested.SaveRestedState()
-	Rested.Print("Save Rested State");
-	Rested.rested = GetXPExhaustion() or 0    -- XP till Exhaustion
-	if (Rested.rested > 0) then
-		Rested.restedPC = (Rested.rested / UnitXPMax("player")) * 100
+-- ignore
+-- allows the user to ignore an alt for a bit of time (set with options)
+-- sets 'ignore' which is a timestamp for when to stop ignoring.
+-- absence of 'ignore' means to not ignore alt.
+function Rested.SetIgnore( param )
+	if( param and strlen( param ) > 0 ) then
+		param = string.upper( param )
+		Rested.Print( "SetIgnore: "..param )
+		for realm in pairs( Rested_restedState ) do
+			for name, struct in pairs( Rested_restedState[realm] ) do
+				if( ( string.find( string.upper( realm ), param ) ) or
+						( string.find( string.upper( name ), param ) ) ) then
+					struct.ignore = time() + Rested_options.ignoreTime
+					Rested.Print( string.format( "Ignoring %s:%s for %s", realm, name, SecondsToTime( Rested_options.ignoreTime ) ) )
+				end
+			end
+		end
 	else
-		Rested.restedPC = 0
-	end
-
-	if (Rested.info) then
-		Rested.Print("UPDATE_EXHAUSTION fired at "..time()..": "..Rested.restedPC.."%");
-	end
-	if (Rested.realm ~= nil) and (Rested.name ~= nil) then
-		Rested_restedState[Rested.realm][Rested.name].restedPC = Rested.restedPC;
-		Rested_restedState[Rested.realm][Rested.name].updated = time();
-		Rested_restedState[Rested.realm][Rested.name].lvlNow = UnitLevel("player");
-		Rested_restedState[Rested.realm][Rested.name].xpMax = UnitXPMax("player");
-		Rested_restedState[Rested.realm][Rested.name].xpNow = UnitXP("player");
-		Rested_restedState[Rested.realm][Rested.name].isResting = IsResting();
-		Rested_restedState[Rested.realm][Rested.name].deaths = tonumber(GetStatistic(60) or 0);
-		Rested_options["maxDeaths"] = math.max(Rested_options["maxDeaths"] or 0,
-													Rested_restedState[Rested.realm][Rested.name].deaths or 0);
-	else
-		Rested.Print("Realm and name not known");
+		-- put code here to show the report
 	end
 end
-]]
+function Rested.UpdateIgnore( charStruct )
+	-- clear ignore for this charStruct if expired
+	if( charStruct.ignore and time() >= charStruct.ignore ) then
+		charStruct.ignore = nil
+	end
+end
+Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search>", "Ignore matched chars, or show ignored." } }
