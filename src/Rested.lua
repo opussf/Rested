@@ -31,6 +31,7 @@ Rested_restedState = {}
 Rested = {}
 Rested.commandList = {}  -- ["cmd"] = { ["func"] = reference, ["help"] = {"parameters", "help string"} }
 Rested.initFunctions = {}
+Rested.onUpdateFunctions = {}
 Rested.eventFunctions = {} -- [event] = {}, [event] = {}, ...
 Rested.reminderFunctions = {}  -- the functions to call for each alt ( realm, name, struct )
 Rested.reminders = {}
@@ -44,6 +45,11 @@ function Rested.OnLoad()
 	RestedFrame:RegisterEvent( "VARIABLES_LOADED" )
 	SLASH_RESTED1 = "/rested"
 	SlashCmdList["RESTED"] = function( msg ) Rested.Command( msg ); end
+end
+function Rested.OnUpdate( ... )
+	for i, func in pairs( Rested.onUpdateFunctions ) do
+		func( ... )
+	end
 end
 
 function Rested.Print( msg, showName )
@@ -121,6 +127,11 @@ function Rested.EventCallback( event, callback )
 	-- register event with the frame
 	RestedFrame:RegisterEvent( event )
 end
+function Rested.OnUpdateCallback( callback )
+	-- these are called from OnUpdate
+	table.insert( Rested.onUpdateFunctions, callback )
+end
+
 -- Reminder callback for modules
 -- reminder callback functions are passed realm, name, character table info
 -- reminder callback functions should return a table of {[ts] = {"ms1", "ms2", ...}}
@@ -151,8 +162,16 @@ function Rested.MakeReminderSchedule()
 			end
 		end
 	end
-
 end
+Rested.InitCallback( Rested.MakeReminderSchedule )
+
+function Rested.ReminderOnUpdate()
+	if( Rested.lastReminderUpdate == nil ) or ( Rested.lastReminderUpdate < time() ) then
+		Rested.PrintReminders()
+		Rested.lastReminderUpdate = time()
+	end
+end
+
 
 -- Events
 -----------------------------------------
@@ -203,6 +222,7 @@ function Rested.VARIABLES_LOADED( ... )
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
 end
+
 --[[
 function Rested.PLAYER_ENTERING_WORLD()
 	Rested.Print(date("%x %X")..": PLAYER_ENTERING_WORLD" )

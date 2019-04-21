@@ -207,6 +207,31 @@ function test.test_EventCallback_EventTakesParameter()
 	assertEquals( "ThisParam", Rested.bleh6 )
 end
 
+-- OnUpdate
+function test.test_OnUpdate_registerCallBack()
+	-- the OnUpdate 'event' should be special as it is not an event from the API
+	originalOnUpdateFunctions = Rested.onUpdateFunctions
+	Rested.onUpdateFunctions = {}
+	local testFunc = function() return( { [0] = { "0 reminder", } } ) end
+	Rested.OnUpdateCallback( testFunc )
+	for k, f in pairs( Rested.onUpdateFunctions ) do
+		if f == testFunc then
+			found = true
+		end
+	end
+	Rested.onUpdateFunctions = originalReminderFunctions
+	assertTrue( found )
+end
+function test.test_OnUpdate_callOnUpdate()
+	originalOnUpdateFunctions = Rested.onUpdateFunctions
+	Rested.onUpdateFunctions = {}
+	Rested.OnUpdateCallback( function() Rested.updated = time(); end )
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.OnUpdate()
+	assertTrue( Rested.updated )
+end
+
 -- Reminders
 function test.test_Reminders_registerCallBack()
 	local testFunc = function() return( { [0] = { "0 reminder", } } ) end
@@ -258,6 +283,9 @@ function test.test_Reminders_makeReminderSchedule_oneChar_isIgnored()
 	Rested.reminderFunctions = originalReminderFunctions
 	assertIsNil( Rested.reminders[0] )
 end
+
+
+
 
 --[[
 
