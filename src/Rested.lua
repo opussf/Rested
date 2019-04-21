@@ -67,7 +67,6 @@ function Rested.PrintHelp()
 			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
 	end
 end
---Rested.CommandList["help"]
 
 function Rested.ParseCmd( msg )
 	msg = string.lower( msg )
@@ -139,6 +138,8 @@ function Rested.ReminderCallback( callback )
 	table.insert( Rested.reminderFunctions, callback )
 end
 function Rested.MakeReminderSchedule()
+	-- should this filter reminders that are in the past?
+	-- or should this rely solely on the registered function?
 	Rested.reminders = {}  -- clear the reminders
 	for realm in pairs( Rested_restedState ) do
 		for name, struct in pairs( Rested_restedState[realm] ) do
@@ -169,6 +170,26 @@ function Rested.ReminderOnUpdate()
 	if( Rested.lastReminderUpdate == nil ) or ( Rested.lastReminderUpdate < time() ) then
 		Rested.PrintReminders()
 		Rested.lastReminderUpdate = time()
+	end
+end
+function Rested.PrintReminders()
+	-- print any reminder that is older than now.
+	-- sort them from oldest to newest so that they make sense
+	Rested.reminderKeys = {}
+	local n = 0
+	for k,_ in pairs( Rested.reminders ) do
+		n = n + 1  -- lua tables are '1' based
+		Rested.reminderKeys[n] = k
+	end
+	table.sort( Rested.reminderKeys )
+	for v = 1, n do
+		k = Rested.reminderKeys[v]
+		if( k <= time() ) then
+			for _, txt in pairs( Rested.reminders[k] ) do
+				Rested.Print( txt, false )
+			end
+			Rested.reminders[k] = nil
+		end
 	end
 end
 

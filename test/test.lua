@@ -283,7 +283,16 @@ function test.test_Reminders_makeReminderSchedule_oneChar_isIgnored()
 	Rested.reminderFunctions = originalReminderFunctions
 	assertIsNil( Rested.reminders[0] )
 end
-
+function test.test_Reminders_PrintReminders()
+	-- test that the current reminder is processed
+	-- the reminders that are printed are removed from the table
+	now = time()
+	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
+	Rested.PrintReminders()
+	assertIsNil( Rested.reminders[now] )   -- primary test
+	assertTrue( Rested.reminders[now+5] )  -- These are secondary tests only
+	assertIsNil( Rested.reminders[now-5] )
+end
 
 
 
@@ -293,21 +302,7 @@ end
 
 
 -- ForAllAlts
-function test.test_Reminders_makeReminders_notIgnored()
-	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
-			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time(), ["ignore"] = now+60 } }
-	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
-			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
-	Rested.reminderFunctions = {}
-	Rested.ReminderCallback(
-		function( realm, name, struct )
-			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
-		end
-	)
-	Rested.MakeReminderSchedule()
-	assertEquals( 1, #Rested.reminders[0] )
-end
+
 function test.notest_Reminders_makeReminders_noMaxLvl()
 	now = time()
 	print( "maxLevel = "..Rested.maxLevel )
@@ -329,16 +324,7 @@ function test.test_Reminders_ReminderOnUpdate()
 	Rested.ReminderOnUpdate()
 	assertEquals( time(), Rested.lastReminderUpdate )
 end
-function test.test_Reminders_PrintReminders()
-	-- test that the current reminder is processed
-	-- the reminders that are printed are removed from the table
-	now = time()
-	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
-	Rested.PrintReminders()
-	assertIsNil( Rested.reminders[now] )   -- primary test
-	assertTrue( Rested.reminders[now-5] )  -- These are secondary tests only
-	assertTrue( Rested.reminders[now+5] )
-end
+
 function test.test_Reminders_ReminderOnUpdate_printsCurrentReminder()
 	now = time()
 	Rested.reminders = { [now] = { "Reminder", "Another" }, [now+5] = { "Future" }, [now-5] = { "Past" } }
