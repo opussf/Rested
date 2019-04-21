@@ -14,6 +14,8 @@ require "Rested"
 require "RestedBase"
 require "RestedDeaths"
 require "RestedGuild"
+require "RestediLvl"
+require "RestedPlayed"
 --require "RestedOptions"
 
 test.outFileName = "testOut.xml"
@@ -176,83 +178,93 @@ function test.test_EventCallback_CreatesFunction()
 	Rested.EventCallback( "EVENT_FUNCTION", function() return; end )
 	assertTrue( Rested.EVENT_FUNCTION )
 end
-
---[[
-
-function test.test_EventCallback_01()
-	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.bleh1=27; end )
-	Rested.PLAYER_ENTERING_WORLD( )
-	assertEquals( 27, Rested.bleh1 )
-end
-function test.test_EventCallback_noADDON_LOADED()
-	Rested.EventCallback( "ADDON_LOADED", function() Rested.bleh2=37; end )
-	Rested.ADDON_LOADED()
-	assertIsNil( Rested.bleh2 )
-end
-function test.test_EventCallback_2Events()
-	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.bleh3=42; end )
-	Rested.EventCallback( "LICK_THE_BEAR", function() Rested.bleh4=43; end )
-	Rested.ADDON_LOADED()
-	Rested.LICK_THE_BEAR()
-	assertEquals( 43, Rested.bleh4 )
-end
 function test.test_EventCallback_2functions()
 	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.bleh5=48; end )
 	Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.yonks=49; end )
 	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
+	assertEquals( 48, Rested.bleh5 )
 	assertEquals( 49, Rested.yonks )
+end
+function test.test_EventCallback_noADDON_LOADED()
+	Rested.EventCallback( "ADDON_LOADED", function() Rested.bleh2=37; end )
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertIsNil( Rested.bleh2 )
+end
+function test.test_EventCallback_noVARIABLES_LOADED()
+	Rested.EventCallback( "VARIABLES_LOADED", function() Rested.lala=96; end )
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertIsNil( Rested.lala )
 end
 function test.test_EventCallback_EventTakesParameter()
 	Rested.EventCallback( "WITH_PARAM", function( thing ) Rested.bleh6=thing; end )
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	Rested.WITH_PARAM( "ThisParam" )
 	assertEquals( "ThisParam", Rested.bleh6 )
 end
+
+-- Reminders
+function test.test_Reminders_registerCallBack()
+	local testFunc = function() return( { [0] = { "0 reminder", } } ) end
+	Rested.ReminderCallback( testFunc )
+	for k, f in pairs( Rested.reminderFunctions ) do
+		if f == testFunc then
+			found = true
+		end
+	end
+	assertTrue( found )
+end
+function test.test_Reminders_makeReminderSchedule_oneChar()
+	originalReminderFunctions = Rested.reminderFunctions
+	Rested.reminderFunctions = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
+		end
+	)
+	Rested.MakeReminderSchedule()
+	Rested.reminderFunctions = originalReminderFunctions
+	assertEquals( "testPlayer-testRealm is resting.", Rested.reminders[0][1] )
+end
+function test.test_Reminders_makeReminderSchedule_badReturnStruct()
+	-- test if the reminder function does not return an expected table
+	originalReminderFunctions = Rested.reminderFunctions
+	Rested.reminderFunctions = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isRested"] = true, ["updated"] = time() } }
+	Rested.ReminderCallback( function() return true; end )
+	Rested.MakeReminderSchedule()
+	Rested.reminderFunctions = originalReminderFunctions
+	assertEquals( 0, #Rested.reminders )
+end
+function test.test_Reminders_makeReminderSchedule_oneChar_isIgnored()
+	-- ignored char should not show up in reminders
+	originalReminderFunctions = Rested.reminderFunctions
+	Rested.reminderFunctions = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time(), ["ignore"] = time()+60 } }
+	Rested.ReminderCallback(
+		function( realm, name, struct )
+			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
+		end
+	)
+	Rested.MakeReminderSchedule()
+	Rested.reminderFunctions = originalReminderFunctions
+	assertIsNil( Rested.reminders[0] )
+end
+
+--[[
+
 -- core data
 
 
 -- ForAllAlts
-
--- Reminders
-function test.test_Reminders_registerCallBack()
-	Rested.reminderFunctions = {}
-	Rested.ReminderCallback( function() return( { [0] = { "0 reminder", } } ) end )
-	assertEquals( 1, #Rested.reminderFunctions )
-end
-function test.test_Reminders_makeReminderSchedule_noChars()
-	-- this really should not happen, as the system is guaranteed to have at least the current alt
-	Rested_restedState = {}
-	Rested.reminderFunctions = {}
-	Rested.ReminderCallback( function() return( { [0] = { "0 reminder", } } ) end )
-	Rested.MakeReminderSchedule()
-	assertEquals( 0, #Rested.reminders )
-end
-function test.test_Reminders_makeReminderSchedule_oneChar()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
-			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
-	Rested.reminderFunctions = {}
-	Rested.ReminderCallback(
-		function( realm, name, struct )
-			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
-		end
-	)
-	Rested.MakeReminderSchedule()
-	assertEquals( "testPlayer-testRealm is resting.", Rested.reminders[0][1] )
-end
-function test.test_Reminders_makeReminderSchedule_twoChar()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
-			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
-	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
-			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
-	Rested.reminderFunctions = {}
-	Rested.ReminderCallback(
-		function( realm, name, struct )
-			return( { [0] = { name.."-"..realm.." is"..( struct.isResting and "" or " not").." resting." } } )
-		end
-	)
-	Rested.MakeReminderSchedule()
-	assertEquals( 2, #Rested.reminders[0] )
-end
 function test.test_Reminders_makeReminders_notIgnored()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =

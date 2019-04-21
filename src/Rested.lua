@@ -105,19 +105,53 @@ function Rested.EventCallback( event, callback )
 	end
 	table.insert( Rested.eventFunctions[event], callback )
 
-	-- create function
-	Rested[event] = function( ... )
-		if Rested.eventFunctions[event] then
-			for _, func in pairs( Rested.eventFunctions[event] ) do
-				func( ... )
+	if not Rested[event] then
+		-- create function
+		Rested[event] = function( ... )
+			if Rested.eventFunctions[event] then
+				for _, func in pairs( Rested.eventFunctions[event] ) do
+					func( ... )
+				end
+				Rested_restedState[Rested.realm][Rested.name].updated = time()
+			else
+				Rested.Print( "There are no function callbacks registered for this event: ("..event..")" )
 			end
-			Rested_restedState[Rested.realm][Rested.name].updated = time()
-		else
-			Rested.Print( "There are no function callbacks registered for this event: ("..event..")" )
 		end
 	end
 	-- register event with the frame
 	RestedFrame:RegisterEvent( event )
+end
+-- Reminder callback for modules
+-- reminder callback functions are passed realm, name, character table info
+-- reminder callback functions should return a table of {[ts] = {"ms1", "ms2", ...}}
+function Rested.ReminderCallback( callback )
+	table.insert( Rested.reminderFunctions, callback )
+end
+function Rested.MakeReminderSchedule()
+	Rested.reminders = {}  -- clear the reminders
+	for realm in pairs( Rested_restedState ) do
+		for name, struct in pairs( Rested_restedState[realm] ) do
+			if( struct.ignore ) then -- character is being ignored
+				-- do nothing
+			else -- not ignored
+				for _, func in pairs( Rested.reminderFunctions ) do
+					local msgstruct = func( realm, name, struct )
+					if type( msgstruct ) == "table" then
+						for ts, msgs in pairs( msgstruct ) do
+							for _, m in pairs( msgs ) do
+								if( Rested.reminders[ts] ) then
+									table.insert( Rested.reminders[ts], m )
+								else
+									Rested.reminders[ts] = { m }
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
 end
 
 -- Events
