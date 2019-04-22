@@ -223,6 +223,8 @@ function Rested.ReminderOnUpdate()
 		Rested.lastReminderUpdate = time()
 	end
 end
+Rested.OnUpdateCallback( Rested.ReminderOnUpdate )
+
 function Rested.PrintReminders()
 	-- print any reminder that is older than now.
 	-- sort them from oldest to newest so that they make sense
@@ -294,33 +296,3 @@ function Rested.VARIABLES_LOADED( ... )
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
 end
 
--- ignore
--- allows the user to ignore an alt for a bit of time (set with options)
--- sets 'ignore' which is a timestamp for when to stop ignoring.
--- absence of 'ignore' means to not ignore alt.
-function Rested.SetIgnore( param )
-	if( param and strlen( param ) > 0 ) then
-		param = string.upper( param )
-		Rested.Print( "SetIgnore: "..param )
-		for realm in pairs( Rested_restedState ) do
-			for name, struct in pairs( Rested_restedState[realm] ) do
-				if( ( string.find( string.upper( realm ), param ) ) or
-						( string.find( string.upper( name ), param ) ) ) then
-					struct.ignore = time() + Rested_options.ignoreTime
-					Rested.Print( string.format( "Ignoring %s:%s for %s", realm, name, SecondsToTime( Rested_options.ignoreTime ) ) )
-				end
-			end
-		end
-	else
-		-- put code here to show the report
-	end
-end
-function Rested.UpdateIgnore( charStruct )
-	-- clear ignore for this charStruct if expired
-	if( charStruct.ignore and time() >= charStruct.ignore ) then
-		charStruct.ignore = nil
-	end
-end
-Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search>", "Ignore matched chars, or show ignored." } }
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.Print( "PLAYER_ENTERING_WORLD" ); end )
