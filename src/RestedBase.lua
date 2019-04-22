@@ -25,10 +25,22 @@ Rested.EventCallback( "PLAYER_UPDATE_RESTING", Rested.SaveRestedState )
 Rested.EventCallback( "UPDATE_EXHAUSTION", Rested.SaveRestedState )
 Rested.EventCallback( "CHANNEL_UI_UPDATE", Rested.SaveRestedState )  -- what IS this event?
 
+--
+function Rested.ReminderIsNotResting( realm, name, struct )
+	returnStruct = {}
+	if( not struct.isResting ) then
+		if( not returnStruct[0] ) then
+			returnStruct[0] = {}
+		end
+		table.insert( returnStruct[0],
+				string.format( "%s is not resting.", Rested.FormatName( realm, name, false ) ) )
+	end
+	return returnStruct
+end
+Rested.ReminderCallback( Rested.ReminderIsNotResting )
 
---[[
 
-
+--[[]
 
 Rested.reminderValues = {
 	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",

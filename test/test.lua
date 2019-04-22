@@ -445,16 +445,12 @@ function test.test_Ignore_SetIgnore_noParam()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-function test.test_Ignore_clearIgnore()
+function test.test_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = now-5 } }
-	for realm in pairs( Rested_restedState ) do
-		for name, charStruct in pairs( Rested_restedState[realm] ) do
-			Rested.UpdateIgnore( charStruct )
-		end
-	end
+	Rested.PLAYER_ENTERING_WORLD()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
 
@@ -464,8 +460,6 @@ end
 
 -- core data
 
-
--- ForAllAlts
 
 function test.notest_Reminders_makeReminders_noMaxLvl()
 	now = time()
