@@ -30,8 +30,6 @@ Rested.EventCallback( "CHANNEL_UI_UPDATE", Rested.SaveRestedState )  -- what IS 
 
 
 
-
-
 Rested.reminderValues = {
 	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
 	[60] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 minute until %s:%s is fully rested.",
@@ -127,34 +125,6 @@ function Rested.MakeReminderSchedule()
 
 
 
-
-
-function Rested.SaveRestedState()
-	--Rested.Print("Save Rested State");
-	Rested.rested = GetXPExhaustion() or 0;		-- XP till Exhaustion
-	if (Rested.rested > 0) then
-		Rested.restedPC = (Rested.rested / UnitXPMax("player")) * 100;
-	else
-		Rested.restedPC = 0;
-	end
-
-	if (Rested.info) then
-		Rested.Print("UPDATE_EXHAUSTION fired at "..time()..": "..Rested.restedPC.."%");
-	end
-	if (Rested.realm ~= nil) and (Rested.name ~= nil) then
-		Rested_restedState[Rested.realm][Rested.name].restedPC = Rested.restedPC;
-		Rested_restedState[Rested.realm][Rested.name].updated = time();
-		Rested_restedState[Rested.realm][Rested.name].lvlNow = UnitLevel("player");
-		Rested_restedState[Rested.realm][Rested.name].xpMax = UnitXPMax("player");
-		Rested_restedState[Rested.realm][Rested.name].xpNow = UnitXP("player");
-		Rested_restedState[Rested.realm][Rested.name].isResting = IsResting();
-		Rested_restedState[Rested.realm][Rested.name].deaths = tonumber(GetStatistic(60) or 0);
-		Rested_options["maxDeaths"] = math.max(Rested_options["maxDeaths"] or 0,
-													Rested_restedState[Rested.realm][Rested.name].deaths or 0);
-	else
-		Rested.Print("Realm and name not known");
-	end
-end
 
 
 

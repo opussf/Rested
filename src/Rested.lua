@@ -90,6 +90,57 @@ function Rested.Command( msg )
 		return( "help" )
 	end
 end
+function Rested.FormatName( realm, name, useColor )
+	-- only use Color formatting if current player
+	-- unless useColor is passed as 'false'
+	useColor = useColor or ( useColor == nil )
+	useColor = useColor and ( realm == Rested.realm and name == Rested.name )
+	return string.format( "%s%s:%s%s",
+			( useColor and COLOR_GREEN or ""), realm, name, ( useColor and COLOR_END or "" ) )
+end
+function Rested.ForAllChars( action, processIgnored )
+	-- loops through all the chars, using action callback to return count, and build the reporting table
+	-- include chars that:
+	--     are not ignored
+	--     match the filter
+	--     are ignored, and processIgnored is true
+	--     are ignored, processIgnored is true and matches the filter
+	-- param: action -- function to call with params ( realm, name, charStuct )
+	--               -- This should also insert into Rested.displayList
+	--               -- And return the number of lines / chars added to the struct
+	-- param: processIgnored -- boolean ( true to include ignored toons )
+	-- returns: integer -- the sum of the values returned by action
+	-- Rested.displayList = {} -- force this clear
+	-- print( "ForAllChars( fn, "..( processIgnored and "true or "nil" )..") " )
+	local count = 0
+	for realm in pairs( Rested_restedState ) do
+		for name, charStruct in pairs( Rested_restedState[realm] ) do
+			local match = true
+			if( Rested.filter ) then -- there is a filter value
+				match = false -- default to false if a filter is given
+				if( string.find( string.upper( realm ), Rested.filter ) or
+					string.find( string.upper( name ), Rested.filter ) ) then
+					match = true
+				else -- does not match name or realm, search the keys
+					for _, key in pairs( Rested.filterKeys ) do
+						if( charStruct[key] and string.find( string.upper( charStruct[key] ), Rested.filter ) ) then
+							match = true
+						end
+					end
+				end
+			end
+			if( charStruct.ignore ) then -- char is being ignored
+				Rested.UpdateIgnore( charStruct )
+				match = match and processIgnored
+			end
+			if( match ) then
+				count = count + action( realm, name, charStruct )
+			end
+		end
+	end
+	return count
+end
+
 -- event callback for modules
 function Rested.InitCallback( callback )
 	-- these are called from VARIABLES_LOADED.
