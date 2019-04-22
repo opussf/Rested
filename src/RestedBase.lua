@@ -32,9 +32,6 @@ Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<sear
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.Print( "PLAYER_ENTERING_WORLD" ); end )
 
-
-
-Rested.restedRates = { [ true ] = 5/(8*3600), [ false ] = 5/(32*3600) }  -- 5% every 8 hours
 function Rested.SaveRestedState()
 	-- update anything based on rested state
 	-- lvlNow, xpNow, xpMax, isResting, restedPC, rested
@@ -60,19 +57,17 @@ Rested.EventCallback( "CHANNEL_UI_UPDATE", Rested.SaveRestedState )  -- what IS 
 --
 function Rested.ReminderIsNotResting( realm, name, struct )
 	returnStruct = {}
+	reminderTime = time() + 60
 	if( not struct.isResting ) then
-		if( not returnStruct[0] ) then
-			returnStruct[0] = {}
+		if( not returnStruct[reminderTime] ) then
+			returnStruct[reminderTime] = {}
 		end
-		table.insert( returnStruct[0],
+		table.insert( returnStruct[reminderTime],
 				string.format( "%s is not resting.", Rested.FormatName( realm, name, false ) ) )
 	end
 	return returnStruct
 end
 Rested.ReminderCallback( Rested.ReminderIsNotResting )
-
-
---[[]
 
 Rested.reminderValues = {
 	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
@@ -92,20 +87,18 @@ Rested.reminderValues = {
 	[172800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 days until %s:%s is fully rested.",
 	[432000] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 days until %s:%s is fully rested.",
 }
+Rested.restedRates = { [ true ] = 5/(8*3600), [ false ] = 5/(32*3600) }  -- 5% every 8 hours
 function Rested.RestedReminderValues( realm, name, struct )
 	returnStruct = {}
-	print( struct.lvlNow.." <? "..Rested.maxLevel )
-	if( struct.lvlNow < Rested.maxLevel ) then
+	if( struct.lvlNow and struct.lvlNow < Rested.maxLevel ) then
 		local now = time()
 		local timeSince = now - struct.updated
-		local restRate = Rested.restedRates[ struct.isResting ]
+		local restRate = Rested.restedRates[struct.isResting]
 		local restAdded = restRate * timeSince
 		local restedVal = struct.restedPC + restAdded
 		local restedAt = now + ( ( 150 - restedVal ) / restRate )
-		--print( restedAt )
 		for diff, format in pairs( Rested.reminderValues ) do
 			reminderTime = tonumber( restedAt - diff )
-			--print( ".."..reminderTime..( reminderTime > now and " > " or " <= " )..now )
 			if( reminderTime > now ) then
 				if( not returnStruct[reminderTime] ) then
 					returnStruct[reminderTime] = {}
@@ -114,63 +107,10 @@ function Rested.RestedReminderValues( realm, name, struct )
 			end
 		end
 	end
-	return returnStruct
 end
-
-
 Rested.ReminderCallback( Rested.RestedReminderValues )
-]]
+
 --[[
-
-function Rested.MakeReminderSchedule()
-	Rested.reminders = {};
-	for realm in pairs(Rested_restedState) do
-		for name, charStruct in pairs(Rested_restedState[realm]) do
-			if (charStruct.ignore) or
-				(realm == Rested.realm and name == Rested.name) or
-				(charStruct.lvlNow == Rested.maxLevel) then
-				-- skip ignored, this char, or maxLvl chars.
-				-- do nothing... Nicer logic to do it this way
-				--Rested.Print(string.format("Do not process %s:%s", realm, name));
-			else
-				now = time();
-				timeSince = now - charStruct.updated;
-				if charStruct.isResting then  -- http://www.wowwiki.com/Rested
-					restRate = (5/(8*3600));  -- 5% every 8 hours (5 seems a tad too much)
-				else
-					restRate = (5/(32*3600));  -- quarter rate 5% every 32 hours
-				end
-				restAdded = restRate * timeSince;
-				restedVal = charStruct.restedPC + restAdded;
-				restedAt = now + ((150-restedVal) / restRate);
-				--Rested.Print(string.format("%s:%s rested at %s", realm, name, date("%x %X", restedAt)));
-				for diff, format in pairs(Rested.reminderValues) do
-					reminderTime = string.format("%i",(restedAt - diff)) * 1;
-					if (reminderTime > now) then
-						if (not Rested.reminders[reminderTime]) then
-							Rested.reminders[reminderTime] = {};
-						end
-						table.insert( Rested.reminders[reminderTime], {["msg"]=string.format(format, realm, name)});
-					end
-				end
-				if charStruct.xpNow then
-					needPC = 100 - ((charStruct.xpNow / charStruct.xpMax) * 100);
-					lvlRestedAt = string.format("%i", now + ((needPC - restedVal) / restRate)) *1;
-					if (lvlRestedAt > now) then
-						if (not Rested.reminders[lvlRestedAt]) then
-							Rested.reminders[lvlRestedAt] = {};
-						end
-						table.insert( Rested.reminders[lvlRestedAt],
-								{["msg"]=string.format("%s:%s is rested to end of level.", realm, name)});
-						Rested.Print(string.format("Level %s:%s at %s",
-								realm, name, date("%x %X",lvlRestedAt)));
-					end
-				end
-
-
-
-
-
 
 Rested.dropDownMenuTable["Level"] = "level";
 Rested.commandList["level"] = function()
