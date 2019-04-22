@@ -134,7 +134,7 @@ function Rested.ForAllChars( action, processIgnored )
 				match = match and processIgnored
 			end
 			if( match ) then
-				count = count + action( realm, name, charStruct )
+				count = count + ( action( realm, name, charStruct ) or 0 )
 			end
 		end
 	end
@@ -322,3 +322,5 @@ function Rested.UpdateIgnore( charStruct )
 	end
 end
 Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search>", "Ignore matched chars, or show ignored." } }
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.Print( "PLAYER_ENTERING_WORLD" ); end )

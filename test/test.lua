@@ -235,7 +235,18 @@ function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
 	Rested.filter = 2
 	result = Rested.ForAllChars( test.returnOne )
 	assertEquals( 1, result )
-end-- Event callbacks
+end
+function test.test_ForAllChars_callBack_returnsNil()
+	Rested_restedState = {}
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
+	Rested.filter = nil
+	result = Rested.ForAllChars( function() end, true )
+	assertEquals( 0, result )
+end
+-- Event callbacks
 -- InitCallback
 function test.test_InitCallback_RegisterdAndCalledFromVARIABLES_LOADED()
 	Rested.miscVariable = nil
