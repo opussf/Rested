@@ -4,7 +4,7 @@
 ## Author: opussf
 ## Version: @VERSION@
 ## Description: Track stats for your alts.
-## SavedVariables: Rested_restedState Rested_options
+## SavedVariables: Rested_restedState Rested_misc Rested_options
 Rested.lua
 Rested.xml
 

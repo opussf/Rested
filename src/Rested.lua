@@ -27,6 +27,7 @@ MAX_PLAYER_LEVEL_TABLE={
 
 -- Saved Variables
 Rested_restedState = {}
+Rested_misc = {}
 
 Rested = {}
 Rested.commandList = {}  -- ["cmd"] = { ["func"] = reference, ["help"] = {"parameters", "help string"} }
