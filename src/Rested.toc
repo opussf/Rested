@@ -13,3 +13,5 @@ RestedDeaths.lua
 RestedPlayed.lua
 RestedGuild.lua
 RestediLvl.lua
+
+RestedMounts.lua

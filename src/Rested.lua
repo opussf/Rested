@@ -141,6 +141,16 @@ function Rested.ForAllChars( action, processIgnored )
 	end
 	return count
 end
+function Rested.PruneByAge( struct, ageSeconds )
+	-- works with a table in the structure of { [ts] = value, ... }
+	-- it will remove any ts that is older than ageSeconds
+	local timeCutOff = time() - ageSeconds
+	for ts in pairs( struct ) do
+		if( ts <= timeCutOff ) then
+			struct[ts] = nil
+		end
+	end
+end
 
 -- event callback for modules
 function Rested.InitCallback( callback )
