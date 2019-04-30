@@ -477,6 +477,7 @@ function CloseMail()
 	-- @TODO - Write this
 end
 ]]
+
 function CombatTextSetActiveUnit( who )
 	-- http://www.wowwiki.com/API_CombatTextSetActiveUnit
 	-- @TODO - Write this
@@ -1155,6 +1156,9 @@ end
 function TaxiNodeGetType( nodeId )
 	-- http://www.wowwiki.com/API_TaxiNodeGetType
 	return TaxiNodes[nodeId].type
+end
+function UnitAffectingCombat( unit )
+	return false
 end
 function UnitAura( unit, auraName )
 	-- @TODO: Look this up to get a better idea of what this function does.
