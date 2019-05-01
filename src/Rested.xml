@@ -6,13 +6,13 @@
 	<Frame name="RestedFrame" frameStrata="BACKGROUND" toplevel="false" parent="UIParent" enableMouse="false" movable="false">
 		<Scripts>
 			<OnLoad>
-				Rested.OnLoad();
+				Rested.OnLoad()
 			</OnLoad>
 			<OnEvent>
-				Rested[event](...);
+				Rested[event]( ... )
 			</OnEvent>
 			<OnUpdate>
-				Rested.OnUpdate(arg1);
+				Rested.OnUpdate(elapsed)
 			</OnUpdate>
 		</Scripts>
 	</Frame>

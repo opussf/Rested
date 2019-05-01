@@ -45,3 +45,4 @@ end
 Rested.InitCallback( function() Rested_options.mountHistoryAge = Rested_options.mountHistoryAge or 7200; end )
 -- set the history age to 2 hours
 Rested.EventCallback( "UNIT_AURA", Rested.GetCurrentMount )
+Rested.EventCallback( "COMPANION_LEARNED", Rested.BuildMountSpells )

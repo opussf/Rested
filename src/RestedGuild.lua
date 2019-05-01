@@ -12,7 +12,7 @@ end
 function Rested.SaveGuildInfo( ... )
 	--Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
-	Rested_restedState[Rested.realm][Rested.name].guildName = gName
+	Rested_restedState[Rested.realm][Rested.name].guildName = gName or nil
 	Rested_restedState[Rested.realm][Rested.name].guildRank = gName and gRankName or nil
 	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gName and gRankIndex or nil
 	local rep, bottom, top = Rested.GetGuildRep()

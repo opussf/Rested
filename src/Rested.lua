@@ -135,7 +135,7 @@ function Rested.ForAllChars( action, processIgnored )
 				end
 			end
 			if( charStruct.ignore ) then -- char is being ignored
-				Rested.UpdateIgnore( charStruct )
+				Rested.UpdateIgnore( "nil", "nil", charStruct )
 				match = match and processIgnored
 			end
 			if( match ) then
@@ -177,8 +177,16 @@ function Rested.EventCallback( event, callback )
 	table.insert( Rested.eventFunctions[event], callback )
 
 	if not Rested[event] then
-		-- create function
+		-- create function if it does not exist
+		print( "CREATE function for event: "..event )
 		Rested[event] = function( ... )
+			--[[
+			Rested.Print( string.format( "%s-->%s (%i)<--%s",
+					(UnitAffectingCombat( "player" ) and COLOR_RED or ""),
+					event,
+					#Rested.eventFunctions[event],
+					(UnitAffectingCombat( "player" ) and COLOR_END or "") ) )
+			]]
 			if Rested.eventFunctions[event] then
 				for _, func in pairs( Rested.eventFunctions[event] ) do
 					func( ... )
@@ -233,9 +241,11 @@ end
 Rested.InitCallback( Rested.MakeReminderSchedule )
 
 function Rested.ReminderOnUpdate()
+	if not UnitAffectingCombat("player") then
 	if( Rested.lastReminderUpdate == nil ) or ( Rested.lastReminderUpdate < time() ) then
 		Rested.PrintReminders()
-		Rested.lastReminderUpdate = time()
+		Rested.lastReminderUpdate = time() + 5
+	end
 	end
 end
 Rested.OnUpdateCallback( Rested.ReminderOnUpdate )

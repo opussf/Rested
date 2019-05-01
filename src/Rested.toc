@@ -7,8 +7,8 @@
 ## SavedVariables: Rested_restedState Rested_misc Rested_options
 Rested.lua
 Rested.xml
-
 RestedBase.lua
+
 RestedDeaths.lua
 RestedPlayed.lua
 RestedGuild.lua

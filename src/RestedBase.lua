@@ -22,28 +22,30 @@ function Rested.SetIgnore( param )
 		-- put code here to show the report
 	end
 end
-function Rested.UpdateIgnore( charStruct )
+function Rested.UpdateIgnore( realm, name, charStruct )
 	-- clear ignore for this charStruct if expired
+	if( charStruct.ignore ) then
+		print( "Ignore will expire in "..( charStruct.ignore - time() ).." seconds." )
+	end
 	if( charStruct.ignore and time() >= charStruct.ignore ) then
 		charStruct.ignore = nil
 	end
 end
 Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search>", "Ignore matched chars, or show ignored." } }
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.Print( "PLAYER_ENTERING_WORLD" ); end )
 
 function Rested.SaveRestedState()
 	-- update anything based on rested state
 	-- lvlNow, xpNow, xpMax, isResting, restedPC, rested
-	Rested.rested = GetXPExhaustion() or 0  -- XP till Exhaustion
+	Rested.restedValue = GetXPExhaustion() or 0  -- XP till Exhaustion
 	Rested.xpMax = UnitXPMax( "player" )
-	Rested.restedPC = ( Rested.rested > 0 and ( ( Rested.rested / Rested.xpMax ) * 100 ) or 0 )
+	Rested.restedPC = ( Rested.restedValue > 0 and ( ( Rested.restedValue / Rested.xpMax ) * 100 ) or 0 )
 
 	Rested_restedState[Rested.realm][Rested.name].lvlNow = UnitLevel( "player" )
 	Rested_restedState[Rested.realm][Rested.name].xpNow = UnitXP( "player" )
 	Rested_restedState[Rested.realm][Rested.name].xpMax = Rested.xpMax
 	Rested_restedState[Rested.realm][Rested.name].isResting = IsResting()
-	Rested_restedState[Rested.realm][Rested.name].rested = Rested.rested
+	Rested_restedState[Rested.realm][Rested.name].rested = Rested.restedValue
 	Rested_restedState[Rested.realm][Rested.name].restedPC = Rested.restedPC
 end
 
