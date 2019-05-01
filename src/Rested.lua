@@ -14,17 +14,6 @@ COLOR_GOLD = "|cffcfb52b"
 COLOR_NEON_BLUE = "|cff4d4dff"
 COLOR_END = "|r"
 
-MAX_PLAYER_LEVEL_TABLE={
-	[0]=60,
-	[1]=70,
-	[2]=80,
-	[3]=85,
-	[4]=(time()>1348531200 and 90 or 85),   -- Mists
-	[5]=(time()>1415750400 and 100 or 90),
-	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
-	[7]=(time()>1534118400 and 120 or 110), -- Aug 13, 2018  -- validate this
-}
-
 -- Saved Variables
 Rested_restedState = {}
 Rested_misc = {}
@@ -40,6 +29,20 @@ Rested.genders={ "", "Male", "Female" }
 Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 --Rested.reportName = ""
 
+Rested.maxPlayerLevelTable = {  -- MAX_PLAYER_LEVEL_TABLE is an existing table.  currently goes to 10
+	[0]=60,
+	[1]=70,
+	[2]=80,
+	[3]=85,
+	[4]=(time()>1348531200 and 90 or 85),   -- Mists
+	[5]=(time()>1415750400 and 100 or 90),
+	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
+	[7]=(time()>1534118400 and 120 or 110), -- Aug 13, 2018  -- validate this
+	[8]=120,
+	[9]=120,
+	[10]=120,
+}
+
 -- Load / init functions
 function Rested.OnLoad()
 	RestedFrame:RegisterEvent( "ADDON_LOADED" )
@@ -47,9 +50,10 @@ function Rested.OnLoad()
 	SLASH_RESTED1 = "/rested"
 	SlashCmdList["RESTED"] = function( msg ) Rested.Command( msg ); end
 end
-function Rested.OnUpdate( ... )
+function Rested.OnUpdate( elapsed )
+	--print( "OnUpdate( "..(elapsed or "nil").." )("..#Rested.onUpdateFunctions..")" )
 	for i, func in pairs( Rested.onUpdateFunctions ) do
-		func( ... )
+		func( elapsed )
 	end
 end
 
@@ -263,10 +267,11 @@ function Rested.ADDON_LOADED( ... )
 	-- core init:
 	Rested.name = UnitName("player")
 	Rested.realm = GetRealmName()
-	Rested.maxLevel = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()]
+	--Rested.maxLevel = MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel()]
+	Rested.maxLevel = Rested.maxPlayerLevelTable[GetAccountExpansionLevel()]
 
 	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
-	--Rested.Print( "Addon_Loaded End" )
+	Rested.Print( "Addon_Loaded End" )
 end
 function Rested.VARIABLES_LOADED( ... )
 	--a, b, c = ...
