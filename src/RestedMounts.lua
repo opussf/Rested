@@ -12,7 +12,9 @@ end
 function Rested.GetCurrentMount( ... )
 	arg1 = ...
 	if( arg1 == "MOUNT" ) then   -- only look if the event is for MOUNT
-		Rested.currentMount = nil
+		if( not IsMounted() ) then -- IsMounted() seems to be updated AFTER this event, and after the auras are updated.
+			Rested.currentMount = nil  -- it will be True (you are mounted) if you were mounted when the event fired (probably not from you)
+		end
 		if( not Rested.mountSpells ) then
 			Rested.BuildMountSpells()
 		end
