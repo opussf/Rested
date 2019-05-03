@@ -290,7 +290,7 @@ function Rested.VARIABLES_LOADED( ... )
 	-- init unsaved variables
 	-- Global
 	if not Rested_options.ignoreTime then
-		Rested_options.ignoreTime = 3600
+		Rested_options.ignoreTime = 3600 * 24 * 7
 	end
 	Rested_options["maxLevel"] = Rested.maxLevel
 
