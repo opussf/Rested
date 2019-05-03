@@ -305,14 +305,16 @@ function Rested.VARIABLES_LOADED( ... )
 			["initAt"] = time()
 		}
 	end
+
+	Rested.me = Rested_restedState[Rested.realm][Rested.name]
 	-- core data that will always be a part of the records
-	Rested_restedState[Rested.realm][Rested.name].class = UnitClass( "player" )
-	Rested_restedState[Rested.realm][Rested.name].faction = select( 2, UnitFactionGroup( "player" ) )  -- localized string
-	Rested_restedState[Rested.realm][Rested.name].race = UnitRace( "player" )
-	Rested_restedState[Rested.realm][Rested.name].gender = Rested.genders[(UnitSex( "player" ) or 0 )]
-	Rested_restedState[Rested.realm][Rested.name].updated = time()
+	Rested.me.class = UnitClass( "player" )
+	Rested.me.faction = select( 2, UnitFactionGroup( "player" ) )  -- localized string
+	Rested.me.race = UnitRace( "player" )
+	Rested.me.gender = Rested.genders[(UnitSex( "player" ) or 0 )]
+	Rested.me.updated = time()
 	-- ALWAYS remove the ignore timer for the current player
-	Rested_restedState[Rested.realm][Rested.name].ignore = nil
+	Rested.me.ignore = nil
 
 	-- init other modules
 	for _,func in pairs( Rested.initFunctions ) do

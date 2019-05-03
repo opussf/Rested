@@ -454,7 +454,12 @@ function test.test_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
 
---
+-- Rested.me
+function test.test_RestedMe_isSet()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( Rested_restedState["testRealm"]["testPlayer"], Rested.me, "Rested.me should be set, and point to the current toon." )
+end
 
 --[[
 
