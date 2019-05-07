@@ -4,7 +4,9 @@ function Rested.CaptureAzerothItem()
     if C_AzeriteItem.HasActiveAzeriteItem() then
         local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
         local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo( azeriteItemLocation )
+        local azeriteItem = Item:CreateFromItemLocation( azeriteItemLocation )
         Rested.me["heart"] = {
+            ["currentiLvl"] = azeriteItem:GetCurrentItemLevel(),
             ["currentLevel"] = C_AzeriteItem.GetPowerLevel( azeriteItemLocation ),
             ["currentXP"] = xp,
             ["totalLevelXP"] = totalLevelXP,
@@ -37,7 +39,12 @@ local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
 if azeriteItemLocation then
     local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation);
     print(azeriteItem:GetItemName())
+
+    GetItemInfo("Heart of Azeroth")
 end
+
+azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
+azeriteItem:GetCurrentItemLevel()
 
 
 ]]
