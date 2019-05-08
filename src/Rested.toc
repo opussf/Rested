@@ -7,6 +7,8 @@
 ## SavedVariables: Rested_restedState Rested_misc Rested_options
 Rested.lua
 Rested.xml
+RestedUI.lua
+RestedUI.xml
 RestedBase.lua
 
 RestedDeaths.lua
