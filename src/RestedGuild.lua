@@ -1,14 +1,7 @@
 --=================
 -- Guild Info
 --=================
---[[
-Rested.dropDownMenuTable["Guild"] = "guild"
-Rested.commandList["guild"] = function()
-	Rested.reportName="Guild Standing"
-	Rested.ShowReport( Rested.GuildStanding )
-end
-]]
---table.insert( Rested.seachKeys, "guildName" )
+table.insert( Rested.filterKeys, "guildName" )
 function Rested.SaveGuildInfo( ... )
 	--Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
@@ -23,7 +16,6 @@ function Rested.SaveGuildInfo( ... )
 	Rested_restedState[Rested.realm][Rested.name].guildTop = gName and top or nil
 	--Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
 end
-
 function Rested.GetGuildRep( )
 	-- Return the rep for the guild only
 	for factionIndex = 1, GetNumFactions() do
@@ -41,25 +33,25 @@ end
 
 Rested.EventCallback( "PLAYER_GUILD_UPDATE", Rested.SaveGuildInfo )
 
-
---[[
-function Rested.GuildStanding( realm, name, charStruct )
-	local rn = realm..":"..name
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
+Rested.dropDownMenuTable["Guild"] = "guild"
+Rested.commandList["guild"] = {["help"] = {"","Show guild standing"}, ["func"] = function()
+		Rested.reportName = "Guild Standing"
+		Rested.UIShowReport( Rested.GuildStandingReport )
 	end
+}
+function Rested.GuildStandingReport( realm, name, charStruct )
+	local rn = Rested.FormatName( realm, name )
 	local lineCount = 0
 	if charStruct.guildName then
 		lineCount = 1
-		Rested.strOut = string.format("%s :: %s",
+		Rested.strOut = string.format( "%s :: %s",
 				charStruct.guildName,
-				rn)
+				rn )
 		table.insert( Rested.charList,
-				{ ( charStruct.guildRep / (( charStruct.guildTop - charStruct.guildBottom ) + 1 ) ) * 150,
+				{ ( charStruct.guildRep / ( ( charStruct.guildTop - charStruct.guildBottom ) + 1 ) ) * 150,
 					Rested.strOut
 				}
 		)
 	end
 	return lineCount
 end
-]]
