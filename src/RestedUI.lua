@@ -47,40 +47,30 @@ function Rested.UIUpdateFrame()
 	if( RestedUIFrame:IsVisible() and Rested.reportFunction ) then  -- a non-set reportFunction will break this.
 		count = Rested.ForAllChars( Rested.reportFunction, ( Rested.reportName == "Ignored" ) )
 		RestedUIFrame_TitleText:SetText( "Rested - "..Rested.reportName.." - "..count )
-
-	end
-	--[[
-	if (RestedFrame:IsVisible()) then
-		count = Rested.ForAllChars( Rested.reportFunction, ( Rested.reportName == "Ignored" ) )
-		RestedFrame_TitleText:SetText("Rested - "..Rested.reportName.." - "..count);
+		RestedScrollFrame_VSlider:SetMinMaxValues( 0, max( 0, count-Rested.showNumBars ) )
 		if count > 0 then
-			table.sort( Rested.charList, function( a,b ) return a[1] > b[1] end );
-			offset = math.floor(RestedScrollFrame_VSlider:GetValue());
+			table.sort( Rested.charList, function( a, b ) return( a[1] > b[1] ); end )
+			offset = math.floor( RestedScrollFrame_VSlider:GetValue() )
 			for i = 1, Rested.showNumBars do
-				idx = i+offset;
-				if idx<=count then
-				--if i<=count then
-				--	idx = i+offset;
-					Rested.bars[i].bar:SetValue(max(0,Rested.charList[idx][1]));
-					Rested.bars[i].text:SetText(Rested.charList[idx][2]);
-					Rested.bars[i].bar:Show();
+				idx = i + offset
+				if idx <= count then
+					Rested.bars[i].bar:SetValue( max( 0, Rested.charList[idx][1] ) ) -- sorted on value
+					Rested.bars[i].text:SetText( Rested.charList[idx][2] )
+					Rested.bars[i].bar:Show()
 				else
-					Rested.bars[i].bar:Hide();
+					Rested.bars[i].bar:Hide()
 				end
 			end
-		elseif (Rested.bars and count == 0) then
+		elseif( Rested.bars and count == 0 ) then
 			for i = 1, Rested.showNumBars do
-				Rested.bars[i].bar:Hide();
+				Rested.bars[i].bar:Hide()
 			end
 		end
-		RestedScrollFrame_VSlider:SetMinMaxValues(0, max(0,count-Rested.showNumBars));
 	end
-	]]
 end
 function Rested.UIOnUpdate( arg1 )
 	-- only gets called when the report frame is shown
 	if( Rested.UIlastUpdate == nil ) or ( Rested.UIlastUpdate <= time() ) then
-		print( "Rested.UIOnUpdate( "..(arg1 or "nil") .." )" )
 		Rested.UIlastUpdate = time() + 1 -- only update once a second
 		Rested.UIUpdateFrame()
 	end

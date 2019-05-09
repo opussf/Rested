@@ -149,6 +149,7 @@ function Rested.ForAllChars( action, processIgnored )
 	-- Rested.displayList = {} -- force this clear
 	-- print( "ForAllChars( fn, "..( processIgnored and "true or "nil" )..") " )
 	local count = 0
+	Rested.charList = {}  -- since it is expected that action() populates charList, it needs to be cleared here
 	for realm in pairs( Rested_restedState ) do
 		for name, charStruct in pairs( Rested_restedState[realm] ) do
 			local match = true

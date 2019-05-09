@@ -112,6 +112,7 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>self:SetValue(0)</OnLoad>
+					<OnValueChanged>Rested.UIUpdateFrame()</OnValueChanged>
 				</Scripts>
 
 				<!--
