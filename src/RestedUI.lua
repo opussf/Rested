@@ -114,5 +114,15 @@ function Rested.UIDropDownOnLoad( self )
 	UIDropDownMenu_JustifyText( RestedUIFrame.DropDownMenu, "LEFT" )
 end
 
+-- Filter Code
+function Rested.updateFilter()
+	if RestedEditBox:GetNumLetters() then
+		Rested.filter = string.upper(RestedEditBox:GetText())
+		Rested.UIUpdateFrame()
+	else
+		Rested.filter = nil
+	end
+end
+
 -- Report Suport
 --------------------------------------

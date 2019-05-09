@@ -114,15 +114,6 @@
 					<OnLoad>self:SetValue(0)</OnLoad>
 					<OnValueChanged>Rested.UIUpdateFrame()</OnValueChanged>
 				</Scripts>
-
-				<!--
-				<Scripts>
-
-					<OnValueChanged>
-						Rested.UpdateFrame();
-					</OnValueChanged>
-				</Scripts>
-				-->
 				<ThumbTexture name="$parentThumbTexture"
 						file="Interface\Buttons\UI-ScrollBar-Knob">
 					<Size x="12" y="25"/>
@@ -139,21 +130,15 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self:SetAutoFocus( false )</OnLoad>
+					<OnTextChanged>Rested.updateFilter()</OnTextChanged>
 				</Scripts>
-				<!--
-				<Scripts>
-					<OnTextChanged>
-						Rested.updateFilter()
-					</OnTextChanged>
-				</Scripts>
-				-->
 			</EditBox>
 			<Frame name="$parent_DropDownMenu" inherits="UIDropDownMenuTemplate" parentKey="DropDownMenu">
 				<Size x="50" y="16" />
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="RestedEditBox">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="0" y="-2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
