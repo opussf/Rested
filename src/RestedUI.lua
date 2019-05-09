@@ -78,7 +78,7 @@ end
 
 function Rested.UIShowReport( reportFunction )
 	-- use reportFunction to drive the report
-	print( "Rested.UIShowReport" )
+	--print( "Rested.UIShowReport" )
 	Rested.reportFunction = reportFunction
 	RestedUIFrame:Show()
 	Rested.UIResetFrame()
@@ -89,7 +89,7 @@ end
 
 -- DropDown code
 function Rested.UIDropDownOnClick( self, cmd )
-	print( "Rested.UIDropDownOnClick( "..cmd.." )" )
+	--print( "Rested.UIDropDownOnClick( "..cmd.." )" )
 	Rested.commandList[cmd].func()
 end
 function Rested.UIDropDownInitialize( self, level, menuList )
