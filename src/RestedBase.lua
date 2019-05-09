@@ -26,9 +26,6 @@ function Rested.SetIgnore( param )
 end
 function Rested.UpdateIgnore( realm, name, charStruct )
 	-- clear ignore for this charStruct if expired
-	if( charStruct.ignore ) then
-		print( "Ignore will expire in "..( charStruct.ignore - time() ).." seconds." )
-	end
 	if( charStruct.ignore and time() >= charStruct.ignore ) then
 		charStruct.ignore = nil
 	end
