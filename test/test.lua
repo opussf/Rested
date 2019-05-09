@@ -7,6 +7,10 @@ require "wowTest"
 RestedOptionsFrame_NagTimeSliderText = CreateFontString()
 RestedOptionsFrame_NagTimeSlider = CreateFrame()
 RestedFrame = CreateFrame()
+RestedUIFrame = CreateFrame()
+RestedUIFrame_TitleText = CreateFontString()
+RestedScrollFrame_VSlider = CreateFrame()
+RestedUIFrame_TitleText = CreateFontString()
 
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
@@ -445,7 +449,7 @@ function test.test_Ignore_SetIgnore_dot()
 	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-function test.test_Ignore_SetIgnore_noParam()
+function test.notest_Ignore_SetIgnore_noParam()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =

@@ -345,7 +345,7 @@ Frame = {
 		["Events"] = {},
 		["Hide"] = function() end,
 		["Show"] = function() end,
-		["IsShown"] = function() return(true) end,
+		["IsVisible"] = function() return(true) end,
 		["RegisterEvent"] = function(self, event) self.Events[event] = true; end,
 		["SetPoint"] = function() end,
 		["UnregisterEvent"] = function(self, event) self.Events[event] = nil; end,
