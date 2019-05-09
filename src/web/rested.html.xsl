@@ -5,7 +5,7 @@
 	<xsl:output method="html"
 doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
 doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" />
-	
+
 	<xsl:variable name="now" select="ex:seconds()" />
 	<xsl:variable name="totalChars" select="count(restedToons/c)" />
 	<xsl:variable name='maxLevel' select='/restedToons/maxLevel'/>
@@ -114,7 +114,7 @@ function showObject(id) {
 			<xsl:apply-templates select="@*"><xsl:with-param name='att'>$att</xsl:with-param></xsl:apply-templates>
 			<xsl:value-of select="$title"/><xsl:text>:</xsl:text>
 			<xsl:value-of select='$a1'/><xsl:text>(</xsl:text>
-			<xsl:value-of select="concat('count(/restedToons/c[', $att, ' = ', $a1, '])')"/> 
+			<xsl:value-of select="concat('count(/restedToons/c[', $att, ' = ', $a1, '])')"/>
 			<xsl:value-of select="$att"/>
 			<xsl:value-of select='$a1'/>
 			<xsl:value-of select="*[name($att) = $a1]"/>
@@ -141,7 +141,7 @@ function showObject(id) {
 				<xsl:text> - </xsl:text>
 				<xsl:value-of select="format-number($thisPC, '0.0%')"/>
 				<xsl:text>) </xsl:text>
-			
+
 			</div>  <!-- meter-text  -->
 		</xsl:element> <!-- meter-value  -->
 		</div> <!-- meter-wrap -->
@@ -169,7 +169,7 @@ function showObject(id) {
 		<xsl:variable name='mpMax' select="count(/restedToons/c[@lvlNow = '90'])"/>
 		<xsl:variable name='wdCount' select="count(/restedToons/c[@lvlNow &gt; '90' and @lvlNow &lt;'100'])"/>
 		<xsl:variable name='wdMax' select="count(/restedToons/c[@lvlNow = '100'])"/>
-		
+
 		<div class='statsbox'>
 		<xsl:text>By Levels:</xsl:text>
 		<xsl:call-template name='statEntry'>
@@ -274,7 +274,7 @@ function showObject(id) {
 			<xsl:with-param name='title'>Last 9 Days</xsl:with-param>
 			<xsl:with-param name='val'><xsl:value-of select='$day9'/></xsl:with-param>
 		</xsl:call-template>
-		
+
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Stale</xsl:with-param>
 			<xsl:with-param name='val'><xsl:value-of select='$stale'/></xsl:with-param>
@@ -283,52 +283,51 @@ function showObject(id) {
 	</xsl:template>
 
 	<xsl:template name='race'>
-		<xsl:variable name='beCount' select="count(/restedToons/c[@race = 'Blood Elf'])"/>
-		<xsl:variable name='drCount' select="count(/restedToons/c[@race = 'Draenei'])"/>
-		<xsl:variable name='dwCount' select="count(/restedToons/c[@race = 'Dwarf'])"/>
-		<xsl:variable name='gnCount' select="count(/restedToons/c[@race = 'Gnome'])"/>
-		<xsl:variable name='goCount' select="count(/restedToons/c[@race = 'Goblin'])"/>
-		<xsl:variable name='huCount' select="count(/restedToons/c[@race = 'Human'])"/>
-		<xsl:variable name='neCount' select="count(/restedToons/c[@race = 'Night Elf'])"/>
-		<xsl:variable name='orCount' select="count(/restedToons/c[@race = 'Orc'])"/>
-		<xsl:variable name='taCount' select="count(/restedToons/c[@race = 'Tauren'])"/>
-		<xsl:variable name='trCount' select="count(/restedToons/c[@race = 'Troll'])"/>
-		<xsl:variable name='unCount' select="count(/restedToons/c[@race = 'Undead'])"/>
-		<xsl:variable name='woCount' select="count(/restedToons/c[@race = 'Worgen'])"/>
-
 		<div class='statsbox'>
 		<xsl:text>By Race:</xsl:text>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Blood Elf</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$beCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Blood Elf'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Draenei</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$drCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Draenei'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Dwarf</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$dwCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Dwarf'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Gnome</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$gnCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Gnome'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Goblin</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$goCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Goblin'])"/></xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Highmountain Tauren</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Highmountain Tauren'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Human</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$huCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Human'])"/></xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Lightforged Draenei</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Lightforged Draenei'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Night Elf</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$neCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Night Elf'])"/></xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Nightborne</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Nightborne'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Orc</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$orCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Orc'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Pandaren</xsl:with-param>
@@ -336,19 +335,23 @@ function showObject(id) {
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Tauren</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$taCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Tauren'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Troll</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$trCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Troll'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Undead</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$unCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Undead'])"/></xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name='statEntry'>
+			<xsl:with-param name='title'>Void Elf</xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Void Elf'])"/></xsl:with-param>
 		</xsl:call-template>
 		<xsl:call-template name='statEntry'>
 			<xsl:with-param name='title'>Worgen</xsl:with-param>
-			<xsl:with-param name='val'><xsl:value-of select='$woCount'/></xsl:with-param>
+			<xsl:with-param name='val'><xsl:value-of select="count(/restedToons/c[@race = 'Worgen'])"/></xsl:with-param>
 		</xsl:call-template>
 
 		</div>  <!-- statsbox -->
@@ -440,7 +443,7 @@ function showObject(id) {
 			<xsl:for-each select="restedToons/c[generate-id() = generate-id(key('realms',@rn)[1])]">
 				<xsl:sort data-type='text' order='ascending' select='@rn'/>
 				<xsl:copy-of select="."/>
-	
+
 				<xsl:value-of select='@rn'/>
 				<xsl:text> - </xsl:text>
 			</xsl:for-each>
@@ -504,7 +507,7 @@ function showObject(id) {
 				format-number(ex:minute-in-hour($timeFull), '00'), ':',
 				format-number(ex:second-in-minute($timeFull), '00'), ' GMT')"/>
 		</xsl:variable>
-		
+
 		<xsl:variable name='iLvlPC' select="(@iLvl div $maxiLvl) * 100"/>
 <!--
 	 select='(@iLvl div max(/restedToons/c/@iLvl)) * 100'/>
@@ -525,7 +528,7 @@ function showObject(id) {
 			<xsl:element name='a'>
 				<xsl:attribute name='target'>_blank</xsl:attribute>
 				<xsl:attribute name='href'>http://us.battle.net/wow/character/<xsl:value-of select='@rn'/>/<xsl:value-of select='@cn'/>/simple</xsl:attribute>
-				<xsl:value-of select='@cn'/> - <xsl:value-of select='@rn'/> 
+				<xsl:value-of select='@cn'/> - <xsl:value-of select='@rn'/>
 			</xsl:element>
 			<xsl:text> (</xsl:text><xsl:value-of select='format-number($PCsum,"#.00")'/>%) <xsl:value-of select="ex:duration($sincePlayed)"/>
 			</div> <!-- meter-text -->

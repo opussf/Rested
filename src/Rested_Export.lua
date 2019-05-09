@@ -66,7 +66,7 @@ function ExportXML()
 	strOut = strOut .. "\t<maxiLvl>"..Rested_options.maxiLvl.."</maxiLvl>\n";
 	strOut = strOut .. "\t<cacheRate>6</cacheRate>\n"
 
-	for realm, chars in pairs(Rested_restedState) do
+	for realm, chars in pairs( Rested_restedState ) do
 		for name, c in pairs(chars) do
 			if not c.ignore or c.ignore < os.time() then
 				charStruct = MakeCharTable( realm, name, c )
