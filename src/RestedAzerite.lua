@@ -13,10 +13,31 @@ function Rested.CaptureAzerothItem()
         }
     end
 end
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.CaptureAzerothItem )
---Rested.EventCallback( "UNIT_INVENTORY_CHANGED", Rested.CaptureAzerothItem )
+--Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.CaptureAzerothItem )  -- seems to set the item level to 0
+Rested.EventCallback( "UNIT_INVENTORY_CHANGED", Rested.CaptureAzerothItem )
 Rested.EventCallback( "AZERITE_ITEM_EXPERIENCE_CHANGED", Rested.CaptureAzerothItem )
 
+Rested.dropDownMenuTable["Azerite"] = "azerite"
+Rested.commandList["azerite"] = {["help"] = {"","Show azerite neck values"}, ["func"] = function()
+        Rested.reportName = "Hearts of Azeroth"
+        Rested.UIShowReport( Rested.AzeriteReport )
+    end
+}
+function Rested.AzeriteReport( realm, name, charStruct )
+    local rn = Rested.FormatName( realm, name )
+    if charStruct.heart then
+        totalLevel = charStruct.heart.currentLevel + ( charStruct.heart.currentXP / charStruct.heart.totalLevelXP )
+        Rested_misc["heartMaxLevel"] = math.max( Rested_misc["heartMaxLevel"] or 0, math.ceil( totalLevel ) )
+        Rested.strOut = string.format( "%0.2f (%d / %d) - %s",
+                totalLevel,
+                charStruct.heart.currentiLvl,
+                charStruct.iLvl,
+                rn )
+        table.insert( Rested.charList, { (totalLevel / Rested_misc.heartMaxLevel) * 150, Rested.strOut } )
+        return 1
+    end
+    return 0
+end
 
 --[[
 if C_AzeriteItem.HasActiveAzeriteItem() then
