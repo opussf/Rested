@@ -2,7 +2,7 @@
 
 -- function
 function Rested.GetILvl()
-	Rested.lastiLvlScan = Rested.lastiLvlScan or time() + 10  -- give it a 10 second grace period at startup.
+	Rested.lastiLvlScan = Rested.lastiLvlScan or time() + 5  -- give it a 5 second grace period at startup.
 	if( Rested.lastiLvlScan+1 <= time() ) then
 		Rested.lastiLvlScan = time()
 		local currentiLvl = select( 2, GetAverageItemLevel() )
@@ -14,6 +14,22 @@ end
 
 Rested.EventCallback( "UNIT_INVENTORY_CHANGED", Rested.GetILvl )
 
+
+Rested.dropDownMenuTable["iLvl"] = "ilvl"
+Rested.commandList["ilvl"] = { ["help"] = {"","Show iLvl report"}, ["func"] = function()
+		Rested.reportName = "Item Level"
+		Rested.UIShowReport( Rested.iLevelReport )
+	end
+}
+function Rested.iLevelReport( realm, name, charStruct )
+	local rn = Rested.FormatName( realm, name )
+	Rested.strOut = string.format( "%d :: %d :: %s",
+			charStruct.iLvl or 0,
+			charStruct.lvlNow,
+			rn)
+	table.insert( Rested.charList, {((charStruct.iLvl or 0) / Rested_options["maxiLvl"]) * 150, Rested.strOut} )
+	return 1
+end
 
 --[[
 
@@ -95,25 +111,4 @@ function Rested.ScanInv()
 end
 
 
-Rested.dropDownMenuTable["iLvl"] = "ilvl";
-Rested.commandList["ilvl"] = function()
-	Rested.reportName = "Item Level";
-	Rested.ShowReport( Rested.iLevel );
-end
-function Rested.iLevel( realm, name, charStruct )
-	-- lvl
-	local rn = realm..":"..name;
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
-	end
-	--if charStruct.lvlNow < Rested.maxLevel then
-	Rested.strOut = string.format("%d :: %d :: %s",
-			charStruct.iLvl or 0,
-			charStruct.lvlNow,
-			rn);
-	table.insert( Rested.charList, {((charStruct.iLvl or 0) / Rested_options["maxiLvl"]) * 150, Rested.strOut} );
-	return 1;
---	end
---	return 0;
-end
 ]]
