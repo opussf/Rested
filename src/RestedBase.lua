@@ -112,54 +112,44 @@ function Rested.RestedReminderValues( realm, name, struct )
 end
 Rested.ReminderCallback( Rested.RestedReminderValues )
 
---[[
-
-Rested.dropDownMenuTable["Level"] = "level";
-Rested.commandList["level"] = function()
-	Rested.reportName = "% of Level";
-	Rested.ShowReport( Rested.OfLevel );
-end
-function Rested.OfLevel( realm, name, charStruct )
-	-- lvl
-	local rn = realm..":"..name;
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
+--  Reports
+------------------------------
+Rested.dropDownMenuTable["Level"] = "level"
+Rested.commandList["level"] = {["help"] = {"","Show % of level"}, ["func"] = function()
+		Rested.reportName = "% of Level"
+		Rested.UIShowReport( Rested.OfLevel )
 	end
+}
+function Rested.OfLevel( realm, name, charStruct )
+	local rn = Rested.FormatName( realm, name )
 	if charStruct.lvlNow < Rested.maxLevel then
-		local lvlPC = charStruct.xpNow / charStruct.xpMax;
-		Rested.strOut = string.format("%d :: %0.2f%% %s",
+		local lvlPC = charStruct.xpNow / charStruct.xpMax
+		Rested.strOut = string.format( "%d :: %0.2f%% %s",
 				charStruct.lvlNow,
 				lvlPC * 100,
-				rn);
-		table.insert( Rested.charList, {lvlPC * 150, Rested.strOut} );
-		return 1;
+				rn)
+		table.insert( Rested.charList, {lvlPC * 150, Rested.strOut} )
+		return 1
 	end
-	return 0;
+	return 0
 end
 
-
-Rested.dropDownMenuTable["Full"] = "full";
-Rested.commandList["full"] = function()
-		Rested.reportName = "Fully Rested";
-		Rested.ShowReport( Rested.FullyRested );
-end
+Rested.dropDownMenuTable["Full"] = "full"
+Rested.commandList["full"] = {["help"] = {"", "Show fully rested characters"}, ["func"] = function()
+		Rested.reportName = "Fully Rested"
+		Rested.UIShowReport( Rested.FullyRested )
+	end
+}
 function Rested.FullyRested( realm, name, charStruct )
 	-- 80 (15.5%): Realm:Name
-	local rn = realm..":"..name;
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
-	end
-	local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct );
+	local rn = Rested.FormatName( realm, name )
+	local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
 	if restedVal >= 150 then
 		Rested.strOut = string.format("%d %s",
 				charStruct.lvlNow,
-				rn);
-		table.insert( Rested.charList, {(charStruct.xpNow / charStruct.xpMax)*150, Rested.strOut} );
-		return 1;
+				rn)
+		table.insert( Rested.charList, {(charStruct.xpNow / charStruct.xpMax)*150, Rested.strOut} )
+		return 1
 	end
-	return 0;
+	return 0
 end
-
-
-
-]]

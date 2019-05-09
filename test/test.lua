@@ -10,13 +10,16 @@ RestedFrame = CreateFrame()
 
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
+--require "Rested_Export"
 require "Rested"
+require "RestedUI"
 require "RestedBase"
 require "RestedDeaths"
 require "RestedGuild"
 require "RestediLvl"
 require "RestedPlayed"
 --require "RestedOptions"
+
 
 test.outFileName = "testOut.xml"
 
@@ -33,6 +36,9 @@ function test.after()
 end
 function test.test_Command_Help()
 	assertEquals( "help", Rested.Command( "help" ) )
+end
+-- Export
+function test.test_Export_01()
 end
 -- VARIABLES_LOADED Inits data
 function test.test_maxLevel_set()
@@ -399,6 +405,7 @@ end
 
 -- ignore code
 function test.test_Ignore_SetIgnore_name()
+	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -408,6 +415,7 @@ function test.test_Ignore_SetIgnore_name()
 	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_realm()
+	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -417,6 +425,7 @@ function test.test_Ignore_SetIgnore_realm()
 	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_partial()
+	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -426,6 +435,7 @@ function test.test_Ignore_SetIgnore_partial()
 	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_dot()
+	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -436,6 +446,7 @@ function test.test_Ignore_SetIgnore_dot()
 	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_noParam()
+	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -446,6 +457,7 @@ function test.test_Ignore_SetIgnore_noParam()
 	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
@@ -459,6 +471,34 @@ function test.test_RestedMe_isSet()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	assertEquals( Rested_restedState["testRealm"]["testPlayer"], Rested.me, "Rested.me should be set, and point to the current toon." )
+end
+
+-- FormatRested
+function test.test_FormatRested_restedOutStr_useInitAt()
+	charStruct = {["initAt"] = time() - 3600 }
+	outStr, rVal, code, timeTill = Rested.FormatRested( charStruct )
+	assertEquals( "0.2%", outStr )
+	assertEquals( "-", code )
+end
+function test.test_FormatRested_restedOutStr_noInitAt()
+	charStruct = {}
+	outStr, rVal, code, timeTill = Rested.FormatRested( charStruct )
+	assertEquals( "|cff00ff00Fully Rested|r", outStr )
+	print( timeTill )
+	assertIsNil( timeTill )
+end
+function test.test_FormatRested_restedOutStr_isResting()
+	charStruct = {["isResting"] = true}
+	outStr, rVal, code, timeTill = Rested.FormatRested( charStruct )
+	assertEquals( "|cff00ff00Fully Rested|r", outStr )
+	assertEquals( "+", code )
+end
+function test.test_FormatRested_restedValue_beyondCurrentLevel()
+	charStruct = {["initAt"] = time() - 14400, ["isResting"] = true, ["xpNow"] = 98, ["xpMax"] = 100 }
+	outStr, rVal, code, timeTill = Rested.FormatRested( charStruct )
+	assertEquals( "|cff00ff002.5%|r", outStr )
+	assertEquals( "+", code )
+	assertEquals( 2.5, rVal )
 end
 
 --[[

@@ -27,7 +27,10 @@ Rested.reminderFunctions = {}  -- the functions to call for each alt ( realm, na
 Rested.reminders = {}
 Rested.genders={ "", "Male", "Female" }
 Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
---Rested.reportName = ""
+Rested.rateStruct = {[0] = {(5/(32*3600)), "-"}, [1] = {(5/(8*3600)), "+"} }
+-- report code that needs to show up 'early'
+Rested.reportName = ""
+Rested.dropDownMenuTable = {}
 
 Rested.maxPlayerLevelTable = {  -- MAX_PLAYER_LEVEL_TABLE is an existing table.  currently goes to 10
 	[0]=60,
@@ -103,6 +106,34 @@ function Rested.FormatName( realm, name, useColor )
 	return string.format( "%s%s:%s%s",
 			( useColor and COLOR_GREEN or ""), realm, name, ( useColor and COLOR_END or "" ) )
 end
+Rested.formatRestedStruct = {}  -- this is here for memory optimization only.  do not rely on this.
+function Rested.FormatRested( charStruct )
+	-- return formated rested string, restedValue, code (+ / -), timeTillRested (seconds)
+	-- rested string is color formated and shows expected current status
+	rs = Rested.formatRestedStruct
+	rs.timeSince = time() - ( charStruct.updated or charStruct.initAt or 0 )
+
+	rs.restRate, rs.code = unpack( Rested.rateStruct[(charStruct.isResting and 1 or 0)] )
+	rs.restAdded = rs.restRate * rs.timeSince
+	rs.restedVal = rs.restAdded + ( charStruct.restedPC or 0 )
+	rs.restedOutStr = string.format( "%0.1f%%", rs.restedVal )
+
+	if( rs.restedVal >= 150 ) then -- 150% of current is the 'max'
+		rs.restedOutStr = COLOR_GREEN.."Fully Rested"..COLOR_END
+		rs.timeTillRested = nil
+	else
+		if( charStruct.xpMax and charStruct.xpNow ) then
+			rs.lvlPCLeft = ( ( charStruct.xpMax - charStruct.xpNow ) / charStruct.xpMax ) * 100
+			if( rs.restedVal >= rs.lvlPCLeft ) then -- rested beyond the current level
+				rs.restedOutStr = COLOR_GREEN..rs.restedOutStr..COLOR_END
+			end
+			rs.timeTillRested = ( 150 - rs.restedVal ) / rs.restRate   -- restedVal is %, restedRate is %/s,
+
+		end
+	end
+	return rs.restedOutStr, rs.restedVal, rs.code, rs.timeTillRested
+end
+
 function Rested.ForAllChars( action, processIgnored )
 	-- loops through all the chars, using action callback to return count, and build the reporting table
 	-- include chars that:
@@ -178,7 +209,7 @@ function Rested.EventCallback( event, callback )
 
 	if not Rested[event] then
 		-- create function if it does not exist
-		print( "CREATE function for event: "..event )
+		--print( "CREATE function for event: "..event )
 		Rested[event] = function( ... )
 			--[[
 			Rested.Print( string.format( "%s-->%s (%i)<--%s",
@@ -242,10 +273,10 @@ Rested.InitCallback( Rested.MakeReminderSchedule )
 
 function Rested.ReminderOnUpdate()
 	if not UnitAffectingCombat("player") then
-	if( Rested.lastReminderUpdate == nil ) or ( Rested.lastReminderUpdate < time() ) then
-		Rested.PrintReminders()
-		Rested.lastReminderUpdate = time() + 5
-	end
+		if( Rested.lastReminderUpdate == nil ) or ( Rested.lastReminderUpdate < time() ) then
+			Rested.PrintReminders()
+			Rested.lastReminderUpdate = time() + 5
+		end
 	end
 end
 Rested.OnUpdateCallback( Rested.ReminderOnUpdate )

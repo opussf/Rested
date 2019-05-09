@@ -152,42 +152,20 @@
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="RestedEditBox">
 						<Offset>
-							<AbsDimension x="0" y="6"/>
+							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<!--
-					<OnLoad>
-						Rested.DropDownOnLoad(self)
-					</OnLoad>
-					-->
+					<OnLoad>Rested.UIDropDownOnLoad(self)</OnLoad>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
-			<OnMouseDown>Rested.UIOnDragStart();</OnMouseDown>
-			<OnMouseUp>Rested.UIOnDragStop();</OnMouseUp>
+			<OnLoad>self:Hide()</OnLoad>
+			<OnUpdate>Rested.UIOnUpdate( elaspsed )</OnUpdate>
+			<OnMouseDown>Rested.UIOnDragStart()</OnMouseDown>
+			<OnMouseUp>Rested.UIOnDragStop()</OnMouseUp>
 		</Scripts>
-		<!--
-		<Scripts>
-			<OnLoad>
-				Rested.OnLoad();
-				self:Hide();
-			</OnLoad>
-			<OnEvent>
-				Rested[event](...);
-			</OnEvent>
-			<OnUpdate>
-				Rested.OnUpdate()
-			</OnUpdate>
-		</Scripts>
-		 <OnEnter function="BagBuddy_Button_OnEnter"/>
-      <OnLeave function="BagBuddy_Button_OnLeave"/>
-		-->
 	</Frame>
-
-
-
-
 </Ui>
