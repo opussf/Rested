@@ -20,6 +20,8 @@ function Rested.SetIgnore( param )
 		end
 	else
 		-- put code here to show the report
+		Rested.reportName = "Ignored"
+		Rested.UIShowReport( Rested.IgnoredCharacters, true )
 	end
 end
 function Rested.UpdateIgnore( realm, name, charStruct )
@@ -31,8 +33,19 @@ function Rested.UpdateIgnore( realm, name, charStruct )
 		charStruct.ignore = nil
 	end
 end
+function Rested.IgnoredCharacters( realm, name, charStruct )
+	if( charStruct.ignore ) then
+		timeToGo = charStruct.ignore - time()
+		Rested.strOut = string.format( "%s: %s", SecondsToTime( timeToGo ), Rested.FormatName( realm, name ) )
+		table.insert( Rested.charList, {(timeToGo/Rested_options.ignoreTime)*150, Rested.strOut} )
+		return 1
+	end
+	return 0
+end
 Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search>", "Ignore matched chars, or show ignored." } }
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
+Rested.dropDownMenuTable["Ignore"] = "ignore"
+
 
 function Rested.SaveRestedState()
 	-- update anything based on rested state
@@ -153,3 +166,5 @@ function Rested.FullyRested( realm, name, charStruct )
 	end
 	return 0
 end
+
+
