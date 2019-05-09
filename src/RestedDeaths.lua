@@ -11,24 +11,18 @@ end
 Rested.InitCallback( Rested.SaveDeaths )
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.SaveDeaths )
 
---[[
-Rested.dropDownMenuTable["Deaths"] = "deaths";
-Rested.commandList["deaths"] = function()
-	Rested.reportName = "Deaths";
-	Rested.ShowReport( Rested.Deaths );
-end
-function Rested.Deaths( realm, name, charStruct )
-	-- lvl
-	local rn = realm..":"..name;
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
+Rested.dropDownMenuTable["Deaths"] = "deaths"
+Rested.commandList["deaths"] = {["help"] = {"","Show number of deaths"}, ["func"] = function()
+		Rested.reportName = "Deaths"
+		Rested.UIShowReport( Rested.DeathReport )
 	end
-	Rested.strOut = string.format("%s :: %s",
+}
+function Rested.DeathReport( realm, name, charStruct )
+	-- lvl
+	local rn = Rested.FormatName( realm, name )
+	Rested.strOut = string.format( "%s :: %s",
 			charStruct.deaths or "Unscanned",
-			rn);
+			rn )
 	table.insert( Rested.charList, {((charStruct.deaths or -1) / Rested_options["maxDeaths"]) * 150, Rested.strOut} );
-	return 1;
---	end
---	return 0;
+	return 1
 end
-]]
