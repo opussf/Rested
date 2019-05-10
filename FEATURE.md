@@ -30,8 +30,22 @@ It would return a table:
 {}[ TimeStemp ] = { "<string to display>", "<string to display>", ... }
 ```
 
+### Command line
+
+The command line should:
+* Allow '/rested' with no extra parameter
+* '/rested' should show the help list the first time it is used alone
+* '/rested' should show the default report
+* '/rested' should show toggle the last report
+
+* Always show the report associated with the given parameter
+	* IE  '/rested all' will always show that report, even if it is the current report
 
 
+
+
+## Rep info
+Track rep for toons, allow to search for rep name.
 
 
 
