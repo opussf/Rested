@@ -313,7 +313,6 @@ function Rested.ADDON_LOADED( ... )
 	Rested.maxLevel = Rested.maxPlayerLevelTable[GetAccountExpansionLevel()]
 
 	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
-	Rested.Print( "Addon_Loaded End" )
 end
 function Rested.VARIABLES_LOADED( ... )
 	--a, b, c = ...
@@ -354,5 +353,5 @@ function Rested.VARIABLES_LOADED( ... )
 	end
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
+	print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") Loaded" )
 end
-
