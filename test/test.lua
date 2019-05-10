@@ -488,7 +488,6 @@ function test.test_FormatRested_restedOutStr_noInitAt()
 	charStruct = {}
 	outStr, rVal, code, timeTill = Rested.FormatRested( charStruct )
 	assertEquals( "|cff00ff00Fully Rested|r", outStr )
-	print( timeTill )
 	assertIsNil( timeTill )
 end
 function test.test_FormatRested_restedOutStr_isResting()
@@ -503,6 +502,114 @@ function test.test_FormatRested_restedValue_beyondCurrentLevel()
 	assertEquals( "|cff00ff002.5%|r", outStr )
 	assertEquals( "+", code )
 	assertEquals( 2.5, rVal )
+end
+
+-- Mounts
+require "RestedMounts"
+function test.showCharList()
+	table.sort( Rested.charList, function( a, b ) return( a[1] > b[1] ); end )
+	for k,v in pairs( Rested.charList ) do
+		print( k..": "..v[1]..":"..v[2] )
+	end
+end
+
+function test.test_Mounts_Report_SingleMount_halfLife()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { ["mountHistory"] = { [time()-30] = "Garn Nighthowl",
+		} }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 75, Rested.charList[1][1] )
+end
+function test.test_Mounts_Report_SingleMount_Recent()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { ["mountHistory"] = { [time()] = "Garn Nighthowl",
+		} }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 150, Rested.charList[1][1] )
+end
+function test.test_Mounts_Report_SingleMount_Oldest()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { ["mountHistory"] = { [time()-59] = "Garn Nighthowl",
+		} }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 2.5, Rested.charList[1][1] )
+end
+function test.test_Mounts_Report_NoMounts()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList )
+end
+function test.test_Mounts_Report_TwoMounts_Same()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { ["mountHistory"] = { [time()-59] = "Garn Nighthowl", [time()-30] = "Garn Nighthowl"
+		} }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 75, Rested.charList[1][1] )
+end
+function test.test_Mounts_Report_TwoMounts_Diff()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { ["mountHistory"] = { [time()-60] = "Garn Nighthowl", [time()-30] = "Other Mount"
+		} }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 75, Rested.charList[1][1] )
+end
+function test.test_Mounts_Report_TwoMounts_TooOldMount()
+	Rested_options.mountHistoryAge = 60
+	Rested_misc = { ["mountHistory"] = { [time()-120] = "Garn Nighthowl", [time()-30] = "Other Mount"
+		} }
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+
+	Rested.ForAllChars( Rested.MountReport )
+
+	test.showCharList()
+	assertEquals( 1, #Rested.charList )
+	assertEquals( 75, Rested.charList[1][1] )
 end
 
 --[[
