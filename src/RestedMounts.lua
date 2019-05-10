@@ -54,7 +54,7 @@ Rested.commandList["mounts"] = { ["help"] = {"","Show recent mount history"}, ["
 	end
 }
 function Rested.MountReport( realm, name, charStruct )
-	print( "size of charList: "..#Rested.charList )
+	--print( "size of charList: "..#Rested.charList )
 	if( #Rested.charList == 0 and Rested_misc.mountHistory ) then
 		Rested.PruneByAge( Rested_misc.mountHistory, Rested_options.mountHistoryAge )
 		local mountCount = {}

@@ -507,6 +507,7 @@ end
 -- Mounts
 require "RestedMounts"
 function test.showCharList()
+	if true then return end
 	table.sort( Rested.charList, function( a, b ) return( a[1] > b[1] ); end )
 	for k,v in pairs( Rested.charList ) do
 		print( k..": "..v[1]..":"..v[2] )
