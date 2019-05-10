@@ -94,8 +94,8 @@ function Rested.Command( msg )
 		cmdFunc.func( param )
 		return( cmd )
 	else
-		Rested.PrintHelp()
-		return( "help" )
+		Rested.commandList[ "resting" ].func()
+		return( "resting" )
 	end
 end
 function Rested.FormatName( realm, name, useColor )

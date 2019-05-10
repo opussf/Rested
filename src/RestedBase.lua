@@ -164,4 +164,28 @@ function Rested.FullyRested( realm, name, charStruct )
 	return 0
 end
 
+Rested.dropDownMenuTable["Resting"] = "resting"
+Rested.commandList["resting"] = {["help"] = {"","Show resting characters"}, ["func"] = function ()
+		Rested.reportName = "Resting Characters"
+		Rested.UIShowReport( Rested.RestingCharacters )
+	end
+}
+function Rested.RestingCharacters( realm, name, charStruct )
+	-- takes the realm, name, charStruct
+	-- appends to the global Rested.charList
+	-- returns 1 on success, 0 on fail
+	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC < 150) or
+			(realm == Rested.realm and name == Rested.name) then
+		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
+		Rested.strOut = string.format("% 2d%s %s", charStruct.lvlNow, code, restedStr)
+		if timeTillRested then
+			Rested.strOut = Rested.strOut.." "..SecondsToTime(timeTillRested)
+		end
 
+		rn = Rested.FormatName( realm, name )
+		Rested.strOut = Rested.strOut..": "..rn
+		table.insert( Rested.charList, {restedVal, Rested.strOut} )
+		return 1
+	end
+	return 0
+end

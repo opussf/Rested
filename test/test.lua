@@ -38,12 +38,6 @@ function test.before()
 end
 function test.after()
 end
-function test.test_Command_Help()
-	assertEquals( "help", Rested.Command( "help" ) )
-end
--- Export
-function test.test_Export_01()
-end
 -- VARIABLES_LOADED Inits data
 function test.test_maxLevel_set()
 	-- account max level is set
