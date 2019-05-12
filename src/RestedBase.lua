@@ -189,3 +189,21 @@ function Rested.RestingCharacters( realm, name, charStruct )
 	end
 	return 0
 end
+
+Rested.dropDownMenuTable["All"] = "all"
+Rested.commandList["all"] = {["help"] = {"","Show all characters"}, ["func"] = function()
+		Rested.reportName = "All"
+		Rested.UIShowReport( Rested.AllCharacters )
+	end
+}
+function Rested.AllCharacters( realm, name, charStruct )
+	-- 80 (15.5%): Realm:Name
+	rn = Rested.FormatName( realm, name )
+	Rested.strOut = string.format( "%d (%s): %s",
+		charStruct.lvlNow,
+		--(charStruct.xpNow / charStruct.xpMax) * 100,
+		select(1,Rested.FormatRested(charStruct)),
+		rn )
+	table.insert( Rested.charList, {(charStruct.lvlNow / Rested.maxLevel) * 150, Rested.strOut} )
+	return 1
+end
