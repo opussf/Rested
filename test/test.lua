@@ -14,7 +14,6 @@ RestedUIFrame_TitleText = CreateFontString()
 
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
---require "Rested_Export"
 require "Rested"
 require "RestedUI"
 require "RestedBase"
@@ -606,6 +605,42 @@ function test.test_Mounts_Report_TwoMounts_TooOldMount()
 	assertEquals( 1, #Rested.charList )
 	assertEquals( 75, Rested.charList[1][1] )
 end
+
+-- Rested Export tests
+function myPrint( str )
+	stdOut = stdOut or {}
+	table.insert( stdOut, str )
+end
+function test.test_Export_01()
+	stdOut = nil
+	originalPrint = print
+	print = myPrint
+	arg = {"./", "json"}
+	loadfile( "../src/Rested_Export.lua" )() -- Rested_Export reads from arg, not actually the parameters passed
+--	for _,v in pairs( stdOut ) do
+--		originalPrint( v )
+--	end
+	print = originalPrint
+	--print( strOut )
+end
+
+--[[
+
+
+originalPrint = print
+out = {}
+function print( str )
+	table.insert( out, str )
+	originalPrint( str )
+end
+arg = {"./","json"}
+local X = loadfile( "../src/Rested_Export.lua" )()  -- Rested_Export reads from arg, not actually the parameters passed
+
+originalPrint( #out )
+
+arg = {"./", "xml"}
+loadfile( "../src/Rested_Export.lua" )()  -- Rested_Export reads from arg, not actually the parameters passed
+]]
 
 --[[
 
