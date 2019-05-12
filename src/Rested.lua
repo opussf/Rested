@@ -75,6 +75,7 @@ function Rested.PrintHelp()
 			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
 	end
 end
+Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
 
 function Rested.ParseCmd( msg )
 	msg = string.lower( msg )
