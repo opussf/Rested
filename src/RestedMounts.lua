@@ -28,7 +28,6 @@ function Rested.GetCurrentMount( ... )
 						print( "You have mounted: "..aName.." at "..date() )
 						Rested.currentMount = aID
 						Screenshot()
-						Rested_misc.mountHistory = Rested_misc.mountHistory or {}
 						Rested_misc.mountHistory[time()] = aName
 						Rested.PruneByAge( Rested_misc.mountHistory, Rested_options.mountHistoryAge )
 					end
@@ -41,7 +40,11 @@ function Rested.GetCurrentMount( ... )
 	end
 	Rested.PruneByAge( Rested_misc.mountHistory, Rested_options.mountHistoryAge )
 end
-Rested.InitCallback( function() Rested_options.mountHistoryAge = Rested_options.mountHistoryAge or 7200; end )
+Rested.InitCallback( function()
+		Rested_misc.mountHistory = Rested_misc.mountHistory or {};
+		Rested_options.mountHistoryAge = Rested_options.mountHistoryAge or 7200;
+	end
+)
 -- set the history age to 2 hours
 Rested.EventCallback( "COMPANION_UPDATE", Rested.GetCurrentMount )
 Rested.EventCallback( "COMPANION_LEARNED", Rested.BuildMountSpells )
