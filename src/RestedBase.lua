@@ -236,7 +236,7 @@ Rested.InitCallback( function()
 )
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function()
 		if( Rested.ForAllChars( Rested.NagCharacters ) > 0 ) then
-			Rested.commandList.func()
+			Rested.Command( "nag" )
 		end
 	end
 )
