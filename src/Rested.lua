@@ -75,6 +75,7 @@ function Rested.PrintHelp()
 			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
 	end
 end
+Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
 
 function Rested.ParseCmd( msg )
 	msg = string.lower( msg )
@@ -94,8 +95,8 @@ function Rested.Command( msg )
 		cmdFunc.func( param )
 		return( cmd )
 	else
-		Rested.PrintHelp()
-		return( "help" )
+		Rested.commandList[ "resting" ].func()
+		return( "resting" )
 	end
 end
 function Rested.FormatName( realm, name, useColor )
@@ -313,7 +314,6 @@ function Rested.ADDON_LOADED( ... )
 	Rested.maxLevel = Rested.maxPlayerLevelTable[GetAccountExpansionLevel()]
 
 	RestedFrame:UnregisterEvent( "ADDON_LOADED" )
-	Rested.Print( "Addon_Loaded End" )
 end
 function Rested.VARIABLES_LOADED( ... )
 	--a, b, c = ...
@@ -354,5 +354,5 @@ function Rested.VARIABLES_LOADED( ... )
 	end
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
+	print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") Loaded" )
 end
-

@@ -164,4 +164,79 @@ function Rested.FullyRested( realm, name, charStruct )
 	return 0
 end
 
+Rested.dropDownMenuTable["Resting"] = "resting"
+Rested.commandList["resting"] = {["help"] = {"","Show resting characters"}, ["func"] = function ()
+		Rested.reportName = "Resting Characters"
+		Rested.UIShowReport( Rested.RestingCharacters )
+	end
+}
+function Rested.RestingCharacters( realm, name, charStruct )
+	-- takes the realm, name, charStruct
+	-- appends to the global Rested.charList
+	-- returns 1 on success, 0 on fail
+	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC < 150) or
+			(realm == Rested.realm and name == Rested.name) then
+		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
+		Rested.strOut = string.format("% 2d%s %s", charStruct.lvlNow, code, restedStr)
+		if timeTillRested then
+			Rested.strOut = Rested.strOut.." "..SecondsToTime(timeTillRested)
+		end
 
+		rn = Rested.FormatName( realm, name )
+		Rested.strOut = Rested.strOut..": "..rn
+		table.insert( Rested.charList, {restedVal, Rested.strOut} )
+		return 1
+	end
+	return 0
+end
+
+Rested.dropDownMenuTable["All"] = "all"
+Rested.commandList["all"] = {["help"] = {"","Show all characters"}, ["func"] = function()
+		Rested.reportName = "All"
+		Rested.UIShowReport( Rested.AllCharacters )
+	end
+}
+function Rested.AllCharacters( realm, name, charStruct )
+	-- 80 (15.5%): Realm:Name
+	rn = Rested.FormatName( realm, name )
+	Rested.strOut = string.format( "%d (%s): %s",
+		charStruct.lvlNow,
+		--(charStruct.xpNow / charStruct.xpMax) * 100,
+		select(1,Rested.FormatRested(charStruct)),
+		rn )
+	table.insert( Rested.charList, {(charStruct.lvlNow / Rested.maxLevel) * 150, Rested.strOut} )
+	return 1
+end
+
+Rested.dropDownMenuTable["Nag"] = "nag"
+Rested.commandList["nag"] = {["help"] = {"","Show nag characters"}, ["func"] = function()
+		Rested.reportName = "Nag Characters"
+		Rested.UIShowReport( Rested.NagCharacters )
+	end
+}
+function Rested.NagCharacters( realm, name, charStruct )
+	-- takes the realm, name, charStruct
+	-- appends to the global Rested.charList
+	-- returns 1 on success, 0 on fail
+	rn = Rested.FormatName( realm, name )
+	local timeSince = time() - charStruct.updated
+	if (charStruct.lvlNow == Rested.maxLevel and
+			timeSince >= Rested_options.maxCutOff*86400 and
+			timeSince <= Rested_options.maxStale * 86400) then
+		Rested.strOut = format( "%d :: %s : %s", charStruct.lvlNow, SecondsToTime(timeSince), rn )
+		table.insert( Rested.charList, {(timeSince/(Rested_options.maxStale*86400))*150, Rested.strOut} )
+		return 1
+	end
+	return 0
+end
+Rested.InitCallback( function()
+		Rested_options.maxCutOff = Rested_options.maxCutOff or 7
+		Rested_options.maxStale = Rested_options.maxStale or 10
+	end
+)
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", function()
+		if( Rested.ForAllChars( Rested.NagCharacters ) > 0 ) then
+			Rested.commandList.func()
+		end
+	end
+)
