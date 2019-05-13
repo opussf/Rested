@@ -207,3 +207,36 @@ function Rested.AllCharacters( realm, name, charStruct )
 	table.insert( Rested.charList, {(charStruct.lvlNow / Rested.maxLevel) * 150, Rested.strOut} )
 	return 1
 end
+
+Rested.dropDownMenuTable["Nag"] = "nag"
+Rested.commandList["nag"] = {["help"] = {"","Show nag characters"}, ["func"] = function()
+		Rested.reportName = "Nag Characters"
+		Rested.UIShowReport( Rested.NagCharacters )
+	end
+}
+function Rested.NagCharacters( realm, name, charStruct )
+	-- takes the realm, name, charStruct
+	-- appends to the global Rested.charList
+	-- returns 1 on success, 0 on fail
+	rn = Rested.FormatName( realm, name )
+	local timeSince = time() - charStruct.updated
+	if (charStruct.lvlNow == Rested.maxLevel and
+			timeSince >= Rested_options.maxCutOff*86400 and
+			timeSince <= Rested_options.maxStale * 86400) then
+		Rested.strOut = format( "%d :: %s : %s", charStruct.lvlNow, SecondsToTime(timeSince), rn )
+		table.insert( Rested.charList, {(timeSince/(Rested_options.maxStale*86400))*150, Rested.strOut} )
+		return 1
+	end
+	return 0
+end
+Rested.InitCallback( function()
+		Rested_options.maxCutOff = Rested_options.maxCutOff or 7
+		Rested_options.maxStale = Rested_options.maxStale or 10
+	end
+)
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", function()
+		if( Rested.ForAllChars( Rested.NagCharacters ) > 0 ) then
+			Rested.commandList.func()
+		end
+	end
+)
