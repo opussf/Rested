@@ -41,8 +41,8 @@ function Rested.GetCurrentMount( ... )
 	Rested.PruneByAge( Rested_misc.mountHistory, Rested_options.mountHistoryAge )
 end
 Rested.InitCallback( function()
-		Rested_misc.mountHistory = Rested_misc.mountHistory or {};
-		Rested_options.mountHistoryAge = Rested_options.mountHistoryAge or 7200;
+		Rested_misc.mountHistory = Rested_misc.mountHistory or {}
+		Rested_options.mountHistoryAge = Rested_options.mountHistoryAge or 7200
 	end
 )
 -- set the history age to 2 hours
