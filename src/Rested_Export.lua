@@ -32,25 +32,47 @@ function DoFile( filename )
 	local f = assert( loadfile( filename ) )
 	return f()
 end
+tableKeyMap = {
+	["isResting"] = { ["key"] = "isResting", ["func"] = function( inValue ) return( inValue and 1 or 0 ); end, },
+	["iLvl"] = { ["key"] = "iLvl", ["func"] = function( inValue ) return( inValue or 0 ); end },
+	["guildName"] = { ["key"] = "guild", ["func"] = function( inValue ) return( inValue or "" ); end },
+}
+function GetKeyValues( key, value, keyPre, t )
+--	print( string.format( "GetKeyValues( %s, %s, %s, %s )",
+--			key, (value and "true" or "false"), (keyPre or "nil"), (t and "t" or "nil") ) )
+	t = t or {}
+
+	if( type(value) == "table" ) then
+--		print( "value is a table" )
+		for k, v in pairs( value ) do
+			t = GetKeyValues( k, v, key, t )
+		end
+	else
+		outKey = ( keyPre and keyPre.."_" or "" )..key
+		outVal = (tableKeyMap[outKey] and tableKeyMap[outKey].func( value ) or value)
+		t[outKey] = outVal
+	end
+	return t
+end
 function MakeCharTable( realm, name, c )
 	charStruct = {}
 	charStruct.rn = realm
 	charStruct.cn = name
-	charStruct.isResting = (c.isResting and 1 or 0)
-	charStruct.class = c.class
-	charStruct.initAt = c.initAt
-	charStruct.updated = c.updated
-	charStruct.race = c.race
-	charStruct.xpNow = c.xpNow
-	charStruct.xpMax = c.xpMax
-	charStruct.restedPC = c.restedPC
-	charStruct.lvlNow = c.lvlNow
-	charStruct.faction = c.faction
-	charStruct.iLvl = c.iLvl or 0
-	charStruct.gender = c.gender
-	charStruct.guild = c.guildName or ""
-	charStruct.totalPlayed = c.totalPlayed or 0
 
+	-- Use the keyMap to set default values.
+	for k, struct in pairs( tableKeyMap ) do
+		charStruct[struct.key] = struct.func()
+	end
+	-- Go through the keys, get single key-value pairs.
+	-- Tables will have _ seperated names
+	for key, value in pairs( c ) do
+		keyValues = GetKeyValues( key, value )
+
+		for k, v in pairs( keyValues ) do
+			charStruct[tableKeyMap[k] and tableKeyMap[k].key or k] = v
+		end
+	end
+	-- Add the guild name to a different struct.
 	if c.guildName then
 		guildList[c.guildName] = realm
 	end
@@ -66,7 +88,7 @@ function ExportXML()
 	strOut = strOut .. "\t<maxiLvl>"..Rested_options.maxiLvl.."</maxiLvl>\n";
 	strOut = strOut .. "\t<cacheRate>6</cacheRate>\n"
 
-	for realm, chars in pairs(Rested_restedState) do
+	for realm, chars in pairs( Rested_restedState ) do
 		for name, c in pairs(chars) do
 			if not c.ignore or c.ignore < os.time() then
 				charStruct = MakeCharTable( realm, name, c )

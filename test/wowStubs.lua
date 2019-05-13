@@ -40,6 +40,10 @@ globals = {}
 accountExpansionLevel = 4   -- 0 to 5
 -- registeredPrefixes - populated by the RegisterAddonMessagePrefix( prefix )
 
+myStatistics = {
+	[60] = 42  -- 60 = deaths
+}
+
 registeredPrefixes = {}
 
 SlotListMap={ "HeadSlot","NeckSlot","ShoulderSlot","ShirtSlot","ChestSlot","WaistSlot","LegsSlot",
@@ -341,7 +345,7 @@ Frame = {
 		["Events"] = {},
 		["Hide"] = function() end,
 		["Show"] = function() end,
-		["IsShown"] = function() return(true) end,
+		["IsVisible"] = function() return(true) end,
 		["RegisterEvent"] = function(self, event) self.Events[event] = true; end,
 		["SetPoint"] = function() end,
 		["UnregisterEvent"] = function(self, event) self.Events[event] = nil; end,
@@ -473,6 +477,7 @@ function CloseMail()
 	-- @TODO - Write this
 end
 ]]
+
 function CombatTextSetActiveUnit( who )
 	-- http://www.wowwiki.com/API_CombatTextSetActiveUnit
 	-- @TODO - Write this
@@ -917,6 +922,9 @@ end
 function GetSendMailPrice()
 	-- returns: amount (in copper) to send the mail
 end
+function GetStatistic( index )
+	return myStatistics[index]
+end
 function GetTradeSkillItemLink( index )
 	if TradeSkillItems[index] then
 		return TradeSkillItems[index].ilink
@@ -960,6 +968,10 @@ function HasNewMail()
 	return true
 end
 ]]
+function GetXPExhaustion()
+	-- TODO:
+	return 3618
+end
 function InterfaceOptionsFrame_OpenToCategory()
 end
 function IsInGuild()
@@ -976,6 +988,9 @@ function IsInRaid()
 	-- 1, nill boolean return of being in raid
 	-- myParty = { ["group"] = nil, ["raid"] = nil } -- set one of these to true to reflect being in group or raid.
 	return ( myParty["raid"] and 1 or nil )
+end
+function IsResting()
+	return true
 end
 function NumTaxiNodes()
 	-- http://www.wowwiki.com/API_NumTaxiNodes
@@ -1142,6 +1157,9 @@ function TaxiNodeGetType( nodeId )
 	-- http://www.wowwiki.com/API_TaxiNodeGetType
 	return TaxiNodes[nodeId].type
 end
+function UnitAffectingCombat( unit )
+	return false
+end
 function UnitAura( unit, auraName )
 	-- @TODO: Look this up to get a better idea of what this function does.
 	-- Returns True or nil
@@ -1177,6 +1195,12 @@ end
 function UnitIsDeadOrGhost( who )
 
 end
+function UnitLevel( who )
+	local unitLevels = {
+		["player"] = 60,
+	}
+	return unitLevels[who]
+end
 function UnitName( who )
 	local unitNames = {
 		["player"] = "testPlayer",
@@ -1200,6 +1224,12 @@ function UnitSex( who )
 		["player"] = 3,
 	}
 	return unitSex[who]
+end
+function UnitXP( who )
+	return 100
+end
+function UnitXPMax( who )
+	return 1000
 end
 ---------  C_WowTokenPublic
 C_WowTokenPublic = {}
