@@ -25,8 +25,19 @@ Should it be
 	- reminder messages will be posted once the timestamp key has passed
 * Register the function to be called for creating reminders
 	- ```Rested.ReminderCallback( Rested.<functionName> )```
-
-
-
-
-index 09daca0..4aac12c 100644
+* Write a function to show a report.
+	- The function will be called for each character tracked
+	- The function will be given ( realm, name, charStruct )
+		- realm and name can be concatinated and colored using ```rn = Rested.FormatName( realm, name )```
+	- Use the data to format a report line, and caluculate a sort value.
+		- The sort value will also be used to show the length of the bar
+		- The sort value should be between 0 and 150, inclusive.
+		- It is probably best to put the realm-name at the right side of the report line
+	- Insert the contents of the sort value, and report string to the table ```Rested.charList```
+		- ```table.insert( Rested.charList( { sortValue, report_str } ) )```
+	- Return 1 if a line is inserted
+	- Return 0 or nil if no line is inserted
+* Create a command to show the report.
+	- Assign the command to ```Rested.commandList```, providing help strings, and a command function to call.
+	- report functions should set ```Rested.reportName``` to a name, and pass the report function name to ```Rested.UIShowReport()```
+		- ```Rested.commandList["commandName"] = {["help"] = {"<optional paremter>","<help string>"}, ["func"] = function() Rested.reportName = "<name>"; Rested.UIShowReport( <reportFunction> ); end }```
