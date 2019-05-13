@@ -240,3 +240,49 @@ Rested.EventCallback( "PLAYER_ENTERING_WORLD", function()
 		end
 	end
 )
+
+Rested.dropDownMenuTable["Stale"] = "stale"
+Rested.commandList["stale"] = {["help"] = {"","Show stale characters"}, ["func"] = function()
+		Rested.reportName = "Stale Characters"
+		Rested.UIShowReport( Rested.StaleCharacters )
+	end
+}
+function Rested.StaleCharacters( realm, name, charStruct )
+	-- takes the realm, name, charStruct
+	-- appends to the global Rested.charList
+	-- returns 1 on success, 0 on fail
+	local rn = Rested.FormatName( realm, name )
+	local stale = Rested_options.maxStale * 86400
+	timeSince = time() - charStruct.updated
+
+	if (timeSince > stale) then
+		Rested.strOut = format( "%d :: %s : %s", charStruct.lvlNow, SecondsToTime(timeSince), rn )
+		table.insert( Rested.charList, {timeSince, Rested.strOut} )
+		return 1
+	end
+	return 0
+end
+
+Rested.dropDownMenuTable["Max"] = "max"
+Rested.commandList["max"] = {["help"] = {"","Show max level characters"}, ["func"] = function()
+		Rested.reportName = "Max Level Characters"
+		Rested.UIShowReport( Rested.MaxCharacters )
+	end
+}
+function Rested.MaxCharacters( realm, name, charStruct )
+	-- takes the realm, name, charStruct
+	-- appends to the global Rested.charList
+	-- returns 1 on success, 0 on fail
+	if( charStruct.lvlNow == Rested.maxLevel ) then
+		timeSince = time() - charStruct.updated
+		rn = Rested.FormatName( realm, name )
+		if (realm == Rested.realm and name == Rested.name) then
+			Rested.strOut = rn
+		else
+			Rested.strOut = SecondsToTime(timeSince) ..": ".. rn
+		end
+		table.insert( Rested.charList, {(timeSince / (Rested_options.maxStale*86400)) * 150, Rested.strOut} )
+		return 1
+	end
+	return 0
+end
