@@ -74,7 +74,7 @@ function MakeCharTable( realm, name, c )
 	end
 	-- Add the guild name to a different struct.
 	if c.guildName then
-		guildList[c.guildName] = realm
+		guildList[c.guildName.."-"..realm] = {["guildName"] = c.guildName, ["realm"] = realm }
 	end
 
 	return charStruct
@@ -100,8 +100,8 @@ function ExportXML()
 			end
 		end
 	end
-	for guildName, realm in pairs( guildList ) do
-		strOut = strOut .. string.format('\t<gi gn="%s" rn="%s" />\n', guildName, realm)
+	for _, st in pairs( guildList ) do
+		strOut = strOut .. string.format('\t<gi gn="%s" rn="%s" />\n', st.guildName, st.realm)
 	end
 
 	strOut = strOut .. "</restedToons>"
@@ -138,8 +138,8 @@ function ExportJSON()
 	strOut = strOut .. '\t"guilds": [\n'
 
 	outTable = {}
-	for guildName, realm in pairs( guildList ) do
-		guildLine = string.format('\t\t{"gn":"%s", "rn":"%s"}', guildName, realm )
+	for _, st in pairs( guildList ) do
+		guildLine = string.format('\t\t{"gn":"%s", "rn":"%s"}', st.guildName, st.realm )
 		table.insert( outTable, guildLine )
 	end
 	strOut = strOut .. table.concat( outTable, ",\n" )
