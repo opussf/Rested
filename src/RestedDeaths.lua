@@ -20,6 +20,7 @@ Rested.commandList["deaths"] = {["help"] = {"","Show number of deaths"}, ["func"
 function Rested.DeathReport( realm, name, charStruct )
 	-- lvl
 	local rn = Rested.FormatName( realm, name )
+	Rested_misc["maxDeaths"] = math.max( Rested_misc["maxDeaths"] or 0, charStruct.deaths or 0 )
 	Rested.strOut = string.format( "%s :: %s",
 			charStruct.deaths or "Unscanned",
 			rn )
