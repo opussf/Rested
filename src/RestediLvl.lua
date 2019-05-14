@@ -23,10 +23,11 @@ Rested.commandList["ilvl"] = { ["help"] = {"","Show iLvl report"}, ["func"] = fu
 }
 function Rested.iLevelReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
+	Rested_misc["maxiLvl"] = math.max( Rested_misc["maxiLvl"] or 0, math.floor( charStruct.iLvl ) )
 	Rested.strOut = string.format( "%d :: %d :: %s",
 			charStruct.iLvl or 0,
 			charStruct.lvlNow,
-			rn)
+			rn )
 	table.insert( Rested.charList, {((charStruct.iLvl or 0) / Rested_misc["maxiLvl"]) * 150, Rested.strOut} )
 	return 1
 end
