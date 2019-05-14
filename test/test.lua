@@ -42,7 +42,7 @@ function test.test_maxLevel_set()
 	-- account max level is set
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertTrue( Rested_options["maxLevel"] )
+	assertTrue( Rested_misc["maxLevel"] )
 end
 function test.test_RealmLevelCreated()
 	-- current realm table is added if it does not exist.

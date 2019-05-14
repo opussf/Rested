@@ -84,7 +84,7 @@ function ExportXML()
 	strOut = strOut .. "<restedToons>\n"
 	strOut = strOut .. "\t<resting>"..restingRate[1].."</resting>\n";
 	strOut = strOut .. "\t<notresting>"..restingRate[0].."</notresting>\n";
-	strOut = strOut .. "\t<maxLevel>"..Rested_options.maxLevel.."</maxLevel>\n";
+	strOut = strOut .. "\t<maxLevel>"..Rested_misc.maxLevel.."</maxLevel>\n";
 	strOut = strOut .. "\t<maxiLvl>"..Rested_misc.maxiLvl.."</maxiLvl>\n";
 	strOut = strOut .. "\t<cacheRate>6</cacheRate>\n"
 
@@ -111,7 +111,7 @@ function ExportJSON()
 	strOut = "{\"restedToons\": {\n"
 	strOut = strOut .. "\t\"resting\": \""..restingRate[1].."\",\n"
 	strOut = strOut .. "\t\"notresting\": \""..restingRate[0].."\",\n"
-	strOut = strOut .. "\t\"maxLevel\": "..Rested_options.maxLevel..",\n"
+	strOut = strOut .. "\t\"maxLevel\": "..Rested_misc.maxLevel..",\n"
 	strOut = strOut .. "\t\"maxiLvl\": "..Rested_misc.maxiLvl..",\n"
 	strOut = strOut .. "\t\"chars\": [\n"
 
