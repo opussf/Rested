@@ -38,34 +38,3 @@ function Rested.AzeriteReport( realm, name, charStruct )
     end
     return 0
 end
-
---[[
-if C_AzeriteItem.HasActiveAzeriteItem() then
-
-        tooltip:AddLine(" ")
-
-        local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-        local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-
-        tooltip:AddDoubleLine(L["Artifact"], "Heart of Azeroth",1, 1, 1, 0, 1, 1)
-        tooltip:AddDoubleLine(L["Artifact Power"],C_AzeriteItem.GetPowerLevel(azeriteItemLocation), 1, 1, 1, 0, 1, 0)
-        tooltip:AddDoubleLine(L["Power to next rank"],totalLevelXP - xp, 1, 1, 1, 1, 0, 0)
-        tooltip:AddDoubleLine(L["Progress in rank %"], string_format("%.1f", xp/totalLevelXP*100) , 1, 1, 1, 0, 1, 0)
-
-end
-
-
-
-local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-if azeriteItemLocation then
-    local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation);
-    print(azeriteItem:GetItemName())
-
-    GetItemInfo("Heart of Azeroth")
-end
-
-azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
-azeriteItem:GetCurrentItemLevel()
-
-
-]]
