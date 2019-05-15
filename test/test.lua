@@ -617,6 +617,7 @@ function test.test_Remove_oneAlt()
 	assertIsNil( Rested_restedState["testRealm"]["otherPlayer"] )
 end
 function test.test_Remove_pruneEmptyRealm()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
@@ -625,6 +626,7 @@ function test.test_Remove_pruneEmptyRealm()
 	assertIsNil( Rested_restedState["otherRealm"] )
 end
 function test.test_Remove_notCurrentToon()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
@@ -633,6 +635,7 @@ function test.test_Remove_notCurrentToon()
 	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
 end
 function test.test_Remove_withRealm()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
@@ -644,6 +647,7 @@ function test.test_Remove_withRealm()
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
 function test.test_Remove_withRealm_colon()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
@@ -655,6 +659,7 @@ function test.test_Remove_withRealm_colon()
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
 function test.test_Remove_realmWithSpace()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["other Realm"] = { ["otherPlayer"] =
@@ -666,6 +671,7 @@ function test.test_Remove_realmWithSpace()
 	assertIsNil( Rested_restedState["other Realm"]["testPlayer"] )
 end
 function test.test_Remove_realmWithPunc()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["Blade's Edge"] = { ["otherPlayer"] =
