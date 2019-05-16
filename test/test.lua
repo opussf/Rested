@@ -695,6 +695,50 @@ function test.test_Remove_realmWithPunc_incomplete()
 	assertIsNil( Rested_restedState["Blade's Edge"]["testPlayer"] )
 end
 
+-- set nag time
+function test.test_NagTime_Set_Day()
+	Rested_options["maxCutoff"] = nil
+	Rested.Command( "setNag 1d" )
+	assertEquals( 86400, Rested_options.maxCutoff )
+end
+function test.test_NagTime_Set_Day_defaultUnit()
+	Rested_options["maxCutoff"] = nil
+	Rested.Command( "setNag 1" )
+	assertEquals( 86400, Rested_options.maxCutoff )
+end
+function test.test_NagTime_Set_Hour()
+	Rested_options["maxCutoff"] = nil
+	Rested.Command( "setNag 1h" )
+	assertEquals( 3600, Rested_options.maxCutoff )
+end
+function test.test_NagTime_Set_2Values()
+	Rested_options["maxCutoff"] = nil
+	Rested.Command( "setNag 1d1m" )
+	assertEquals( 86460, Rested_options.maxCutoff )
+end
+
+-- set stale time
+function test.test_StaleTime_Set_Day()
+	Rested_options["maxStale"] = nil
+	Rested.Command( "setstale 1d" )
+	assertEquals( 86400, Rested_options.maxStale )
+end
+function test.test_StaleTime_Set_Day_defaultUnit()
+	Rested_options["maxStale"] = nil
+	Rested.Command( "setstale 1" )
+	assertEquals( 86400, Rested_options.maxStale )
+end
+function test.test_StaleTime_Set_Week()
+	Rested_options["maxStale"] = nil
+	Rested.Command( "setstale 1w" )
+	assertEquals( 604800, Rested_options.maxStale )
+end
+
+
+
+
+
+
 
 -- Rested Export tests
 function myPrint( str )
