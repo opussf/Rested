@@ -16,6 +16,7 @@ COLOR_END = "|r"
 
 -- Saved Variables
 Rested_restedState = {}
+Rested_options = {}
 Rested_misc = {}
 
 Rested = {}
@@ -188,6 +189,63 @@ function Rested.PruneByAge( struct, ageSeconds )
 		end
 	end
 end
+function Rested.DecodeTime( strIn, defaultUnit )
+	-- take a string (1d1h) and convert to seconds, return the seconds
+	local multipliers = {[" "]=1, ["s"]=1, ["m"]=60, ["h"]= 3600, ["d"]= 86400, ["w"]= 604800 }
+	local total, current = 0, 0
+	for c in strIn:gmatch(".") do
+		if( multipliers[c] ) then
+			current = current * multipliers[c]
+			total = total + current
+			current = 0
+			defaultUnit = nil  -- clear this if a unit is given
+		elseif( tonumber(c) ~= nil ) then
+			current = ( current * 10 ) + tonumber( c )
+		end
+	end
+	total = total + current
+	if( defaultUnit and multipliers[defaultUnit] ) then
+		total = total * multipliers[defaultUnit]
+	end
+
+	return total
+end
+-- remove
+-- There is always the requirement to remove alts no longer being tracked
+function Rested.RemoveCharacter( param )
+	param = string.upper( param )
+	-- character name can only be letters, which have been uppered.... staying consistent
+	-- realm name just needs to be seperated with a '-', but is the rest of the line
+	_, _, dname, drealm = strfind( param, "(%u+)[-|:]*(.*)" )
+	if( strlen( drealm ) == 0 ) then drealm = nil end
+	--print( "charName: "..dname.." realmName: "..( drealm or "nil" ) )
+
+	for realm, v in pairs( Rested_restedState ) do
+		local realmCharCount = 0
+		local realmCharRemoved = 0
+		for name, _ in pairs( Rested_restedState[realm] ) do
+			-- check to see if the name matches, with a possible partial realm name match
+			realmCharCount = realmCharCount + 1
+			if( dname == string.upper( name ) and ( string.find( string.upper( realm ), ( drealm or "" ) ) ) )  then
+				-- make sure it is not the current character
+				if( ( dname == string.upper( Rested.name ) and realm == Rested.realm ) ) then
+					-- matching the positive here
+					-- the inverse boolean would be a bit crazy to follow
+					-- not ( x and y )  == (not x or not y)
+				else
+					Rested.Print( COLOR_RED.."Removing "..Rested.FormatName( name, realm ).." from Rested."..COLOR_END, false )
+					Rested_restedState[realm][name] = nil
+					realmCharRemoved = realmCharRemoved + 1
+				end
+			end
+		end
+		if( realmCharCount - realmCharRemoved == 0 ) then
+			Rested.Print( COLOR_RED.."Pruning realm: "..realm..COLOR_END )
+			Rested_restedState[realm] = nil
+		end
+	end
+end
+Rested.commandList["rm"] = { ["func"] = Rested.RemoveCharacter, ["help"] = { "name[-realm]", "Remove name[-realm] from Rested." } }
 
 -- event callback for modules
 function Rested.InitCallback( callback )
@@ -324,7 +382,7 @@ function Rested.VARIABLES_LOADED( ... )
 	if not Rested_options.ignoreTime then
 		Rested_options.ignoreTime = 3600 * 24 * 7
 	end
-	Rested_options["maxLevel"] = Rested.maxLevel
+	Rested_misc["maxLevel"] = Rested.maxLevel
 
 	-- find or init the realm
 	if not Rested_restedState[Rested.realm] then
