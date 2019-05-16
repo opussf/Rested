@@ -1085,6 +1085,8 @@ function RegisterAddonMessagePrefix( prefix )
 	-- Cannot be empty.
 	-- What does this do?  In a bigger system, it could allow random messages to be generated
 end
+function RequestTimePlayed()
+end
 function SecondsToTime( secondsIn, noSeconds, notAbbreviated, maxCount )
 	-- http://www.wowwiki.com/API_SecondsToTime
 	-- formats seconds to a readable time  -- WoW omits seconds if 0 even if noSeconds is false

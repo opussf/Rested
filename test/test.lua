@@ -37,6 +37,9 @@ function test.before()
 end
 function test.after()
 end
+function test.test_printHelp()
+	Rested.Command( "help" )
+end
 -- VARIABLES_LOADED Inits data
 function test.test_maxLevel_set()
 	-- account max level is set
@@ -605,6 +608,11 @@ function test.test_Mounts_Report_TwoMounts_TooOldMount()
 	assertEquals( 1, #Rested.charList )
 	assertEquals( 75, Rested.charList[1][1] )
 end
+function test.test_Mounts_Set_HistoryAge_Day()
+	Rested_options.mountHistoryAge = 259200
+	Rested.Command( "setMountAge 1d" )
+	assertEquals( 86400, Rested_options.mountHistoryAge )
+end
 
 -- remove
 function test.test_Remove_oneAlt()
@@ -697,42 +705,76 @@ end
 
 -- set nag time
 function test.test_NagTime_Set_Day()
-	Rested_options["maxCutoff"] = nil
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
 	Rested.Command( "setNag 1d" )
-	assertEquals( 86400, Rested_options.maxCutoff )
+	assertEquals( 86400, Rested_options.nagStart )
 end
 function test.test_NagTime_Set_Day_defaultUnit()
-	Rested_options["maxCutoff"] = nil
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
 	Rested.Command( "setNag 1" )
-	assertEquals( 86400, Rested_options.maxCutoff )
+	assertEquals( 86400, Rested_options.nagStart )
 end
 function test.test_NagTime_Set_Hour()
-	Rested_options["maxCutoff"] = nil
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
 	Rested.Command( "setNag 1h" )
-	assertEquals( 3600, Rested_options.maxCutoff )
+	assertEquals( 3600, Rested_options.nagStart )
 end
 function test.test_NagTime_Set_2Values()
-	Rested_options["maxCutoff"] = nil
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
 	Rested.Command( "setNag 1d1m" )
-	assertEquals( 86460, Rested_options.maxCutoff )
+	assertEquals( 86460, Rested_options.nagStart )
 end
+function test.test_NagTime_Set_CannotBeGreaterThanStale()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setNag 10d1m" )
+	assertEquals( 604800, Rested_options.nagStart )
+end
+function test.test_NagTime_Set_CanBeEqualToStale()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setNag 10d" )
+	assertEquals( 864000, Rested_options.nagStart )
+end
+
 
 -- set stale time
 function test.test_StaleTime_Set_Day()
-	Rested_options["maxStale"] = nil
-	Rested.Command( "setstale 1d" )
-	assertEquals( 86400, Rested_options.maxStale )
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setstale 9d" )
+	assertEquals( 777600, Rested_options.staleStart )
 end
 function test.test_StaleTime_Set_Day_defaultUnit()
-	Rested_options["maxStale"] = nil
-	Rested.Command( "setstale 1" )
-	assertEquals( 86400, Rested_options.maxStale )
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setstale 12" )
+	assertEquals( 1036800, Rested_options.staleStart )
 end
 function test.test_StaleTime_Set_Week()
-	Rested_options["maxStale"] = nil
-	Rested.Command( "setstale 1w" )
-	assertEquals( 604800, Rested_options.maxStale )
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setstale 2w" )
+	assertEquals( 1209600, Rested_options.staleStart )
 end
+function test.test_StaleTime_Set_CannotBeLessThanNag()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setstale 5d" )
+	assertEquals( 864000, Rested_options.staleStart )
+end
+function test.test_StaleTime_Set_CanBeEqualToNag()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setstale 7d" )
+	assertEquals( 604800, Rested_options.staleStart )
+end
+
+
 
 
 
