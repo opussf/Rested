@@ -774,7 +774,11 @@ function test.test_StaleTime_Set_CanBeEqualToNag()
 	assertEquals( 604800, Rested_options.staleStart )
 end
 
-
+-- Professions
+require "RestedProfessions"
+function test.test_Profession_01()
+	Rested.SaveProfessionInfo()
+end
 
 
 

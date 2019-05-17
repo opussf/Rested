@@ -18,3 +18,4 @@ RestediLvl.lua
 RestedMounts.lua
 
 RestedAzerite.lua
+RestedProfessions.lua
