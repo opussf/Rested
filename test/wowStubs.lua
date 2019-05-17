@@ -9,6 +9,13 @@
 -- This is not intended to replace WoWBench, but to provide a stub structure for
 --     automated unit tests.
 
+actionLog = {
+}
+-- append actions to the log to track actions that may not have an other sideeffects.
+-- record the function calls
+-- [1] = "DoEmote(....)""
+
+
 local itemDB = {
 }
 
@@ -296,7 +303,7 @@ function getglobal( globalStr )
 	-- set the globals table to return what is needed from the 'globals'
 	return globals[ globalStr ]
 end
-function hooksecurefunc(externalFunc, internalFunc)
+function hooksecurefunc( externalFunc, internalFunc )
 end
 function strsplit( delim, subject, pieces )
 	-- delim is a string that defines all the bytes that may split the string
@@ -342,10 +349,11 @@ ITEM_BIND_ON_PICKUP="Binds when picked up"
 
 -- WOW's frames
 Frame = {
+		["__isShown"] = true,
 		["Events"] = {},
-		["Hide"] = function() end,
-		["Show"] = function() end,
-		["IsVisible"] = function() return(true) end,
+		["Hide"] = function( self ) self.__isShown = false; end,
+		["Show"] = function( self ) self.__isShown = true; end,
+		["IsVisible"] = function( self ) return( self.__isShown ) end,
 		["RegisterEvent"] = function(self, event) self.Events[event] = true; end,
 		["SetPoint"] = function() end,
 		["UnregisterEvent"] = function(self, event) self.Events[event] = nil; end,
@@ -358,9 +366,11 @@ Frame = {
 		["SetMinMaxValues"] = function() end,
 		["SetValue"] = function() end,
 		["SetStatusBarColor"] = function() end,
-
+		["SetScript"] = function() end,
+		["SetAttribute"] = function() end,
 }
 FrameGameTooltip = {
+		["HookScript"] = function( self, callback ) end,
 		["GetName"] = function(self) return self.name end,
 		["SetOwner"] = function(self, newOwner) end, -- this is only for tooltip frames...
 		["ClearLines"] = function(self) end, -- this is only for tooltip frames...
@@ -371,9 +381,50 @@ FrameGameTooltip = {
 			_G[frameName.."TextLeft4"] = CreateFontString(frameName.."TextLeft4")
 		end,
 }
+Units = {
+	["player"] = {
+		["class"] = "Warlock",
+		["faction"] = {"Alliance", "Alliance"},
+		["name"] = "testPlayer",
+		["race"] = "Human",
+		["realm"] = "testRealm",
+		["realmRelationship"] = 1,  -- same realm
+		["sex"] = 3,
+		["currentHealth"] = 100000,
+		["maxHealth"] = 123456,
+	},
+	["sameRealmUnit"] = {
+		["class"] = "Warrior",
+		["faction"] = {"Alliance", "Alliance"},
+		["name"] = "sameRealmPlayer",
+		["race"] = "Gnome",
+		["realm"] = "testPlayer",
+		["realmRelationship"] = 1,
+		["sex"] = 2,
+	},
+	["coalescedRealmUnit"] = {
+		["class"] = "Monk",
+		["faction"] = {"Alliance", "Alliance"},
+		["name"] = "coalescedUnit",
+		["race"] = "Pandarian",
+		["realm"] = "coalescedRealm",
+		["realmRelationship"] = 2,
+	},
+	["connectedRealmUnit"] = {
+		["class"] = "Mage",
+		["faction"] = {"Alliance", "Alliance"},
+		["name"] = "connectedUnit",
+		["realm"] = "connectedRealm",
+		["realmRelationship"] = 3,
+	},
+
+}
 function CreateFrame( frameType, frameName, parentFrame, inheritFrame )
 --	print("CreateFrame: needing a new frame of type: "..(frameType or "nil"))
-	newFrame = Frame  -- deep copy of this?
+	newFrame = {}
+	for k,v in pairs( Frame ) do
+		newFrame[k] = v
+	end
 	if frameType and _G["Frame"..frameType] then  -- construct the name of the table to pull from, use _G to reference it.
 		for k, f in pairs(_G["Frame"..frameType]) do  -- add the methods in the sub frame to the returned frame
 			if k == "init" then  -- check to see if the key is 'init', which is a function to run when creating the Frame
@@ -387,8 +438,7 @@ function CreateFrame( frameType, frameName, parentFrame, inheritFrame )
 	--http://www.wowwiki.com/API_CreateFrame
 	return newFrame
 end
-
-function CreateFontString(name,...)
+function CreateFontString( name, ... )
 	--print("Creating new FontString: "..name)
 	FontString = {}
 	--	print("1")
@@ -402,8 +452,7 @@ function CreateFontString(name,...)
 	--print("FontString made?")
 	return FontString
 end
-
-function CreateStatusBar(name,...)
+function CreateStatusBar( name, ... )
 	StatusBar = {}
 	for k,v in pairs(Frame) do
 		StatusBar[k] = v
@@ -415,7 +464,6 @@ function CreateStatusBar(name,...)
 
 	return StatusBar
 end
-
 Slider = {
 		["GetName"] = function() return ""; end,
 		["SetText"] = function(text) end,
@@ -430,6 +478,31 @@ function CreateSlider( name, ... )
 	Slider["GetName"] = function(self) return self.name; end
 	Slider["SetText"] = function(text) end
 	return Slider
+end
+CheckButton = {
+		["SetChecked"] = function(self,value) self.isChecked=value; end,
+}
+function CreateCheckButton( name, ... )
+	me = {}
+	for k,v in pairs(CheckButton) do
+		me[k] = v
+	end
+	me.name = name
+	me[name.."Text"] = CreateFontString(name.."Text")
+	return me
+end
+EditBox = {
+		["SetText"] = function(self,text) self.text=text; end,
+		["SetCursorPosition"] = function(self,pos) self.cursorPosition=pos; end,
+
+}
+function CreateEditBox( name, ... )
+	me = {}
+	for k,v in pairs(EditBox) do
+		me[k] = v
+	end
+	me.name = name
+	return me
 end
 
 function ChatFrame_AddMessageEventFilter()
@@ -477,7 +550,15 @@ function CloseMail()
 	-- @TODO - Write this
 end
 ]]
+function CombatLogGetCurrentEventInfo()
+	-- return much the same info as used to be passed to the LOG_UNFILTERD event
+	-- set CombatLogCurrentEventInfo = {} to return specific data.
+	-- timestamp,event,hideCaster,srcGUID,srcName,srcFlags,srcFlags2,
+	--		targetGUID,targetName,targetFlags,targetFlags2,spellId = CombatLogGetCurrentEventInfo()
 
+	return unpack( CombatLogCurrentEventInfo )
+
+end
 function CombatTextSetActiveUnit( who )
 	-- http://www.wowwiki.com/API_CombatTextSetActiveUnit
 	-- @TODO - Write this
@@ -489,7 +570,10 @@ function CursorHasItem()
 		return true
 	end
 end
-function DoEmote( emote )
+function DoEmote( emote, target )
+	table.insert( actionLog,
+			"DoEmote( "..(emote or "nil")..", "..(target or "nil").." )"
+	)
 	-- not tested as the only side effect is the character doing an emote
 end
 function EquipItemByName( itemIn, slotIDIn )
@@ -609,7 +693,7 @@ function GetAchievementNumCriteria( achievementID )
 		return #Achievements[achievementID]["criteria"]
 	end
 end
-function GetAddOnMetadata(addon, field)
+function GetAddOnMetadata( addon, field )
 	-- returns addonData[field] for 'addon'
 	-- local addonData = { ["version"] = "1.0", }
 	return addonData[field]
@@ -720,6 +804,13 @@ function GetFactionInfo( index )
 	local f = FactionInfo[ index ]
 	return f.name, f.description, f.standingID, f.bottomValue, f.topValue, f.earnedValue, f.atWarWith, f.canToggleAtWar,
 			f.isHeader, f.isCollapsed, f.hasRep, f.isWatched, f.isChild, f.factionID, f.hasBonusRepGain, f.canBeLFGBonus
+end
+function GetGuildInfo( unitID )
+		-- http://wowprogramming.com/docs/api/GetGuildInfo
+		-- Returns: guildName, guildRankName, guildRankIndex
+		if myGuild and myGuild.name then
+			return myGuild.name, "Rank Name", 2
+		end
 end
 function GetHaste()
 	return 15.42345
@@ -844,7 +935,8 @@ Returns:
 ]]
 end
 function GetArchaeologyRaceInfo( index )
---[[]
+--[[
+
 raceName, raceTexture, raceItemID, numFragmentsCollected, numFragmentsRequired, maxFragments = GetArchaeologyRaceInfo(raceIndex)
 
 Arguments:
@@ -916,6 +1008,11 @@ end
 --	for _ in pairs( TradeSkillItems ) do count = count + 1 end
 --	return count
 --end
+function GetPlayerInfoByGUID( playerGUID )
+	-- http://wowprogramming.com/docs/api/GetPlayerInfoByGUID
+	-- localClass, englishClass, localRace, englishRace, gender, name, realm = GetPlayerInfoByGUID( playerGUID )
+	return "Warlock", "Warlock", "Human", "Human", 3, "testPlayer", "testRealm"
+end
 function GetRaidRosterInfo( raidIndex )
 	-- http://www.wowwiki.com/API_GetRaidRosterInfo
 	-- returns name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML
@@ -992,6 +1089,10 @@ function GetXPExhaustion()
 end
 function InterfaceOptionsFrame_OpenToCategory()
 end
+function IsInGroup( groupType )
+	-- http://wowprogramming.com/docs/api/IsInGroup
+	return true
+end
 function IsInGuild()
 	-- http://www.wowwiki.com/API_IsInGuild
 	-- 1, nil boolean return of being in guild
@@ -1009,6 +1110,8 @@ function IsInRaid()
 end
 function IsResting()
 	return true
+end
+function LoadAddOn()
 end
 function NumTaxiNodes()
 	-- http://www.wowwiki.com/API_NumTaxiNodes
@@ -1165,6 +1268,9 @@ function SendChatMessage( msg, chatType, language, channel )
 	-- returns nil
 	-- @TODO: Expand this
 end
+function BNSendWhisper( id, msg )
+	-- @TODO: Expand this
+end
 function TaxiNodeCost( nodeId )
 	-- http://www.wowwiki.com/API_TaxiNodeCost
 	return TaxiNodes[nodeId].cost
@@ -1193,24 +1299,15 @@ function UnitAura( unit, auraName )
 	--print("UnitAura did not find "..auraName)
 end
 function UnitClass( who )
-	local unitClasses = {
-		["player"] = "Warlock",
-	}
-	return unitClasses[who]
+	return Units[who].class
 end
 function UnitHealthMax( who )
 	-- http://wowwiki.wikia.com/wiki/API_UnitHealth
-	local unitHealth = {
-		["player"] = {["current"] = 100000, ["max"] = 123456},
-	}
-	return unitHealth[who].max
+	return Units[who].maxHealth
 end
 function UnitFactionGroup( who )
 	-- http://www.wowwiki.com/API_UnitFactionGroup
-	local unitFactions = {
-		["player"] = {"Alliance", "Alliance"}
-	}
-	return unpack( unitFactions[who] )
+	return unpack( Units[who].faction )
 end
 function UnitIsDeadOrGhost( who )
 
@@ -1222,10 +1319,7 @@ function UnitLevel( who )
 	return unitLevels[who]
 end
 function UnitName( who )
-	local unitNames = {
-		["player"] = "testPlayer",
-	}
-	return unitNames[who]
+	return Units[who].name
 end
 function UnitPowerMax( who, powerType )
 	-- http://wowwiki.wikia.com/wiki/API_UnitPowerMax
@@ -1233,17 +1327,19 @@ function UnitPowerMax( who, powerType )
 	return 12345
 end
 function UnitRace( who )
-	local unitRaces = {
-		["player"] = "Human",
-	}
-	return unitRaces[who]
+	return Units[who].race
+end
+function UnitRealmRelationship( who )
+	-- https://wow.gamepedia.com/API_UnitRealmRelationship
+	-- returns
+	-- 1 = same realm
+	-- 2 = coalesced and unconnected realms
+	-- 3 = connected realms
+	return Units[who].realmRelationship
 end
 function UnitSex( who )
 	-- 1 = unknown, 2 = Male, 3 = Female
-	local unitSex = {
-		["player"] = 3,
-	}
-	return unitSex[who]
+	return Units[who].sex
 end
 function UnitXP( who )
 	return 100
@@ -1301,3 +1397,9 @@ end
 
 --/script for k,v in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do print(k..":"..v) end
 --/script for k,v in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do print(k..":"..v) end
+
+----------
+
+function IsQuestFlaggedCompleted( questID )
+	return nil
+end
