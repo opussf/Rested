@@ -844,8 +844,7 @@ Returns:
 ]]
 end
 function GetArchaeologyRaceInfo( index )
---[[
-
+--[[]
 raceName, raceTexture, raceItemID, numFragmentsCollected, numFragmentsRequired, maxFragments = GetArchaeologyRaceInfo(raceIndex)
 
 Arguments:
@@ -862,6 +861,25 @@ Returns:
     maxFragments - Maximum number of fragments that can be carried (number)
 ]]
 	return "Dwarf", "", 384, 0, 100, 200
+end
+function GetProfessions()
+	-- prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions();
+	return 5, 6, 7, 8, 9
+end
+ProfessionInfo = {
+	[5] = { "prof1", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism prof1" },
+	[6] = { "prof2", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism prof2" },
+	[7] = { "Archaeology", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism Arch" },
+	[8] = { "Fishing", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism Fishing" },
+	[9] = { "Cooking", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism Cooking" },
+}
+function GetProfessionInfo( index )
+	--[[
+	name, icon, skillLevel, maxSkillLevel, numAbilities, spelloffset,
+    skillLine, skillModifier, specializationIndex,
+    specializationOffset = GetProfessionInfo(index)
+	]]
+	return unpack( ProfessionInfo[index] )
 end
 function GetNumEquipmentSets()
 	-- http://www.wowwiki.com/API_GetNumEquipmentSets
