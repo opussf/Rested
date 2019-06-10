@@ -118,10 +118,9 @@ function Rested.Cooldowns( realm, name, charStruct )
 			recipeSum[struct.category].count = recipeSum[struct.category].count + 1
 		end
 		for category, struct in pairs( recipeSum ) do
-			Rested.strOut = string.format( "%s %s : %s - %s",
+			Rested.strOut = string.format( "%s %s : %s",
 					date( "%m/%d %H:%M", struct.ts ),
 					rn,
-					struct.count,
 					category )
 			table.insert( Rested.charList,
 					{ struct.pc, Rested.strOut } )
@@ -130,6 +129,25 @@ function Rested.Cooldowns( realm, name, charStruct )
 		return count
 	end
 end
+
+function Rested.ReminderCooldowns( realm, name, charStruct )
+	returnStruct = {}
+	if( charStruct.tradeCD ) then
+		local recipeSum = {}
+		for recipeID, struct in pairs( charStruct.traceCD ) do
+			recipeSum[struct.category] = struct.cdTS
+		end
+		for category, cdTS in pairs( recipeSum ) do
+			if( not returnStruct[cdTS] ) then
+				returnStruct[cdTS] = {}
+			end
+			table.insert( returnStruct[cdTS],
+					string.format( "%s has available cooldowns for %s", Rested.FormatName( realm, name, false ), category ) )
+		end
+	end
+	return returnStruct
+end
+Rested.ReminderCallback( Rested.ReminderCooldown )
 
 --[[
 175880
