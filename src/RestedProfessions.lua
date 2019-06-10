@@ -16,6 +16,7 @@ function Rested.ScanTradeSkill()
 	local recipeTable = C_TradeSkillUI.GetAllRecipeIDs()
 	local recipeInfoTable = {}
 	local categoryInfoTable = {}
+	Rested.tradeskillCategorys = Rested.tradeskillCategorys or {}
 
 	for _,recipeID in pairs( recipeTable ) do
 		cdSeconds, hasCD, num3, num4 = C_TradeSkillUI.GetRecipeCooldown( recipeID )
@@ -26,12 +27,20 @@ function Rested.ScanTradeSkill()
 		rLink = C_TradeSkillUI.GetRecipeItemLink( recipeID )
 		Rested.me["tradeCD"] = Rested.me["tradeCD"] or {}
 
---[[
-		if cdSeconds then
-			print( recipeID..":"..rLink..":"..cdSeconds..":"..date( "%x %X", time() + cdSeconds ) )
-		end
-]]
 		if cdSeconds and cdSeconds > 0 then
+			if( not Rested.tradeskillCategorys[recipeInfoTable.categoryID] ) then
+				while( categoryInfoTable.numIndents ~= 0 ) do
+					categoryInfoTable = C_TradeSkillUI.GetCategoryInfo( categoryInfoTable.parentCategoryID )
+				end
+				Rested.tradeskillCategorys[recipeInfoTable.categoryID] = categoryInfoTable.name
+			end
+
+			Rested.me.tradeCD[recipeID] = {}
+			Rested.me.tradeCD[recipeID].category = Rested.tradeskillCategorys[recipeInfoTable.categoryID]
+			Rested.me.tradeCD[recipeID].cdTS = math.ceil( time() + cdSeconds )
+			Rested.me.tradeCD[recipeID].name = recipeInfoTable.name
+--[[
+
 			Rested.me.tradeCD[rLink] = math.ceil( time() + cdSeconds )
 			Rested.me.tradeCD[recipeID] = {}
 			for k, v in pairs( recipeInfoTable ) do
@@ -55,8 +64,8 @@ function Rested.ScanTradeSkill()
 					end
 				end
 			end
-		elseif Rested.me.tradeCD[rLink] then
-			Rested.me.tradeCD[rLink] = nil
+]]
+		elseif Rested.me.tradeCD[recipeID] then
 			Rested.me.tradeCD[recipeID] = nil
 		end
 	end
@@ -65,7 +74,7 @@ function Rested.PruneTradeSkill()
 	if Rested.me.tradeCD then
 		local count = 0
 		for k, v in pairs( Rested.me.tradeCD ) do
-			if( v < time() ) then
+			if( v.cdTS < time() ) then
 				Rested.me.tradeCD[k] = nil
 			else
 				count = count + 1
@@ -99,15 +108,23 @@ function Rested.Cooldowns( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
 	local count = 0
 	if( charStruct.tradeCD ) then
-		for link, ts in pairs( charStruct.tradeCD ) do
-			local s = ( ( 86400 - ( ts - time() ) ) / 86400 ) * 150
+		local recipeSum = {}
+		for recipeID, struct in pairs( charStruct.tradeCD ) do
+			recipeSum[struct.category] = recipeSum[struct.category] or
+					{ ["pc"] = ( ( 86400 - ( struct.cdTS - time() ) ) / 86400 ) * 150,
+					["ts"] = struct.cdTS,
+					["count"] = 0 }
 
-			Rested.strOut = string.format( "%s %s : %s",
-					date( "%x %X", ts ),
+			recipeSum[struct.category].count = recipeSum[struct.category].count + 1
+		end
+		for category, struct in pairs( recipeSum ) do
+			Rested.strOut = string.format( "%s %s : %s - %s",
+					date( "%m/%d %H:%M", struct.ts ),
 					rn,
-					link )
+					struct.count,
+					category )
 			table.insert( Rested.charList,
-					{ s, Rested.strOut } )
+					{ struct.pc, Rested.strOut } )
 			count = count + 1
 		end
 		return count
