@@ -14,10 +14,14 @@ function Rested.SaveProfessionInfo()
 end
 function Rested.ScanTradeSkill()
 	local recipeTable = C_TradeSkillUI.GetAllRecipeIDs()
+	local recipeInfoTable = {}
+	local categoryInfoTable = {}
 
 	for _,recipeID in pairs( recipeTable ) do
 		cdSeconds, hasCD, num3, num4 = C_TradeSkillUI.GetRecipeCooldown( recipeID )
 		-- 1=secondsLeft / nil, 2=False/true, 3 = 0, 4= 0
+		recipeInfoTable = C_TradeSkillUI.GetRecipeInfo( recipeID, recipeInfoTable )
+		categoryInfoTable = C_TradeSkillUI.GetCategoryInfo( recipeInfoTable.categoryID, categoryInfoTable )
 
 		rLink = C_TradeSkillUI.GetRecipeItemLink( recipeID )
 		Rested.me["tradeCD"] = Rested.me["tradeCD"] or {}
@@ -29,8 +33,31 @@ function Rested.ScanTradeSkill()
 ]]
 		if cdSeconds and cdSeconds > 0 then
 			Rested.me.tradeCD[rLink] = math.ceil( time() + cdSeconds )
+			Rested.me.tradeCD[recipeID] = {}
+			for k, v in pairs( recipeInfoTable ) do
+				Rested.me.tradeCD[recipeID][k] = v
+			end
+			Rested.me.tradeCD[recipeID]["categoryIDInfo"] = {}
+			for k, v in pairs( categoryInfoTable ) do
+				Rested.me.tradeCD[recipeID].categoryIDInfo[k] = v
+			end
+			if( categoryInfoTable.parentCategoryID ) then
+				categoryInfoTable = C_TradeSkillUI.GetCategoryInfo( categoryInfoTable.parentCategoryID, categoryInfoTable )
+				Rested.me.tradeCD[recipeID]["categoryIDInfo"]["parentCategoryIDInfo"] = {}
+				for k, v in pairs( categoryInfoTable ) do
+					Rested.me.tradeCD[recipeID].categoryIDInfo.parentCategoryIDInfo[k] = v
+				end
+				if( categoryInfoTable.parentCategoryID ) then
+					categoryInfoTable = C_TradeSkillUI.GetCategoryInfo( categoryInfoTable.parentCategoryID, categoryInfoTable )
+					Rested.me.tradeCD[recipeID]["categoryIDInfo"]["parentCategoryIDInfo"]["parentCategoryIDInfo"] = {}
+					for k, v in pairs( ( categoryInfoTable or {} ) ) do
+						Rested.me.tradeCD[recipeID].categoryIDInfo.parentCategoryIDInfo.parentCategoryIDInfo[k] = v
+					end
+				end
+			end
 		elseif Rested.me.tradeCD[rLink] then
 			Rested.me.tradeCD[rLink] = nil
+			Rested.me.tradeCD[recipeID] = nil
 		end
 	end
 end
@@ -107,6 +134,8 @@ end
 
 
 https://www.wowinterface.com/forums/showthread.php?t=53953
+
+https://wow.gamepedia.com/API_C_TradeSkillUI.GetRecipeInfo
 
 
 
