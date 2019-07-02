@@ -16,6 +16,7 @@ RestedPlayed.lua
 RestedGuild.lua
 RestediLvl.lua
 RestedMounts.lua
+RestedGold.lua
 
 RestedAzerite.lua
 RestedProfessions.lua
