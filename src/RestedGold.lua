@@ -1,7 +1,7 @@
 -- RestedGold.lua
 
 function Rested.SaveGold()
-	Rested.me.gold = GetMoney()
+	Rested.me.gold = GetMoney() or 0
 end
 
 Rested.InitCallback( Rested.SaveGold )
@@ -24,6 +24,6 @@ function Rested.GoldReport( realm, name, charStruct )
 
 	Rested.strOut = string.format( "%sg %ss %sc :: %s",
 			g, s, c, rn )
-	table.insert( Rested.charList, { ( ( charStruct.gold and charStruct.gold or 0 ) / Rested.goldMax ) * 150, Rested.strOut } );
-	return charStruct.gold and charStruct.gold / 10000 or 0
+	table.insert( Rested.charList, { ( ( charStruct.gold and charStruct.gold or 0 ) / Rested.goldMax ) * 150, Rested.strOut } )
+	return 1
 end
