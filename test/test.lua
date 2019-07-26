@@ -780,6 +780,19 @@ function test.test_Profession_01()
 	Rested.SaveProfessionInfo()
 end
 
+-- gold
+require "RestedGold"
+function test.test_Gold_01()
+	Rested.SaveGold()
+end
+function test.test_Gold_Report_01()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+
+
+
+end
 
 
 
