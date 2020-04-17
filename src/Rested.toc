@@ -20,3 +20,4 @@ RestedGold.lua
 
 RestedAzerite.lua
 RestedProfessions.lua
+RestedAuctions.lua

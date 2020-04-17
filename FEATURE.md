@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## Auctions
+
+Track auctions
+
 ## Profession CDs
 
 ### What I can get from the system:
