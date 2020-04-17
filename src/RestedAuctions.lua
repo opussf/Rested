@@ -21,6 +21,7 @@ function Rested.AuctionCreate( AuctionId )
     Rested.Print( "AuctionAuction( "..AuctionId.." )" )
     Rested.me["Auctions"] = Rested.me["Auctions"] or {}
     Rested.me.Auctions[AuctionId] = { ["created"] = time() }
+    Rested.AuctionsClear()
 end
 
 Rested.InitCallback( Rested.AuctionsClear )
