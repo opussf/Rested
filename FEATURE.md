@@ -1,5 +1,63 @@
 # Feature document for Rested
 
+## Profession CDs
+
+### What I can get from the system:
+Scanning of the TradeSkill window can provide what recipes have a CD.
+This CD seems to be the number of seconds till CD.
+In practice, this seems to report seconds till midnight on that server.
+
+Getting the link for the recipe item returns the item created, but this can be an incomplete link ([name]).
+Using the link as a key is probably just really bad.
+
+Many recipes can share CDs.
+Tracking all the CDs might not be the best idea.
+
+### What do I want to track:
+It seems that knowing that [bleh] has a CD might not be important.
+Only that 'char' has a CD.
+
+Knowing too many recipes leads to an awkward report.
+
+tradeCD.Alchemy[ts] = <count>
+
+tradeCD[ts].Alchemy = <count>
+tradeCD[ts].Leatherworking = <count>
+
+tradeCD_ts_Alchemy = 5
+
+tradeCD_Alchemy_count = 5
+tradeCD_Alchemy_TS = #####
+
+tradeCD.Alchemy = { ["count"] = 5, ["TS"] = ##### }
+tradeCD.LeatherWorking = { ["count"] = 2, ["TS"] = ##### }
+
+
+tradeCD.Alchemy = ts
+tradeCD.LeatherWorking = ts
+
+
+
+
+### What would be helpful?
+The intention of this addon is to be reminded of toons that should be visited, for one reason or another.
+
+Knowing that a toon has a profession CD that is ready to be used is what I'm looking for.
+If I can figure out how to get the profession of the CDs, I could report the number of CDs for that profession.
+
+[Alchemy - realm-name : 5   |    ]
+[Leatherworking |- realm-name : 2]
+
+### Heavy usage of the alert system might be best here.
+'realm-name has 5 cooldowns ready in Alchemy'
+'realm-name has 2 cooldowns ready in Leatherworking'
+
+
+
+
+
+
+
 ## Reminder system
 
 The reminder system allows this addon to register reminders to be displayed to the user.
