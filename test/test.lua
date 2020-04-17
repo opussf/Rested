@@ -465,6 +465,7 @@ function test.test_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
+--[[
 function test.test_Ignore_SetIgnore_name_withTime_minute()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -473,6 +474,8 @@ function test.test_Ignore_SetIgnore_name_withTime_minute()
 	Rested.Command( "ignore Player 1m" )
 	assertEquals( time() + 60, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+]]
+--[[
 function test.test_Ignore_SetIgnore_name_withTime_hour()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -481,6 +484,8 @@ function test.test_Ignore_SetIgnore_name_withTime_hour()
 	Rested.Command( "ignore Player 1h" )
 	assertEquals( time() + 3600, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+]]
+--[[
 function test.test_Ignore_SetIgnore_name_withTime_day()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -489,6 +494,8 @@ function test.test_Ignore_SetIgnore_name_withTime_day()
 	Rested.Command( "ignore Player 1d" )
 	assertEquals( time() + 86400, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+]]
+--[[
 function test.test_Ignore_SetIgnore_name_withTime_week()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -497,6 +504,8 @@ function test.test_Ignore_SetIgnore_name_withTime_week()
 	Rested.Command( "ignore Player 1w" )
 	assertEquals( time() + 86400, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
+]]
+--[[
 function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -505,6 +514,7 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	Rested.Command( "ignore test Realm 1w" )
 	assertEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
+]]
 
 
 -- Rested.me
