@@ -1,6 +1,34 @@
 -- RestedBase.lua
 -- Track 'base' data.
 
+--[[
+RF.timeMultipliers = { [" "] = 1, ["s"] = 1, ["m"] = 60, ["h"] = 3600, ["d"] = 86400, ["w"] = 604800 }
+RF.timeMultiplierOrder = { "w", "d", "h", "m", "s" }
+function RF.TextToSeconds( textIn )
+	-- convert a string to seconds
+	-- the string is in the format of <number><unit>.....
+	-- returns seconds
+	local seconds, current = 0, 0
+	for i = 1, string.len( textIn ) do
+		local char = string.lower( strsub( textIn, i, i ) )
+		local multiplier = RF.timeMultipliers[char]
+		if multiplier then
+			current = current * multiplier
+			seconds = seconds + current
+			current = 0
+		elseif char == tostring( tonumber( char ) ) then
+			current = current * 10
+			current = current + tonumber( char )
+		end
+		--print( char..": "..seconds.." + ("..current.." * "..(multiplier or "")..")" )
+	end
+	seconds = seconds + current
+	return seconds
+end
+]]
+
+
+
 -- ignore
 -- allows the user to ignore an alt for a bit of time (set with options)
 -- sets 'ignore' which is a timestamp for when to stop ignoring.
@@ -174,7 +202,7 @@ function Rested.RestingCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct
 	-- appends to the global Rested.charList
 	-- returns 1 on success, 0 on fail
-	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC < 150) or
+	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC <= 149) or
 			(realm == Rested.realm and name == Rested.name) then
 		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
 		Rested.strOut = string.format("% 2d%s %s", charStruct.lvlNow, code, restedStr)

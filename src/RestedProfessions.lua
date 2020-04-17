@@ -134,7 +134,7 @@ function Rested.ReminderCooldowns( realm, name, charStruct )
 	returnStruct = {}
 	if( charStruct.tradeCD ) then
 		local recipeSum = {}
-		for recipeID, struct in pairs( charStruct.traceCD ) do
+		for recipeID, struct in pairs( charStruct.tradeCD ) do
 			recipeSum[struct.category] = struct.cdTS
 		end
 		for category, cdTS in pairs( recipeSum ) do
@@ -147,7 +147,7 @@ function Rested.ReminderCooldowns( realm, name, charStruct )
 	end
 	return returnStruct
 end
-Rested.ReminderCallback( Rested.ReminderCooldown )
+Rested.ReminderCallback( Rested.ReminderCooldowns )
 
 --[[
 175880
