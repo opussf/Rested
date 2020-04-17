@@ -104,21 +104,3 @@ function Rested.AuctionsExpired( realm, name, struct )
 end
 Rested.ReminderCallback( Rested.AuctionsExpired )
 
---[[
-
-function Rested.ReminderIsNotResting( realm, name, struct )
-    returnStruct = {}
-    reminderTime = time() + 60
-    if( not struct.isResting ) then
-        if( not returnStruct[reminderTime] ) then
-            returnStruct[reminderTime] = {}
-        end
-        table.insert( returnStruct[reminderTime],
-                string.format( "%s is not resting.", Rested.FormatName( realm, name, false ) ) )
-    end
-    return returnStruct
-end
-Rested.ReminderCallback( Rested.ReminderIsNotResting )
-
-
-]]
