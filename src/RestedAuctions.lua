@@ -18,23 +18,41 @@ function Rested.AuctionsReport( realm, name, charStruct )
     local AuctionAge = 48 * 3600 -- 48 hours
     local rn = Rested.FormatName( realm, name )
     if charStruct.Auctions then
-        local auctionCount, oldestAuction = 0, time()
+        local now = time()
+        local activeCount, activeOldest = 0, now
+        local expiredCount, expiredOldest = 0, now
         for id in pairs( charStruct.Auctions ) do
-            auctionCount = auctionCount + 1
-            oldestAuction = min( oldestAuction, charStruct.Auctions[id].created )
+            if charStruct.Auctions[id].created <= now - AuctionAge then
+                expiredCount = expiredCount + 1
+                expiredOldest = min( expiredOldest, charStruct.Auctions[id].created )
+            else
+                activeCount = activeCount + 1
+                activeOldest = min( activeOldest, charStruct.Auctions[id].created )
+            end
         end
-        Rested.strOut = string.format( "%d (%s to go) %s",
-                auctionCount, SecondsToTime( time() - oldestAuction ), rn )
-        table.insert( Rested.charList,
-                { ( ( oldestAuction + AuctionAge - time() ) / AuctionAge ) * 150,
-                Rested.strOut } )
+        local lineCount = 0
+        if activeCount > 0 then
+            Rested.strOut = string.format( "%d (%s to go) %s",
+                    activeCount, SecondsToTime( now - activeOldest ), rn )
+            table.insert( Rested.charList,
+                    { ( ( activeOldest + AuctionAge - time() ) / AuctionAge ) * 150,
+                    Rested.strOut } )
+            lineCount = lineCount + 1
+        end
+        if expiredCount > 0 then
+            Rested.strOut = string.format( "%d (EXPIRED) %s",
+                    expiredCount, rn )
+            table.insert( Rested.charList,
+                    { 0, Rested.strOut } )
+            lineCount = lineCount + 1
+        end
 
 --[[
 table.insert( Rested.charList,
                     { ( ( struct.mostRecent + Rested_options.mountHistoryAge - time() ) / Rested_options.mountHistoryAge ) * 150,
                     Rested.strOut } )
 ]]
-        return 1
+        return lineCount
     end
     return 0
 end

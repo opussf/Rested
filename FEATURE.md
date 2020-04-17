@@ -4,6 +4,10 @@
 
 Track auctions
 
+https://www.townlong-yak.com/framexml/live/Blizzard_APIDocumentation#C_AuctionHouse.GetBrowseResults
+
+
+
 ## Profession CDs
 
 ### What I can get from the system:
