@@ -89,14 +89,16 @@ function Rested.AuctionsExpired( realm, name, struct )
                 expiredCount = expiredCount + 1
             end
         end
-        if( not returnStruct[reminderTime] ) then
-            returnStruct[reminderTime] = {}
+        if expiredCount > 0 then
+            if( not returnStruct[reminderTime] ) then
+                returnStruct[reminderTime] = {}
+            end
+            table.insert( returnStruct[reminderTime],
+                    string.format( "%s has %i expired auctions.",
+                            Rested.FormatName( realm, name ), expiredCount
+                    )
+            )
         end
-        table.insert( returnStruct[reminderTime],
-                string.format( "%s has %i expired auctions.",
-                        Rested.FormatName( realm, name ), expiredCount
-                )
-        )
     end
     return returnStruct
 end
