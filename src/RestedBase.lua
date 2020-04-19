@@ -83,7 +83,7 @@ function Rested.SaveRestedState()
 	Rested_restedState[Rested.realm][Rested.name].xpNow = UnitXP( "player" )
 	Rested_restedState[Rested.realm][Rested.name].xpMax = Rested.xpMax
 	Rested_restedState[Rested.realm][Rested.name].isResting = IsResting()
-	Rested_restedState[Rested.realm][Rested.name].rested = Rested.restedValue
+	Rested_restedState[Rested.realm][Rested.name].rested = Rested.restedValue   -- this is how much rested XP you have
 	Rested_restedState[Rested.realm][Rested.name].restedPC = Rested.restedPC
 end
 
@@ -246,14 +246,30 @@ function Rested.NagCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct
 	-- appends to the global Rested.charList
 	-- returns 1 on success, 0 on fail
+	local reportStr = "%d :: %s : %s"
 	rn = Rested.FormatName( realm, name )
 	local timeSince = time() - charStruct.updated
-	if( charStruct.lvlNow == Rested.maxLevel and
+	print( rn )
+	print( charStruct.lvlNow.." is max ("..Rested.maxLevel..")?" )
+	if( charStruct.lvlNow == Rested.maxLevel and  -- maxLevel char in the NAG range
 			timeSince >= Rested_options.nagStart and
 			timeSince <= Rested_options.staleStart ) then
-		Rested.strOut = format( "%d :: %s : %s", charStruct.lvlNow, SecondsToTime( timeSince ), rn )
+		Rested.strOut = string.format( reportStr, charStruct.lvlNow, SecondsToTime( timeSince ), rn )
 		table.insert( Rested.charList, {(timeSince/(Rested_options.staleStart))*150, Rested.strOut} )
 		return 1
+	end
+	if( charStruct.lvlNow < Rested.maxLevel and charStruct.restedPC <= 149 ) then -- leveling character
+		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
+		rs = Rested.formatRestedStruct  -- side effect of FormatRested()
+		print( "rs.restedVal: "..(rs.restedVal or "nil" ) )
+		print( "rs.lvlPCLeft: "..(rs.lvlPCLeft or "nil" ) )
+		print( "timeTillRested: "..( timeTillRested or "nil" ) )
+		if( ( not rs.lvlPCLeft or restedVal >= rs.lvlPCLeft ) and -- lvlPCLeft is not set if you are fully rested
+				restedVal <= 250 ) then  -- 200 % rested.   Let it expire after a time.
+			Rested.strOut = string.format( reportStr, charStruct.lvlNow, SecondsToTime( timeSince ), rn )
+			table.insert( Rested.charList, { restedVal, Rested.strOut } )
+			return 1
+		end
 	end
 	return 0
 end
