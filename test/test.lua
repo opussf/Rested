@@ -37,6 +37,13 @@ function test.before()
 end
 function test.after()
 end
+function test.showCharList()
+	--if true then return end
+	table.sort( Rested.charList, function( a, b ) return( a[1] > b[1] ); end )
+	for k,v in pairs( Rested.charList ) do
+		print( k..": "..v[1]..":-:"..v[2] )
+	end
+end
 function test.test_printHelp()
 	Rested.Command( "help" )
 end
@@ -553,13 +560,7 @@ end
 
 -- Mounts
 require "RestedMounts"
-function test.showCharList()
-	if true then return end
-	table.sort( Rested.charList, function( a, b ) return( a[1] > b[1] ); end )
-	for k,v in pairs( Rested.charList ) do
-		print( k..": "..v[1]..":"..v[2] )
-	end
-end
+
 
 function test.test_Mounts_Report_SingleMount_halfLife()
 	Rested_options.mountHistoryAge = 60
@@ -590,6 +591,7 @@ function test.test_Mounts_Report_SingleMount_Recent()
 	assertEquals( 150, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_SingleMount_Oldest()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-59] = "Garn Nighthowl",
 		} }
@@ -694,6 +696,8 @@ function test.test_Remove_notCurrentToon()
 	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
 end
 function test.test_Remove_withRealm()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -1031,5 +1035,174 @@ function test.test_PruneByAge_pruneOne()
 end
 ]]
 
+-- Nag MountReport
+function test.test_NagReport_MaxLevel_InNagRange()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_MaxLevel"] =
+			{ ["lvlNow"] = Rested.maxLevel, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
+			["updated"] = now-(8*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	print( Rested_options.nagStart )
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( "90 :: 8 Day 0 Hr : testRealm:testPlayer_MaxLevel", Rested.charList[1][2] )
+end
+function test.test_NagReport_MaxLevel_LessThanNagRange()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_MaxLevel"] =
+			{ ["lvlNow"] = Rested.maxLevel, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
+			["updated"] = now-(6*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	print( Rested_options.nagStart )
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_MaxLevel_GreaterThanNagRange()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_MaxLevel"] =
+			{ ["lvlNow"] = Rested.maxLevel, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
+			["updated"] = now-(10.2*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	print( Rested_options.nagStart )
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedLessThanLevel_Resting_True()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
+			["updated"] = now-(2*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedLessThanLevel_Resting_False()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 0,
+			["updated"] = now-(2*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
+			["updated"] = now-(8.5*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( "2 :: 8 Day 12 Hr : testRealm:testPlayer_lvl2", Rested.charList[1][2] )
+end
+function test.test_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 0,
+			["updated"] = now-(8.5*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedGreaterThanMax_Resting_True()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
+			["updated"] = now-(17*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedGreaterThanMax_Resting_False()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 0,
+			["updated"] = now-(70*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting_True()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 150,
+			["updated"] = now-(1*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting_False()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150,
+			["updated"] = now-(1*86400) } }
+
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
 
 test.run()
