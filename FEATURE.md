@@ -6,7 +6,12 @@ Track auctions
 
 https://www.townlong-yak.com/framexml/live/Blizzard_APIDocumentation#C_AuctionHouse.GetBrowseResults
 
+## Nag
 
+Expand the Nag report.
+Also show rested toons who are rested to end of level.
+Show resting toons who are now full for 3 days.
+Don't show toons who were fully rested when logging out.
 
 ## Profession CDs
 
