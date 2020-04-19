@@ -1,5 +1,5 @@
 language: lua
 before_install:
-  - sudo apt-get install lua5.3
+  - sudo apt-get install lua5.3.5
 script: ant clean package
 
