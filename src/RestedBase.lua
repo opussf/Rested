@@ -249,8 +249,6 @@ function Rested.NagCharacters( realm, name, charStruct )
 	local reportStr = "%d :: %s : %s"
 	rn = Rested.FormatName( realm, name )
 	local timeSince = time() - charStruct.updated
-	print( rn )
-	print( charStruct.lvlNow.." is max ("..Rested.maxLevel..")?" )
 	if( charStruct.lvlNow == Rested.maxLevel and  -- maxLevel char in the NAG range
 			timeSince >= Rested_options.nagStart and
 			timeSince <= Rested_options.staleStart ) then
@@ -261,9 +259,6 @@ function Rested.NagCharacters( realm, name, charStruct )
 	if( charStruct.lvlNow < Rested.maxLevel and charStruct.restedPC <= 149 ) then -- leveling character
 		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
 		rs = Rested.formatRestedStruct  -- side effect of FormatRested()
-		print( "rs.restedVal: "..(rs.restedVal or "nil" ) )
-		print( "rs.lvlPCLeft: "..(rs.lvlPCLeft or "nil" ) )
-		print( "timeTillRested: "..( timeTillRested or "nil" ) )
 		if( ( not rs.lvlPCLeft or restedVal >= rs.lvlPCLeft ) and -- lvlPCLeft is not set if you are fully rested
 				restedVal <= 250 ) then  -- 200 % rested.   Let it expire after a time.
 			Rested.strOut = string.format( reportStr, charStruct.lvlNow, SecondsToTime( timeSince ), rn )
