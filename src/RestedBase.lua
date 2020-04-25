@@ -246,7 +246,7 @@ function Rested.NagCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct
 	-- appends to the global Rested.charList
 	-- returns 1 on success, 0 on fail
-	local reportStr = "%d :: %s : %s"
+	local reportStr = "%d :: %s : %s"  -- (lvl Now) :: timeSince : Name
 	rn = Rested.FormatName( realm, name )
 	local timeSince = time() - charStruct.updated
 	if( charStruct.lvlNow == Rested.maxLevel and  -- maxLevel char in the NAG range
@@ -261,7 +261,7 @@ function Rested.NagCharacters( realm, name, charStruct )
 		rs = Rested.formatRestedStruct  -- side effect of FormatRested()
 		if( ( not rs.lvlPCLeft or restedVal >= rs.lvlPCLeft ) and -- lvlPCLeft is not set if you are fully rested
 				restedVal <= 250 ) then  -- 200 % rested.   Let it expire after a time.
-			Rested.strOut = string.format( reportStr, charStruct.lvlNow, SecondsToTime( timeSince ), rn )
+			Rested.strOut = string.format( reportStr, charStruct.lvlNow, string.format( "%0.2f%%" , restedVal - rs.lvlPCLeft ), rn )
 			table.insert( Rested.charList, { restedVal, Rested.strOut } )
 			return 1
 		end
