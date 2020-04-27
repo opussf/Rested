@@ -183,12 +183,12 @@ function test.test_FormatName_DiffRealm_DiffName()
 	rn = Rested.FormatName( "otherRealm", "otherPlayer" )
 	assertEquals( "otherRealm:otherPlayer", rn )
 end
-
 -- ForAllChars
 function test.returnOne( realm, name, cstruct )
 	return 1
 end
 function test.test_ForAllChars_returnsCount()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -199,7 +199,7 @@ function test.test_ForAllChars_returnsCount()
 	assertEquals( 2, result )
 end
 function test.test_ForAllChars_returnsCount_ignoreChar()
-	now=time()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -210,7 +210,7 @@ function test.test_ForAllChars_returnsCount_ignoreChar()
 	assertEquals( 1, result )
 end
 function test.test_ForAllChars_returnsCount_includeIgnoreChar()
-	now=time()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -220,9 +220,10 @@ function test.test_ForAllChars_returnsCount_includeIgnoreChar()
 	result = Rested.ForAllChars( test.returnOne, true )
 	assertEquals( 2, result )
 end
+
 -- Filter
 function test.test_ForAllChars_filter_lvlNow_ignored()
-	now=time()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -233,7 +234,7 @@ function test.test_ForAllChars_filter_lvlNow_ignored()
 	assertEquals( 0, result )
 end
 function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
-	now=time()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -244,7 +245,7 @@ function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
 	assertEquals( 1, result )
 end
 function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
-	now=time()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -255,7 +256,7 @@ function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
 	assertEquals( 1, result )
 end
 function test.test_ForAllChars_callBack_returnsNil()
-	now=time()
+	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -276,6 +277,7 @@ function test.test_InitCallback_RegisterdAndCalledFromVARIABLES_LOADED()
 	Rested.VARIABLES_LOADED()
 	assertEquals( 19, Rested.miscVariable )
 end
+--[[
 -- EventCallBack
 function test.test_EventCallback_RegistersEvent()
 	-- calling EventCallback registers the event
@@ -528,8 +530,8 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	assertEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
 ]]
-
-
+--]]
+--[[
 -- Rested.me
 function test.test_RestedMe_isSet()
 	Rested.ADDON_LOADED()
@@ -849,6 +851,7 @@ end
 -- gold
 require "RestedGold"
 function test.test_Gold_01()
+	Rested.VARIABLES_LOADED()
 	Rested.SaveGold()
 end
 function test.test_Gold_Report_01()
@@ -857,14 +860,7 @@ function test.test_Gold_Report_01()
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.VARIABLES_LOADED()
 
-
-
 end
-
-
-
-
-
 
 -- Rested Export tests
 function myPrint( str )
@@ -1046,7 +1042,8 @@ function test.test_PruneByAge_pruneOne()
 	assertIsNil( tableWithSubTable["subTable"][now-180] )
 end
 ]]
-
+--]]
+--[[
 -- Nag MountReport
 function test.test_NagReport_MaxLevel_InNagRange()
 	now = time()
@@ -1216,5 +1213,5 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting
 	test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
-
+]]
 test.run()
