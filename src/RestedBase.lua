@@ -261,7 +261,7 @@ function Rested.NagCharacters( realm, name, charStruct )
 		rs = Rested.formatRestedStruct  -- side effect of FormatRested()
 		if( ( not rs.lvlPCLeft or restedVal >= rs.lvlPCLeft ) and -- lvlPCLeft is not set if you are fully rested
 				restedVal <= 250 ) then  -- 200 % rested.   Let it expire after a time.
-			Rested.strOut = string.format( reportStr, charStruct.lvlNow, string.format( "%0.2f%%" , restedVal - rs.lvlPCLeft ), rn )
+			Rested.strOut = string.format( reportStr, charStruct.lvlNow, restedStr, rn )
 			table.insert( Rested.charList, { restedVal, Rested.strOut } )
 			return 1
 		end
