@@ -199,6 +199,7 @@ function test.test_ForAllChars_returnsCount()
 	assertEquals( 2, result )
 end
 function test.test_ForAllChars_returnsCount_ignoreChar()
+	now=time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -209,6 +210,7 @@ function test.test_ForAllChars_returnsCount_ignoreChar()
 	assertEquals( 1, result )
 end
 function test.test_ForAllChars_returnsCount_includeIgnoreChar()
+	now=time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -220,6 +222,7 @@ function test.test_ForAllChars_returnsCount_includeIgnoreChar()
 end
 -- Filter
 function test.test_ForAllChars_filter_lvlNow_ignored()
+	now=time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -230,6 +233,7 @@ function test.test_ForAllChars_filter_lvlNow_ignored()
 	assertEquals( 0, result )
 end
 function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
+	now=time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -240,6 +244,7 @@ function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
 	assertEquals( 1, result )
 end
 function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
+	now=time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -250,6 +255,7 @@ function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
 	assertEquals( 1, result )
 end
 function test.test_ForAllChars_callBack_returnsNil()
+	now=time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -563,6 +569,7 @@ require "RestedMounts"
 
 
 function test.test_Mounts_Report_SingleMount_halfLife()
+	now=time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-30] = "Garn Nighthowl",
 		} }
@@ -606,6 +613,7 @@ function test.test_Mounts_Report_SingleMount_Oldest()
 	assertEquals( 2.5, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_NoMounts()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { }
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
@@ -619,6 +627,7 @@ function test.test_Mounts_Report_NoMounts()
 	assertEquals( 0, #Rested.charList )
 end
 function test.test_Mounts_Report_TwoMounts_Same()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-59] = "Garn Nighthowl", [time()-30] = "Garn Nighthowl"
 		} }
@@ -633,6 +642,7 @@ function test.test_Mounts_Report_TwoMounts_Same()
 	assertEquals( 75, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_TwoMounts_Diff()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-60] = "Garn Nighthowl", [time()-30] = "Other Mount"
 		} }
@@ -647,6 +657,7 @@ function test.test_Mounts_Report_TwoMounts_Diff()
 	assertEquals( 75, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_TwoMounts_TooOldMount()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-120] = "Garn Nighthowl", [time()-30] = "Other Mount"
 		} }
@@ -841,6 +852,7 @@ function test.test_Gold_01()
 	Rested.SaveGold()
 end
 function test.test_Gold_Report_01()
+	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.VARIABLES_LOADED()
