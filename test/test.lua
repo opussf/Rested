@@ -1139,7 +1139,7 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
-	assertEquals( "2 :: 27.50% : testRealm:testPlayer_lvl2", Rested.charList[1][2] )
+	assertEquals( "2 :: |cff00ff00127.5%|r : testRealm:testPlayer_lvl2", Rested.charList[1][2] )
 end
 function test.test_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
 	now = time()
