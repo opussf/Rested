@@ -23,12 +23,12 @@ require "RestediLvl"
 require "RestedPlayed"
 --require "RestedOptions"
 
-
 test.outFileName = "testOut.xml"
 
 -- addon setup
 function test.before()
 	--Rested.eventFunctions = {}
+	Rested.filter = nil
 	Rested.reminders = {}
 	Rested.lastReminderUpdate = nil
 	Rested_options = {}
@@ -233,7 +233,7 @@ function test.test_ForAllChars_filter_lvlNow_ignored()
 	result = Rested.ForAllChars( test.returnOne )
 	assertEquals( 0, result )
 end
-function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
+function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar_10()
 	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
@@ -244,7 +244,7 @@ function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
 	result = Rested.ForAllChars( test.returnOne, true )
 	assertEquals( 1, result )
 end
-function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar()
+function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar_2()
 	now = time()
 	Rested_restedState = {}
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
@@ -277,7 +277,6 @@ function test.test_InitCallback_RegisterdAndCalledFromVARIABLES_LOADED()
 	Rested.VARIABLES_LOADED()
 	assertEquals( 19, Rested.miscVariable )
 end
---[[
 -- EventCallBack
 function test.test_EventCallback_RegistersEvent()
 	-- calling EventCallback registers the event
@@ -355,7 +354,6 @@ function test.test_OnUpdate_callOnUpdate()
 	Rested.OnUpdate()
 	assertTrue( Rested.updated )
 end
-
 -- Reminders
 function test.test_Reminders_registerCallBack()
 	local testFunc = function() return( { [0] = { "0 reminder", } } ) end
@@ -477,6 +475,8 @@ function test.test_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = now-5 } }
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
@@ -530,8 +530,7 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	assertEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
 ]]
---]]
---[[
+
 -- Rested.me
 function test.test_RestedMe_isSet()
 	Rested.ADDON_LOADED()
@@ -568,10 +567,8 @@ end
 
 -- Mounts
 require "RestedMounts"
-
-
 function test.test_Mounts_Report_SingleMount_halfLife()
-	now=time()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-30] = "Garn Nighthowl",
 		} }
@@ -586,6 +583,7 @@ function test.test_Mounts_Report_SingleMount_halfLife()
 	assertEquals( 75, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_SingleMount_Recent()
+	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()] = "Garn Nighthowl",
 		} }
@@ -682,6 +680,7 @@ end
 
 -- remove
 function test.test_Remove_oneAlt()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -691,6 +690,7 @@ function test.test_Remove_oneAlt()
 	assertIsNil( Rested_restedState["testRealm"]["otherPlayer"] )
 end
 function test.test_Remove_pruneEmptyRealm()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -700,6 +700,7 @@ function test.test_Remove_pruneEmptyRealm()
 	assertIsNil( Rested_restedState["otherRealm"] )
 end
 function test.test_Remove_notCurrentToon()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -723,6 +724,7 @@ function test.test_Remove_withRealm()
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
 function test.test_Remove_withRealm_colon()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -735,6 +737,7 @@ function test.test_Remove_withRealm_colon()
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
 function test.test_Remove_realmWithSpace()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -747,6 +750,7 @@ function test.test_Remove_realmWithSpace()
 	assertIsNil( Rested_restedState["other Realm"]["testPlayer"] )
 end
 function test.test_Remove_realmWithPunc()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -759,6 +763,7 @@ function test.test_Remove_realmWithPunc()
 	assertIsNil( Rested_restedState["Blade's Edge"]["testPlayer"] )
 end
 function test.test_Remove_realmWithPunc_incomplete()
+	Rested.ADDON_LOADED()
 	now = time()
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -809,7 +814,6 @@ function test.test_NagTime_Set_CanBeEqualToStale()
 	assertEquals( 864000, Rested_options.nagStart )
 end
 
-
 -- set stale time
 function test.test_StaleTime_Set_Day()
 	Rested_options["nagStart"] = 7 * 86400
@@ -845,21 +849,45 @@ end
 -- Professions
 require "RestedProfessions"
 function test.test_Profession_01()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	Rested.SaveProfessionInfo()
 end
 
 -- gold
 require "RestedGold"
+function test.before_gold()
+	oldMyCopper = myCopper
+end
+function test.after_gold()
+	myCopper = 0
+end
 function test.test_Gold_01()
+	test.before_gold()
+	myCopper = 847394
+	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+
 	Rested.SaveGold()
+	assertEquals( 847394, Rested_restedState["testRealm"]["testPlayer"].gold )
+	test.after_gold()
 end
 function test.test_Gold_Report_01()
-	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
-			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
-	Rested.VARIABLES_LOADED()
+	test.before_gold()
 
+	--Rested.ADDON_LOADED()
+	--Rested.VARIABLES_LOADED()
+	--Rested.PLAYER_ENTERING_WORLD()
+
+	Rested_restedState = nil
+	Rested_restedState = {}
+	Rested_restedState["goldRealm"] = { ["goldPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = time(), ["gold"] = 872648 } }
+
+	Rested.ForAllChars( Rested.GoldReport )
+	assertEquals( "87g 26s 48c :: goldRealm:goldPlayer", Rested.charList[1][2] )
+	test.after_gold()
 end
 
 -- Rested Export tests
@@ -1042,8 +1070,7 @@ function test.test_PruneByAge_pruneOne()
 	assertIsNil( tableWithSubTable["subTable"][now-180] )
 end
 ]]
---]]
---[[
+
 -- Nag MountReport
 function test.test_NagReport_MaxLevel_InNagRange()
 	now = time()
@@ -1136,7 +1163,8 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
-	assertEquals( "2 :: 27.50% : testRealm:testPlayer_lvl2", Rested.charList[1][2] )
+	assertEquals( "2 :: |cff00ff00127.5%|r : testRealm:testPlayer_lvl2", Rested.charList[1][2] )
+
 end
 function test.test_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
 	now = time()
@@ -1213,5 +1241,5 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting
 	test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
-]]
+
 test.run()
