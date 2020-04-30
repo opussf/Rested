@@ -190,7 +190,7 @@ end
 RestedFrame = CreateFrame( "Frame", "RestedFrame" )
 RestedUIFrame = CreateFrame( "Frame", "RestedUIFrame" )
 RestedUIFrame_TitleText = CreateFontString( "RestedUIFrame_TitleText" )
-RestedUIFrame_TitleText:SetText( "Empty Report" )
+RestedUIFrame_TitleText:SetText( report.." Report is Empty" )
 RestedScrollFrame_VSlider = CreateFrame( "Frame", "RestedScrollFrame_VSlider" )
 UIDropDownMenu_SetText = function() end
 
