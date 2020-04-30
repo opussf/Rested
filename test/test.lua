@@ -1243,12 +1243,20 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting
 end
 
 -- Offline tests
--- Rested Export tests
 function myPrint( str )
 	stdOut = stdOut or {}
 	table.insert( stdOut, str )
 end
-function test.test_Offline_01()
+function test.after_Offline()
+	require "Rested"
+	require "RestedUI"
+	require "RestedBase"
+	require "RestedDeaths"
+	require "RestedGuild"
+	require "RestediLvl"
+	require "RestedPlayed"
+end
+function test.notest_Offline_01()
 	stdOut = nil
 	originalPrint = print
 	print = myPrint
@@ -1259,6 +1267,7 @@ function test.test_Offline_01()
 	end
 	print = originalPrint
 	--print( strOut )
+	test.after_Offline()
 end
 
 test.run()
