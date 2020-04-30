@@ -56,7 +56,8 @@ function DoFile( filename )
 	return f()
 end
 
--- WoWAPI fnctions that are not needed
+-- WoWAPI functions that are not needed, and special ones that are
+-- Taken mostly from wowStubs.lua
 GetAddOnMetadata = function() end
 GetXPExhaustion = function() end
 UnitXPMax = function() end
@@ -185,10 +186,11 @@ function CreateStatusBar( name, ... )
 	return StatusBar
 end
 
-
+-- Create needed frames
 RestedFrame = CreateFrame( "Frame", "RestedFrame" )
 RestedUIFrame = CreateFrame( "Frame", "RestedUIFrame" )
 RestedUIFrame_TitleText = CreateFontString( "RestedUIFrame_TitleText" )
+RestedUIFrame_TitleText:SetText( "Empty Report" )
 RestedScrollFrame_VSlider = CreateFrame( "Frame", "RestedScrollFrame_VSlider" )
 UIDropDownMenu_SetText = function() end
 
@@ -229,25 +231,22 @@ else
 	io.stderr:write( "Data file exists  : "..( FileExists( dataFile ) ) )
 end
 
--- MaxLevel
+-- MaxLevel from the data file
 Rested.maxLevel = Rested_misc["maxLevel"]
 
 -- command List
 if Rested.commandList and report then
-	print( report )
-	Rested.commandList[report].func()
-end
-for i, bar in pairs( Rested.bars ) do
-	textOut = bar.text:GetText()
-	if( #textOut > 0 ) then
-		print( DecolorText( textOut ) )
+	if( Rested.commandList[report] ) then
+		Rested.commandList[report].func()
+	end
+	print( RestedUIFrame_TitleText:GetText() )
+	for i, bar in pairs( Rested.bars ) do
+		textOut = bar.text:GetText()
+		if( #textOut > 0 ) then
+			print( DecolorText( textOut ) )
+		end
 	end
 end
-
---Rested.bars[i].bar:SetValue( max( 0, Rested.charList[idx][1] ) ) -- sorted on value
---					Rested.bars[i].text:SetText( Rested.charList[idx][2] )
---					Rested.bars[i].bar:Show()
-
 
 
 
