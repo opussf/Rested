@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## Offline
+
+Create an offline report.
+
 ## Auctions
 
 Track auctions

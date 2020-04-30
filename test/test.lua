@@ -1241,4 +1241,32 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 
+-- Offline tests
+function myPrint( str )
+	stdOut = stdOut or {}
+	table.insert( stdOut, str )
+end
+function test.after_Offline()
+	require "Rested"
+	require "RestedUI"
+	require "RestedBase"
+	require "RestedDeaths"
+	require "RestedGuild"
+	require "RestediLvl"
+	require "RestedPlayed"
+end
+function test.notest_Offline_01()
+	stdOut = nil
+	originalPrint = print
+	print = myPrint
+	arg = {[0] = "../src/Rested_Offline.lua", "./", "nag"}
+	loadfile( "../src/Rested_Offline.lua" )() -- Rested_Export reads from arg, not actually the parameters passed
+	for _,v in pairs( stdOut ) do
+		originalPrint( v )
+	end
+	print = originalPrint
+	--print( strOut )
+	test.after_Offline()
+end
+
 test.run()
