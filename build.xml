@@ -132,7 +132,7 @@
 				<include name="HowTo.md"/>
 			</fileset>
 		</copy>
-		<chmod perm="ugo+x" dir="${addon.dir}" includes="*_Export.lua" />
+		<chmod perm="ugo+x" dir="${addon.dir}" includes="Rested_*.lua" />
 		<echo>Deployed ${version.number} locally</echo>
 	</target>
 
