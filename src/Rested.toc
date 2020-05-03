@@ -1,10 +1,23 @@
 ## Interface: @INTERFACE@
 ## Title: Rested Reporter
-## Notes: Rested Tracker for alts @VERSION@
-## Author: sistersally of hyjal
+## Notes: Rested Tracker for alts v@VERSION@
+## Author: opussf
 ## Version: @VERSION@
-## Description: Slash command function to output rested status of alts.
-## SavedVariables: Rested_restedState Rested_options
+## Description: Track stats for your alts.
+## SavedVariables: Rested_restedState Rested_misc Rested_options
 Rested.lua
 Rested.xml
 RestedAlerts.lua
+RestedUI.lua
+RestedUI.xml
+RestedBase.lua
+
+RestedDeaths.lua
+RestedPlayed.lua
+RestedGuild.lua
+RestediLvl.lua
+RestedMounts.lua
+RestedGold.lua
+
+RestedAzerite.lua
+RestedProfessions.lua
