@@ -1,7 +1,5 @@
 #!/usr/bin/env lua
 
-addonData={["Version"] = "1.0", ["Author"] = "author" }
-
 require "wowTest"
 
 RestedOptionsFrame_NagTimeSliderText = CreateFontString()
@@ -12,16 +10,7 @@ RestedUIFrame_TitleText = CreateFontString()
 RestedScrollFrame_VSlider = CreateFrame()
 RestedUIFrame_TitleText = CreateFontString()
 
--- require the file to test
-package.path = "../src/?.lua;'" .. package.path
-require "Rested"
-require "RestedUI"
-require "RestedBase"
-require "RestedDeaths"
-require "RestedGuild"
-require "RestediLvl"
-require "RestedPlayed"
---require "RestedOptions"
+ParseTOC( "../src/Rested.toc" )
 
 test.outFileName = "testOut.xml"
 
