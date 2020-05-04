@@ -228,11 +228,12 @@ if dataFile and FileExists( dataFile ) then
 	DoFile( dataFile )
 else
 	io.stderr:write( "Something is wrong.  Lets review:\n" )
-	io.stderr:write( "Data file exists  : "..( FileExists( dataFile ) ) )
+	io.stderr:write( "Data file exists  : "..( FileExists( dataFile ) and " True" or "False" ).."\n" )
 end
 
 -- MaxLevel from the data file
 Rested.maxLevel = Rested_misc["maxLevel"]
+Rested.ForAllChars( Rested.UpdateIgnore, true )
 
 -- command List
 if Rested.commandList and report then
