@@ -19,8 +19,9 @@ end
 
 function Rested.AuctionCreate( AuctionId )
     Rested.Print( "AuctionAuction( "..AuctionId.." )" )
+    local AuctionAge = 48 * 3600 -- 48 hours
     Rested.me["Auctions"] = Rested.me["Auctions"] or {}
-    Rested.me.Auctions[AuctionId] = { ["created"] = time() }
+    Rested.me.Auctions[AuctionId] = { ["created"] = time(), ["duration"] = AuctionAge }
     Rested.AuctionsClear()
 end
 
@@ -40,6 +41,7 @@ function Rested.AuctionsReport( realm, name, charStruct )
         local now = time()
         local activeCount, activeOldest = 0, now
         local expiredCount, expiredOldest = 0, now
+        local maxDuration = 0
         for id in pairs( charStruct.Auctions ) do
             if charStruct.Auctions[id].created <= now - AuctionAge then
                 expiredCount = expiredCount + 1
@@ -47,12 +49,13 @@ function Rested.AuctionsReport( realm, name, charStruct )
             else
                 activeCount = activeCount + 1
                 activeOldest = min( activeOldest, charStruct.Auctions[id].created )
+                maxDuration = max( maxDuration, charStruct.Auctions[id].duration )
             end
         end
         local lineCount = 0
         if activeCount > 0 then
             Rested.strOut = string.format( "%d (%s to go) %s",
-                    activeCount, SecondsToTime( now - activeOldest ), rn )
+                    activeCount, SecondsToTime( ( activeOldest + maxDuration) - now ), rn )
             table.insert( Rested.charList,
                     { ( ( activeOldest + AuctionAge - time() ) / AuctionAge ) * 150,
                     Rested.strOut } )
@@ -65,12 +68,6 @@ function Rested.AuctionsReport( realm, name, charStruct )
                     { 0, Rested.strOut } )
             lineCount = lineCount + 1
         end
-
---[[
-table.insert( Rested.charList,
-                    { ( ( struct.mostRecent + Rested_options.mountHistoryAge - time() ) / Rested_options.mountHistoryAge ) * 150,
-                    Rested.strOut } )
-]]
         return lineCount
     end
     return 0
