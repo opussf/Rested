@@ -43,7 +43,7 @@ function Rested.AuctionsReport( realm, name, charStruct )
         local expiredCount, expiredOldest = 0, now
         local maxDuration = 0
         for id in pairs( charStruct.Auctions ) do
-            if charStruct.Auctions[id].created <= now - AuctionAge then
+            if charStruct.Auctions[id].created <= now - charStruct.Auctions[id].duration then
                 expiredCount = expiredCount + 1
                 expiredOldest = min( expiredOldest, charStruct.Auctions[id].created )
             else
@@ -76,12 +76,12 @@ end
 -- Reminders
 
 function Rested.AuctionsExpired( realm, name, struct )
-    local AuctionAge = 48 * 3600
     returnStruct = {}
     reminderTime = time() + 60
     expiredCount = 0
     if struct.Auctions then
         for aID in pairs( struct.Auctions ) do
+            local AuctionAge = struct.Auctions[aID].duration
             if struct.Auctions[aID].created <= time() - AuctionAge then
                 expiredCount = expiredCount + 1
             end
