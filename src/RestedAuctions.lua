@@ -1,11 +1,11 @@
 -- RestedAzerite.lua
 
 function Rested.AuctionsClear()
-    local AuctionAge = 48 * 3600 -- 48 hours
+    --local AuctionAge = 48 * 3600 -- 48 hours
     local activeCount = 0
     if Rested.me.Auctions then
         for aID in pairs( Rested.me.Auctions ) do
-            if Rested.me.Auctions[aID].created <= time() - AuctionAge then
+            if Rested.me.Auctions[aID].created <= time() - Rested.me.Auctions[aID].duration then
                 Rested.me.Auctions[aID] = nil
             else
                 activeCount = activeCount + 1
