@@ -18,7 +18,7 @@ function Rested.AuctionsClear()
 end
 
 function Rested.AuctionCreate( AuctionId )
-    Rested.Print( "AuctionAuction( "..AuctionId.." )" )
+    Rested.Print( "AuctionCreate( "..AuctionId.." )" )
     local AuctionAge = 48 * 3600 -- 48 hours
     Rested.me["Auctions"] = Rested.me["Auctions"] or {}
     Rested.me.Auctions[AuctionId] = { ["created"] = time(), ["duration"] = AuctionAge }
@@ -100,4 +100,28 @@ function Rested.AuctionsExpired( realm, name, struct )
     return returnStruct
 end
 Rested.ReminderCallback( Rested.AuctionsExpired )
+
+
+
+-- Misc functions
+
+function Rested.AuctionsOwnedAuctionsUpdated( ... )
+    local a = select( 1, ... ) or "nil"
+    Rested.Print( "OWNED_AUCTIONS_UPDATED( "..a.." )" )
+end
+
+Rested.EventCallback( "OWNED_AUCTIONS_UPDATED", Rested.AuctionsOwnedAuctionsUpdated )
+
+-- post
+C_AuctionHouse_PostItem = C_AuctionHouse.PostItem
+C_AuctionHouse.PostItem = function( item, duration, quantity, bid, buyout )
+    -- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
+    Rested.Print( "PostItem( "..item..", "..duration..", "..quantity.." ...) " )
+    C_AuctionHouse_PostItem( item, duration, quantity, bid, buyout )
+end
+
+--hooksecurefunc( C_AuctionHouse, "PostItem", Rested.AuctionsPostItem )
+
+
+
 
