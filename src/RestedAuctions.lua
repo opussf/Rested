@@ -24,7 +24,7 @@ function Rested.AuctionsClear()
 end
 
 function Rested.AuctionCreate( AuctionId )
-    Rested.Print( "AuctionCreate( "..AuctionId.." )" )
+    --Rested.Print( "AuctionCreate( "..AuctionId.." )" )
     --local AuctionAge = 48 * 3600 -- 48 hours
     Rested.me["Auctions"] = Rested.me["Auctions"] or {}
     Rested.me.Auctions[AuctionId] = { ["created"] = time(), ["duration"] = Rested.AuctionAge }
@@ -122,7 +122,7 @@ Rested.EventCallback( "OWNED_AUCTIONS_UPDATED", Rested.AuctionsOwnedAuctionsUpda
 C_AuctionHouse_PostCommodity = C_AuctionHouse.PostCommodity
 C_AuctionHouse.PostCommodity = function( item, duration, quantity, bid, buyout )
     -- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
-    Rested.Print( "PostCommodity( item, "..duration..", "..quantity.." ...) " )
+    --Rested.Print( "PostCommodity( item, "..duration..", "..quantity.." ...) " )
     Rested.AuctionAge = Rested.AuctionsDurations[duration]
     C_AuctionHouse_PostCommodity( item, duration, quantity, bid, buyout )
 end
