@@ -40,6 +40,7 @@ end
 
 Rested.InitCallback( Rested.AuctionsClear )
 Rested.EventCallback( "AUCTION_HOUSE_AUCTION_CREATED", Rested.AuctionCreate )
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.AuctionsClear )
 
 Rested.dropDownMenuTable["Auctions"] = "auctions"
 Rested.commandList["auctions"] = {["help"] = {"","Show auction counts"}, ["func"] = function()
