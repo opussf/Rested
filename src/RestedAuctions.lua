@@ -5,6 +5,7 @@ Rested.AuctionsDurations = {  -- auction duration is set as index of duration dr
     [3] = 48 * 3600, -- 48 hours
 }
 Rested.AuctionAge = Rested.AuctionsDurations[3]
+Rested.AuctionType = nil
 
 function Rested.AuctionsClear()
     --local AuctionAge = 48 * 3600 -- 48 hours
@@ -27,8 +28,14 @@ function Rested.AuctionCreate( AuctionId )
     --Rested.Print( "AuctionCreate( "..AuctionId.." )" )
     --local AuctionAge = 48 * 3600 -- 48 hours
     Rested.me["Auctions"] = Rested.me["Auctions"] or {}
-    Rested.me.Auctions[AuctionId] = { ["created"] = time(), ["duration"] = Rested.AuctionAge }
+    Rested.me.Auctions[AuctionId] = {
+            ["created"] = time(),
+            ["duration"] = Rested.AuctionAge,
+            ["type"] = Rested.AuctionType,
+    }
+    Rested.AuctionType = nil
     Rested.AuctionsClear()
+
 end
 
 Rested.InitCallback( Rested.AuctionsClear )
@@ -124,13 +131,15 @@ C_AuctionHouse.PostCommodity = function( item, duration, quantity, bid, buyout )
     -- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
     --Rested.Print( "PostCommodity( item, "..duration..", "..quantity.." ...) " )
     Rested.AuctionAge = Rested.AuctionsDurations[duration]
+    Rested.AuctionType = "Commodity"
     C_AuctionHouse_PostCommodity( item, duration, quantity, bid, buyout )
 end
 
 C_AuctionHouse_PostItem = C_AuctionHouse.PostItem
 C_AuctionHouse.PostItem = function( item, duration, quantity, bid, buyout )
     -- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
-    Rested.Print( "PostItem( item, "..duration..", "..quantity.." ...) " )
+    --Rested.Print( "PostItem( item, "..duration..", "..quantity.." ...) " )
     Rested.AuctionAge = Rested.AuctionsDurations[duration]
+    Rested.AuctionType = "Item"
     C_AuctionHouse_PostItem( item, duration, quantity, bid, buyout )
 end
