@@ -1,4 +1,10 @@
 -- RestedAzerite.lua
+Rested.AuctionsDurations = {  -- auction duration is set as index of duration dropdown
+    [1] = 12 * 3600, -- 12 hours
+    [2] = 24 * 3600, -- 24 hours
+    [3] = 48 * 3600, -- 48 hours
+}
+Rested.AuctionAge = Rested.AuctionsDurations[3]
 
 function Rested.AuctionsClear()
     --local AuctionAge = 48 * 3600 -- 48 hours
@@ -19,9 +25,9 @@ end
 
 function Rested.AuctionCreate( AuctionId )
     Rested.Print( "AuctionCreate( "..AuctionId.." )" )
-    local AuctionAge = 48 * 3600 -- 48 hours
+    --local AuctionAge = 48 * 3600 -- 48 hours
     Rested.me["Auctions"] = Rested.me["Auctions"] or {}
-    Rested.me.Auctions[AuctionId] = { ["created"] = time(), ["duration"] = AuctionAge }
+    Rested.me.Auctions[AuctionId] = { ["created"] = time(), ["duration"] = Rested.AuctionAge }
     Rested.AuctionsClear()
 end
 
@@ -113,15 +119,18 @@ end
 Rested.EventCallback( "OWNED_AUCTIONS_UPDATED", Rested.AuctionsOwnedAuctionsUpdated )
 
 -- post
+C_AuctionHouse_PostCommodity = C_AuctionHouse.PostCommodity
+C_AuctionHouse.PostCommodity = function( item, duration, quantity, bid, buyout )
+    -- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
+    Rested.Print( "PostCommodity( item, "..duration..", "..quantity.." ...) " )
+    Rested.AuctionAge = Rested.AuctionsDurations[duration]
+    C_AuctionHouse_PostCommodity( item, duration, quantity, bid, buyout )
+end
+
 C_AuctionHouse_PostItem = C_AuctionHouse.PostItem
 C_AuctionHouse.PostItem = function( item, duration, quantity, bid, buyout )
     -- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
-    Rested.Print( "PostItem( "..item..", "..duration..", "..quantity.." ...) " )
+    Rested.Print( "PostItem( item, "..duration..", "..quantity.." ...) " )
+    Rested.AuctionAge = Rested.AuctionsDurations[duration]
     C_AuctionHouse_PostItem( item, duration, quantity, bid, buyout )
 end
-
---hooksecurefunc( C_AuctionHouse, "PostItem", Rested.AuctionsPostItem )
-
-
-
-
