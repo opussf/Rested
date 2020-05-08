@@ -32,6 +32,7 @@ function Rested.AuctionCreate( AuctionId )
 			["created"] = time(),
 			["duration"] = Rested.AuctionAge,
 			["type"] = Rested.AuctionType,
+			["version"] = RESTED_MSG_VERSION,
 	}
 	Rested.AuctionType = nil
 	Rested.AuctionsClear()
