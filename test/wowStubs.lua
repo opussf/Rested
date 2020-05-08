@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
 -- Date    :  $Date:$
--- Revision:  @VERSION@
+-- Revision:  v1.2-15-g34cc1e6
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -1547,6 +1547,9 @@ end
 C_AuctionHouse = {}
 function C_AuctionHouse.PostItem( item, duration, quantity, bid, buyout )
 end
+function C_AuctionHouse.PostCommodity( item, duration, quantity, price )
+end
+
 
 function IsQuestFlaggedCompleted( questID )
 	return nil
