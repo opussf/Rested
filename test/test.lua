@@ -1258,4 +1258,189 @@ function test.notest_Offline_01()
 	test.after_Offline()
 end
 
+-- Auction tests
+function test.test_AuctionReport_noAuctions()
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_AuctionReport_newAuction_12hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150,
+			["updated"] = now-(1*86400),
+			["Auctions"] = {
+				[550] = {
+					["created"] = now,
+					["duration"] = 12 * 3600
+				},
+			} } }
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertEquals( "1 (12 Hr 0 Min to go) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+end
+function test.test_AuctionReport_newAuction_24hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			["Auctions"] = {
+				[550] = {
+					["created"] = now,
+					["duration"] = 24 * 3600
+				},
+			} } }
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertEquals( "1 (1 Day 0 Hr to go) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+end
+function test.test_AuctionReport_newAuction_48hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			["Auctions"] = {
+				[550] = {
+					["created"] = now,
+					["duration"] = 48 * 3600
+				},
+			} } }
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertEquals( "1 (2 Day 0 Hr to go) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+end
+function test.test_AuctionReport_clearOldAuction_12hours_Init()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			["Auctions"] = {
+				[550] = {
+					["created"] = now-(12*3600) - 5,  -- 12 hours, 5 seconds ago
+					["duration"] = 12 * 3600
+				},
+			} } }
+	Rested.VARIABLES_LOADED()  -- calls init functions
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["Auctions"] )
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_AuctionReport_clearOldAuction_12hours_PLAYER_ENTERING_WORLD()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()  -- calls init functions
+	Rested_restedState["testRealm"]["testPlayer"]["Auctions"] = {
+			[550] = {
+				["created"] = now-(12*3600) - 5,  -- 12 hours, 5 seconds ago
+				["duration"] = 12 * 3600
+			},
+	}
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["Auctions"] )
+	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
+end
+function test.test_AuctionReport_CreateAuction_PostCommodity_12Hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			} }
+	Rested.VARIABLES_LOADED()
+	C_AuctionHouse.PostCommodity( {}, 1, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
+	Rested.AUCTION_HOUSE_AUCTION_CREATED( 15 )  -- This event has a payload....  The auction ID
+	assertEquals( 12*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][15].duration )
+end
+function test.test_AuctionReport_CreateAuction_PostCommodity_24Hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			} }
+	Rested.VARIABLES_LOADED()
+	C_AuctionHouse.PostCommodity( {}, 2, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
+	Rested.AUCTION_HOUSE_AUCTION_CREATED( 15 )  -- This event has a payload....  The auction ID
+	assertEquals( 24*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][15].duration )
+end
+function test.test_AuctionReport_CreateAuction_PostCommodity_48Hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			} }
+	Rested.VARIABLES_LOADED()
+	C_AuctionHouse.PostCommodity( {}, 3, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
+	Rested.AUCTION_HOUSE_AUCTION_CREATED( 15 )  -- This event has a payload....  The auction ID
+	assertEquals( 48*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][15].duration )
+end
+function test.test_AuctionReport_CreateAuction_PostItem_12Hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			} }
+	Rested.VARIABLES_LOADED()
+	C_AuctionHouse.PostItem( {}, 1, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
+	Rested.AUCTION_HOUSE_AUCTION_CREATED( 16 )  -- This event has a payload....  The auction ID
+	assertEquals( 12*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][16].duration )
+end
+function test.test_AuctionReport_CreateAuction_PostCommodity_24Hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			} }
+	Rested.VARIABLES_LOADED()
+	C_AuctionHouse.PostItem( {}, 2, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
+	Rested.AUCTION_HOUSE_AUCTION_CREATED( 16 )  -- This event has a payload....  The auction ID
+	assertEquals( 24*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][16].duration )
+end
+function test.test_AuctionReport_CreateAuction_PostCommodity_48Hours()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
+			} }
+	Rested.VARIABLES_LOADED()
+	C_AuctionHouse.PostItem( {}, 3, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
+	Rested.AUCTION_HOUSE_AUCTION_CREATED( 16 )  -- This event has a payload....  The auction ID
+	assertEquals( 48*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][16].duration )
+end
+function test.test_AuctionReport_ExpiredAuction_Report()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()  -- calls init functions
+	Rested_restedState["testRealm"]["testPlayer"]["Auctions"] = {
+			[550] = {
+				["created"] = now-(12*3600) - 5,  -- 12 hours, 5 seconds ago
+				["duration"] = 12 * 3600
+			},
+	}
+	Rested.ForAllChars( Rested.AuctionsReport )
+	--test.showCharList()
+	assertEquals( "1 (EXPIRED) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+end
+function test.test_AuctionReport_ExipredReminders()
+	now = time()
+	Rested.reminders = {}
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time(), ["restedPC"] = 150,
+			["Auctions"] = {
+				[550] = {
+					["created"] = now-(12*3600) - 25,  -- 12 hours, 5 seconds ago
+					["duration"] = 12 * 3600
+				}
+	} } }
+	Rested.VARIABLES_LOADED()
+	Rested.MakeReminderSchedule()
+	assertEquals( "testRealm:testPlayer2 has 1 expired auctions.", Rested.reminders[time()+60][1] )
+end
+
 test.run()

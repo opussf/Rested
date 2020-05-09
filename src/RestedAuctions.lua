@@ -115,7 +115,7 @@ function Rested.AuctionsExpired( realm, name, struct )
 	return returnStruct
 end
 Rested.ReminderCallback( Rested.AuctionsExpired )
-
+--[[
 
 
 -- Misc functions
@@ -126,22 +126,22 @@ function Rested.AuctionsOwnedAuctionsUpdated( ... )
 end
 
 Rested.EventCallback( "OWNED_AUCTIONS_UPDATED", Rested.AuctionsOwnedAuctionsUpdated )
-
+]]
 -- post
 C_AuctionHouse_PostCommodity = C_AuctionHouse.PostCommodity
-C_AuctionHouse.PostCommodity = function( item, duration, quantity, bid, buyout )
-	-- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
-	--Rested.Print( "PostCommodity( item, "..duration..", "..quantity.." ...) " )
+C_AuctionHouse.PostCommodity = function( ... )
+	-- C_AuctionHouse.PostCommodity(item, duration, quantity, unitPrice )
+	item, duration = ...
 	Rested.AuctionAge = Rested.AuctionsDurations[duration]
 	Rested.AuctionType = "Commodity"
-	C_AuctionHouse_PostCommodity( item, duration, quantity, bid, buyout )
+	C_AuctionHouse_PostCommodity( ... )
 end
 
 C_AuctionHouse_PostItem = C_AuctionHouse.PostItem
-C_AuctionHouse.PostItem = function( item, duration, quantity, bid, buyout )
+C_AuctionHouse.PostItem = function( ... )
 	-- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
-	--Rested.Print( "PostItem( item, "..duration..", "..quantity.." ...) " )
+	item, duration = ...
 	Rested.AuctionAge = Rested.AuctionsDurations[duration]
 	Rested.AuctionType = "Item"
-	C_AuctionHouse_PostItem( item, duration, quantity, bid, buyout )
+	C_AuctionHouse_PostItem( ... )
 end
