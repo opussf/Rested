@@ -174,7 +174,6 @@ function CreateStatusBar( name, ... )
 
 	return StatusBar
 end
-
 function DecolorText( textIn )
 	textIn = string.gsub( textIn, "|c%x%x%x%x%x%x%x%x", "" )
 	textIn = string.gsub( textIn, "|r", "" )
@@ -255,5 +254,4 @@ else
 	end
 	io.stderr:write( "Data file          : "..( dataFile or "False" ).."\n" )
 	io.stderr:write( "Data file exists   : "..( FileExists( dataFile ) and " True" or "False" ).."\n" )
-
 end
