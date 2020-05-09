@@ -4,6 +4,17 @@
 
 Create an offline report.
 
+## Auctions
+
+Track auctions
+
+https://www.townlong-yak.com/framexml/live/Blizzard_APIDocumentation#C_AuctionHouse.GetBrowseResults
+
+-- Research
+[ ] Figure out the set duration of the auction
+[ ] Determine if the auction is still active
+	* remove it before the expire date if it is not.
+
 ## Nag
 
 Expand the Nag report.
