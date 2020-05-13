@@ -115,18 +115,7 @@ function Rested.AuctionsExpired( realm, name, struct )
 	return returnStruct
 end
 Rested.ReminderCallback( Rested.AuctionsExpired )
---[[
 
-
--- Misc functions
-
-function Rested.AuctionsOwnedAuctionsUpdated( ... )
-	local a = select( 1, ... ) or "nil"
-	Rested.Print( "OWNED_AUCTIONS_UPDATED( "..a.." )" )
-end
-
-Rested.EventCallback( "OWNED_AUCTIONS_UPDATED", Rested.AuctionsOwnedAuctionsUpdated )
-]]
 -- post
 C_AuctionHouse_PostCommodity = C_AuctionHouse.PostCommodity
 C_AuctionHouse.PostCommodity = function( ... )
@@ -145,3 +134,17 @@ C_AuctionHouse.PostItem = function( ... )
 	Rested.AuctionType = "Item"
 	C_AuctionHouse_PostItem( ... )
 end
+
+-- Misc functions
+function Rested.AuctionsOwnedAuctionsUpdated( ... )
+	local a = select( 1, ... ) or "nil"
+	Rested.Print( "OWNED_AUCTIONS_UPDATED( "..a.." )" )
+end
+
+Rested.EventCallback( "OWNED_AUCTIONS_UPDATED", Rested.AuctionsOwnedAuctionsUpdated )
+
+function Rested.ScanMail()
+	Rested.Print( "ScanMail" )
+end
+
+Rested.EventCallback( "MAIL_SHOW", Rested.ScanMail )
