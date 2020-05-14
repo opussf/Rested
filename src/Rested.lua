@@ -76,7 +76,36 @@ function Rested.PrintHelp()
 			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
 	end
 end
-Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
+--Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
+function Rested.HelpReport( )
+	-- normally takes realm, name, charStruct
+	index = 1
+	if( #Rested.charList == 0 ) then
+		--Rested.Print( "Size of charList: "..#Rested.charList )
+		table.insert( Rested.charList, { 150, string.format( "%s:  Version %s", SLASH_RESTED1, RESTED_MSG_VERSION ) } )
+		local sortedKeys = {}
+		for text in pairs( Rested.commandList ) do
+			table.insert( sortedKeys, text )
+		end
+		table.sort( sortedKeys, function( a, b ) return string.lower(a) < string.lower(b) end )
+		for _, text in ipairs( sortedKeys ) do
+			index = index + 1
+			info = Rested.commandList[text]
+			table.insert( Rested.charList, { 150-(index * 0.01), string.format( "%s %s -> %s",
+					text, info.help[1], info.help[2] ) } )
+		end
+
+		return index
+	end
+	return 0
+end
+
+Rested.dropDownMenuTable["Help"] = "help"
+Rested.commandList["help"] = { ["help"] = {"","Show help"}, ["func"] = function()
+		Rested.reportName = "Help"
+		Rested.UIShowReport( Rested.HelpReport )
+	end
+}
 
 function Rested.ParseCmd( msg )
 	msg = string.lower( msg )

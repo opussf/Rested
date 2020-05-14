@@ -34,7 +34,10 @@ function test.showCharList()
 	end
 end
 function test.test_printHelp()
-	Rested.Command( "help" )
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.HelpReport )
+	test.showCharList()
 end
 -- VARIABLES_LOADED Inits data
 function test.test_maxLevel_set()
