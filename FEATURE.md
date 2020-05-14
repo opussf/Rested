@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## Help report
+
+Use the dispaly to show the help.
+
 ## Offline
 
 Create an offline report.
