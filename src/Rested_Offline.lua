@@ -64,7 +64,8 @@ function SecondsToTime( secondsIn, noSeconds, notAbbreviated, maxCount )
 	secondsIn = secondsIn - (hours * 3600)
 
 	minutes = math.floor( secondsIn / 60 )
-	seconds = secondsIn - (minutes * 60)
+	seconds = math.floor( secondsIn - (minutes * 60) )
+
 
 	-- format output
 	local includeZero = false
@@ -94,6 +95,7 @@ max = math.max
 min = math.min
 format = string.format
 time = os.time
+date = os.date
 unpack = table.unpack
 Frame = {
 		["__isShown"] = true,

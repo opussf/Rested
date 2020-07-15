@@ -1232,6 +1232,18 @@ function test.test_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting
 	test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
+function test.test_NagReport_NotResting()
+	now = time()
+	Rested.ADDON_LOADED()
+	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150,
+			["updated"] = now-(1*3600) } }
+	Rested.VARIABLES_LOADED()
+	Rested.ForAllChars( Rested.NagCharacters )
+
+	test.showCharList()
+	assertEquals( "testRealm:testPlayer_lvl2 is NOT RESTING", Rested.charList[1][2] )
+end
 
 -- Offline tests
 function myPrint( str )
