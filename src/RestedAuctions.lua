@@ -33,6 +33,7 @@ function Rested.AuctionCreate( AuctionId )
 			["duration"] = Rested.AuctionAge,
 			["type"] = Rested.AuctionType,
 			["version"] = RESTED_MSG_VERSION,
+			["total"] = Rested.AuctionTotal,
 	}
 	Rested.AuctionType = nil
 	Rested.AuctionsClear()
@@ -120,18 +121,20 @@ Rested.ReminderCallback( Rested.AuctionsExpired )
 C_AuctionHouse_PostCommodity = C_AuctionHouse.PostCommodity
 C_AuctionHouse.PostCommodity = function( ... )
 	-- C_AuctionHouse.PostCommodity(item, duration, quantity, unitPrice )
-	item, duration = ...
+	item, duration, quantity, unitPrice = ...
 	Rested.AuctionAge = Rested.AuctionsDurations[duration]
 	Rested.AuctionType = "Commodity"
+	Rested.AuctionTotal = quantity * unitPrice
 	C_AuctionHouse_PostCommodity( ... )
 end
 
 C_AuctionHouse_PostItem = C_AuctionHouse.PostItem
 C_AuctionHouse.PostItem = function( ... )
 	-- C_AuctionHouse.PostItem(item, duration, quantity, bid, buyout)
-	item, duration = ...
+	item, duration, quantity, bid, buyout = ...
 	Rested.AuctionAge = Rested.AuctionsDurations[duration]
 	Rested.AuctionType = "Item"
+	Rested.AuctionTotal = quantity * ( buyout or bid )
 	C_AuctionHouse_PostItem( ... )
 end
 

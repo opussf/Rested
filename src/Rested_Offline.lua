@@ -94,6 +94,7 @@ max = math.max
 min = math.min
 format = string.format
 time = os.time
+date = os.date
 unpack = table.unpack
 Frame = {
 		["__isShown"] = true,
