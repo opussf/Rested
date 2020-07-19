@@ -2,12 +2,13 @@
 
 ## Ignore
 
+Chars ignored for a LONG time, will have the date / time instead of # of days in the ignore report.
+* How many is too many days?  (7?)
+
 Extend the system to allow to ignore a toon for any amount of time.
 The ignore time is then set as the default.
 
 Re-ignoring a toon will reset the ignore time.
-
-
 
 ## Help report
 
