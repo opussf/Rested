@@ -7,58 +7,58 @@ function Rested.TextToSeconds( textIn )
 	-- convert a string to seconds
 	-- the string is in the format of <number><unit>....
 	-- returns seconds or nil
-	local seconds, current = 0, 0
-	local hasValue = false
-	for i = 1, string.len( textIn ) do
-		local char = string.lower( strsub( textIn, i, i ) )
-		local multiplier = Rested.timeMultipliers[char]
-		if multiplier then
-			current = current * multiplier
-			seconds = seconds + current
-			current = 0
-		elseif char == tostring( tonumber ( char ) ) then
-			hasValue = true
-			current = current * 10
-			current = current + tonumber( char )
+	if( strlen( textIn ) > 0 ) then
+		local seconds, current = 0, 0
+		local hasValue = false
+		for i = 1, string.len( textIn ) do
+			local char = string.lower( strsub( textIn, i, i ) )
+			local multiplier = Rested.timeMultipliers[char]
+			if multiplier then
+				current = current * multiplier
+				seconds = seconds + current
+				current = 0
+			elseif char == tostring( tonumber ( char ) ) then
+				hasValue = true
+				current = current * 10
+				current = current + tonumber( char )
+			end
+			--print( char..": "..seconds.." + ("..current.." * "..(multiplier or "")..")" )
 		end
-		--print( char..": "..seconds.." + ("..current.." * "..(multiplier or "")..")" )
+		seconds = seconds + current
+		--print( "Final seconds: ".. ( hasValue and seconds or "nil" ) )
+		return( hasValue and seconds or nil )
 	end
-	seconds = seconds + current
-	--print( "Final seconds: ".. ( hasValue and seconds or "nil" ) )
-	return( hasValue and seconds or nil )
 end
-
 
 -- ignore
 -- allows the user to ignore an alt for a bit of time (set with options)
 -- sets 'ignore' which is a timestamp for when to stop ignoring.
 -- absence of 'ignore' means to not ignore alt.
 function Rested.SetIgnore( param )
-	print( "SetIgnore( "..param.." )" )
-	-- break the param into strings seperated by spaces
-	local charMatches = {}
-	for ignoreStr in string.gmatch( param, "%S+" ) do
-		table.insert( charMatches, ignoreStr )
-	end
-	-- test for time values from the back
-	local isTime = true
-	local seconds = 0
-	while( isTime ) do
-		secFromText = Rested.TextToSeconds( charMatches[#charMatches] )
-		if( secFromText ~= nil ) then
-			seconds = seconds + secFromText
-			Rested_options.ignoreTime = seconds
-			charMatches[#charMatches] = nil
-
-		else
-			isTime = false
-		end
-	end
-	param = table.concat( charMatches, " " )  -- concat with spaces
-	--print( "Param: "..param )
-
 	-- do the original search and ignore
 	if( param and strlen( param ) > 0 ) then
+		-- break the param into strings seperated by spaces
+		local charMatches = {}
+		for ignoreStr in string.gmatch( param, "%S+" ) do
+			table.insert( charMatches, ignoreStr )
+		end
+		-- test for time values from the back
+		local isTime = true
+		local seconds = 0
+		while( isTime ) do
+			secFromText = Rested.TextToSeconds( charMatches[#charMatches] )
+			if( secFromText ~= nil ) then
+				seconds = seconds + secFromText
+				Rested_options.ignoreTime = seconds
+				charMatches[#charMatches] = nil
+
+			else
+				isTime = false
+			end
+		end
+		param = table.concat( charMatches, " " )  -- concat with spaces
+		--print( "Param: "..param )
+
 		param = string.upper( param )
 		Rested.Print( "SetIgnore: "..param )
 		for realm in pairs( Rested_restedState ) do
