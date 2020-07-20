@@ -85,7 +85,7 @@ end
 function Rested.IgnoredCharacters( realm, name, charStruct )
 	if( charStruct.ignore ) then
 		timeToGo = charStruct.ignore - time()
-		if( timeToGo >= ( Rested_options.ignoreDateLimit or 7776000 ) ) then
+		if( timeToGo >= ( Rested_options.ignoreDateLimit and Rested_options.ignoreDateLimit or 7776000 ) ) then
 			Rested.strOut = string.format( "%s: %s", date( "%x %X", charStruct.ignore ), Rested.FormatName( realm, name ) )
 		else
 			Rested.strOut = string.format( "%s: %s", SecondsToTime( timeToGo ), Rested.FormatName( realm, name ) )
