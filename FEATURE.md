@@ -3,7 +3,8 @@
 ## Ignore
 
 Chars ignored for a LONG time, will have the date / time instead of # of days in the ignore report.
-* How many is too many days?  (7?)
+* How many is too many days?  (90?)  -- Set this as an option.
+
 
 Extend the system to allow to ignore a toon for any amount of time.
 The ignore time is then set as the default.

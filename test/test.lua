@@ -544,7 +544,6 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTime()
 	Rested.Command( "ignore test Realm 1d12h" )
 	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
-
 function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTimeWithSpaces()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -553,7 +552,53 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTimeWithSpaces()
 	Rested.Command( "ignore test Realm 1d 12h" )
 	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
+function test.test_Ignore_IgnoreReport_ShortTime()
+	-- the ignore report changes based on how long the char is ignored for.
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "ignore test Realm 1d 12h" )
+	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 
+	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
+	test.showCharList()
+	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
+	assertEquals( "1 Day 12 Hr: test Realm:testPlayer", Rested.charList[1][2] )
+end
+function test.test_Ignore_IgnoreReport_LongTime()
+	-- the ignore report changes based on how long the char is ignored for.
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "ignore test Realm 100d" )
+	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+
+	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
+	test.showCharList()
+	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
+	expected = string.format( "%s: test Realm:testPlayer", date( "%x %X", now + 8640000 ) )
+	assertEquals( expected, Rested.charList[1][2] )
+end
+function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
+	-- the ignore report changes based on how long the char is ignored for.
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "ignore test Realm 100d" )
+	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+
+	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
+	test.showCharList()
+	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
+	expected = string.format( "%s: test Realm:testPlayer", date( "%x %X", now + 8640000 ) )
+	assertEquals( expected, Rested.charList[1][2] )
+end
 -- Rested.me
 function test.test_RestedMe_isSet()
 	Rested.ADDON_LOADED()
