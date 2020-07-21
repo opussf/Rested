@@ -7,7 +7,7 @@ function Rested.TextToSeconds( textIn )
 	-- convert a string to seconds
 	-- the string is in the format of <number><unit>....
 	-- returns seconds or nil
-	if( strlen( textIn ) > 0 ) then
+	if( textIn and strlen( textIn ) > 0 ) then
 		local seconds, current = 0, 0
 		local hasValue = false
 		for i = 1, string.len( textIn ) do
