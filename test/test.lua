@@ -472,7 +472,14 @@ function test.test_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 end
---[[
+function test.test_Ignore_SetIgnore_name_withTime_60seconds()
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore Player 60" )
+	assertEquals( time() + 60, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+end
 function test.test_Ignore_SetIgnore_name_withTime_minute()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -481,8 +488,14 @@ function test.test_Ignore_SetIgnore_name_withTime_minute()
 	Rested.Command( "ignore Player 1m" )
 	assertEquals( time() + 60, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-]]
---[[
+function test.test_Ignore_SetIgnore_name_withTime_minute_setsOption()
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore Player 5m" )
+	assertEquals( 300, Rested_options.ignoreTime )
+end
 function test.test_Ignore_SetIgnore_name_withTime_hour()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -491,8 +504,6 @@ function test.test_Ignore_SetIgnore_name_withTime_hour()
 	Rested.Command( "ignore Player 1h" )
 	assertEquals( time() + 3600, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-]]
---[[
 function test.test_Ignore_SetIgnore_name_withTime_day()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
@@ -501,28 +512,93 @@ function test.test_Ignore_SetIgnore_name_withTime_day()
 	Rested.Command( "ignore Player 1d" )
 	assertEquals( time() + 86400, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-]]
---[[
 function test.test_Ignore_SetIgnore_name_withTime_week()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["testRealm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1w" )
-	assertEquals( time() + 86400, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
 end
-]]
---[[
+function test.test_Ignore_SetIgnore_name_withTime_1year()
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["testRealm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore Player 52w" )
+	assertEquals( time() + 31449600, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+end
 function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
-	Rested.Command( "ignore test Realm 1w" )
+	Rested.Command( "ignore test Realm 1d" )
 	assertEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
-]]
+function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTime()
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore test Realm 1d12h" )
+	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+end
+function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTimeWithSpaces()
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.Command( "ignore test Realm 1d 12h" )
+	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+end
+function test.test_Ignore_IgnoreReport_ShortTime()
+	-- the ignore report changes based on how long the char is ignored for.
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "ignore test Realm 1d 12h" )
+	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 
+	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
+	test.showCharList()
+	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
+	assertEquals( "1 Day 12 Hr: test Realm:testPlayer", Rested.charList[1][2] )
+end
+function test.test_Ignore_IgnoreReport_LongTime()
+	-- the ignore report changes based on how long the char is ignored for.
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "ignore test Realm 100d" )
+	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+
+	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
+	test.showCharList()
+	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
+	expected = string.format( "%s: test Realm:testPlayer", date( "%x %X", now + 8640000 ) )
+	assertEquals( expected, Rested.charList[1][2] )
+end
+function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
+	-- the ignore report changes based on how long the char is ignored for.
+	now = time()
+	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_restedState["test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "ignore test Realm 100d" )
+	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+
+	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
+	test.showCharList()
+	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
+	expected = string.format( "%s: test Realm:testPlayer", date( "%x %X", now + 8640000 ) )
+	assertEquals( expected, Rested.charList[1][2] )
+end
 -- Rested.me
 function test.test_RestedMe_isSet()
 	Rested.ADDON_LOADED()
