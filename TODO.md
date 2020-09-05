@@ -2,12 +2,12 @@
 
 [ ]  Track of a few toons.
 [ ]  Who should I play
-	[ ] Who is fully rested
-	[ ] Add low level chars to Nag
+	[x] Who is fully rested
+	[x] Add low level chars to Nag
 		* Rested to end of level
 		* Full rested pool
 		* Up to 3 days after fully rested.
-	[ ]  Nag toons - in Rested, I thought Nag would be to nag me to play a lowbie who was at full rested
+	[x]  Nag toons - in Rested, I thought Nag would be to nag me to play a lowbie who was at full rested
 
 
 
