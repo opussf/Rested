@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
 -- Date    :  $Date:$
--- Revision:  v1.2-16-gd245645
+-- Revision:  v1.2-32-g3eaa557
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -381,8 +381,12 @@ Frame = {
 		["UnregisterEvent"] = function(self, event) self.Events[event] = nil; end,
 		["GetName"] = function(self) return self.framename end,
 		["SetFrameStrata"] = function() end,
+		["width"] = 100,
+		["height"] = 100,
 		["SetWidth"] = function(self, value) self.width = value; end,
+		["GetWidth"] = function(self) return( self.width ); end,
 		["SetHeight"] = function(self, value) self.height = value; end,
+		["GetHeight"] = function(self) return( self.height ); end,
 		["CreateFontString"] = function(self, ...) return(CreateFontString(...)) end,
 
 		["SetMinMaxValues"] = function() end,
@@ -1374,6 +1378,9 @@ end
 function ClearAchievementComparisonUnit()
 	-- mostly does nothing...
 end
+function SetRaidTarget( target, iconID )
+	-- sets the raid icon ID on target
+end
 function BNSendWhisper( id, msg )
 	table.insert( chatLog,
 			{ ["msg"] = msg, ["chatType"] = "BNWhisper", ["language"] = "", ["channel"] = "BNWhisper" }
@@ -1565,10 +1572,10 @@ end
 -----------------------------------------
 -- TOC functions
 addonData = {}
-function ParseTOC( tocFile )
+function ParseTOC( tocFile, useRequire )
 	-- parse the TOC file for ## entries, and lua files to include
 	-- put ## entries in addonData hash - normally hard coded
-	-- require found lua files.
+	-- set useRequire to use the old require method
 	local tocFileTable = {}
 	local f = io.open( tocFile, "r" )
 	local tocContents = f:read( "*all" )
@@ -1588,13 +1595,27 @@ function ParseTOC( tocFile )
 			break
 		end
 	end
-	pathSeparator = string.sub(package.config, 1, 1) -- first character of this string (http://www.lua.org/manual/5.2/manual.html#pdf-package.config)
+	pathSeparator = string.sub(package.config, 1, 1)
+	-- first character of this string (http://www.lua.org/manual/5.2/manual.html#pdf-package.config)
 	includePath = tocFile
 	while( string.sub( includePath, -1, -1 ) ~= pathSeparator ) do
 		includePath = string.sub( includePath, 1, -2 )
 	end
-	package.path = includePath.."?.lua;" .. package.path
+	addonName = string.sub( tocFile, string.len( includePath ) + 1, -5 )
+
+	if( useRequire ) then
+		--add to the include package.path
+		package.path = includePath.."?.lua;" .. package.path
+	end
+
+	sharedTable = {}
+
 	for _,f in pairs( tocFileTable ) do
-		require( f )
+		if( useRequire ) then
+			require( f )
+		else
+			local loadedfile = assert( loadfile( includePath..f..".lua" ) )
+			loadedfile( addonName, sharedTable )
+		end
 	end
 end
