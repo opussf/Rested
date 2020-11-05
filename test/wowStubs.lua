@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
 -- Date    :  $Date:$
--- Revision:  v1.2-32-g3eaa557
+-- Revision:  1.3
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -18,8 +18,6 @@ chatLog = {
 -- append chat output here
 -- [1] = { ["msg"] = "ChatOutput", ["channel"] = "where", [<other parameters>] = <values> }
 }
-
-
 
 local itemDB = {
 }
@@ -1578,44 +1576,72 @@ function ParseTOC( tocFile, useRequire )
 	-- set useRequire to use the old require method
 	local tocFileTable = {}
 	local f = io.open( tocFile, "r" )
-	local tocContents = f:read( "*all" )
-	while true do
-		local linestart, lineend, line = string.find( tocContents, "(.-)\n" )
-		if linestart then
-			local lua, luaEnd, luaFile = string.find( line, "([%a]*)%.lua" )
-			local xml, xmlEnd, xmlFile = string.find( line, "([%a]*)%.xml" )
-			local hash, hashEnd, hashKey, hashValue = string.find( line, "## ([%a]*): (.*)" )
-			if( hash ) then
-				addonData[ hashKey ] = hashValue
-			elseif( lua ) then
-				table.insert( tocFileTable, luaFile )
+	if f then
+		local tocContents = f:read( "*all" )
+		while true do
+			local linestart, lineend, line = string.find( tocContents, "(.-)\n" )
+			if linestart then
+				local lua, luaEnd, luaFile = string.find( line, "([%a]*)%.lua" )
+				local xml, xmlEnd, xmlFile = string.find( line, "([%a]*)%.xml" )
+				local hash, hashEnd, hashKey, hashValue = string.find( line, "## ([%a]*): (.*)" )
+				if( hash ) then
+					addonData[ hashKey ] = hashValue
+				elseif( lua ) then
+					table.insert( tocFileTable, luaFile )
+				end
+				tocContents = string.sub( tocContents, lineend+1 )
+			else
+				break
 			end
-			tocContents = string.sub( tocContents, lineend+1 )
-		else
-			break
 		end
-	end
-	pathSeparator = string.sub(package.config, 1, 1)
-	-- first character of this string (http://www.lua.org/manual/5.2/manual.html#pdf-package.config)
-	includePath = tocFile
-	while( string.sub( includePath, -1, -1 ) ~= pathSeparator ) do
-		includePath = string.sub( includePath, 1, -2 )
-	end
-	addonName = string.sub( tocFile, string.len( includePath ) + 1, -5 )
+		pathSeparator = string.sub(package.config, 1, 1)
+		-- first character of this string (http://www.lua.org/manual/5.2/manual.html#pdf-package.config)
+		includePath = tocFile
+		while( string.sub( includePath, -1, -1 ) ~= pathSeparator ) do
+			includePath = string.sub( includePath, 1, -2 )
+		end
+		addonName = string.sub( tocFile, string.len( includePath ) + 1, -5 )
 
-	if( useRequire ) then
-		--add to the include package.path
-		package.path = includePath.."?.lua;" .. package.path
-	end
-
-	sharedTable = {}
-
-	for _,f in pairs( tocFileTable ) do
 		if( useRequire ) then
-			require( f )
-		else
-			local loadedfile = assert( loadfile( includePath..f..".lua" ) )
-			loadedfile( addonName, sharedTable )
+			--add to the include package.path
+			package.path = includePath.."?.lua;" .. package.path
+		end
+
+		sharedTable = {}
+
+		for _,f in pairs( tocFileTable ) do
+			if( useRequire ) then
+				require( f )
+			else
+				local loadedfile = assert( loadfile( includePath..f..".lua" ) )
+				loadedfile( addonName, sharedTable )
+			end
 		end
 	end
 end
+
+
+
+---   https://wowwiki.fandom.com/wiki/AddOn_loading_process
+--[[ Load event order:
+
+After the addon code has been loaded, the loading process can be followed by registering for various events, listed here in order of firing.
+
+    ADDON_LOADED
+        This event fires whenever an AddOn has finished loading and the SavedVariables for that AddOn have been loaded from their file.
+    SPELLS_CHANGED
+        This event fires shortly before the PLAYER_LOGIN event and signals that information on the user's spells has been loaded and is available to the UI.
+    PLAYER_LOGIN
+        This event fires immediately before PLAYER_ENTERING_WORLD.
+        Most information about the game world should now be available to the UI.
+        All Sizing and Positioning of frames is supposed to be completed before this event fires.
+        AddOns that want to do one-time initialization procedures once the player has "entered the world" should use this event instead of PLAYER_ENTERING_WORLD.
+    PLAYER_ENTERING_WORLD
+        This event fires immediately after PLAYER_LOGIN
+        Most information about the game world should now be available to the UI. If this is an interface reload rather than a fresh log in, talent information should also be available.
+        All Sizing and Positioning of frames is supposed to be completed before this event fires.
+        This event also fires whenever the player enters/leaves an instance and generally whenever the player sees a loading screen
+    PLAYER_ALIVE
+        This event fires after PLAYER_ENTERING_WORLD
+        Quest and Talent information should now be available to the UI
+]]
