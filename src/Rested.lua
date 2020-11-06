@@ -42,7 +42,7 @@ Rested.maxPlayerLevelTable = {  -- MAX_PLAYER_LEVEL_TABLE is an existing table. 
 	[5]=(time()>1415750400 and 100 or 90),
 	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
 	[7]=(time()>1534118400 and 120 or 110), -- Aug 13, 2018  -- validate this
-	[8]=(time()>2608281976 and 60 or 120), -- Shadow lands - unknown release date - level squish to 60
+	[8]=(time()>1602547200 and 60 or 120), -- Oct 13, 2020
 	[9]=120,
 	[10]=120,
 }
@@ -71,12 +71,48 @@ function Rested.Print( msg, showName )
 end
 function Rested.PrintHelp()
 	Rested.Print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") by "..RESTED_MSG_AUTHOR )
-	for cmd, info in pairs( Rested.commandList ) do
-		Rested.Print( string.format( "%s %s %s -> %s",
-			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
+	local sortedKeys = {}
+	for text in pairs( Rested.commandList ) do
+		table.insert( sortedKeys, text )
+	end
+	table.sort( sortedKeys, function( a, b ) return string.lower(a) < string.lower(b) end )
+	for _, cmd in ipairs( sortedKeys ) do
+		info = Rested.commandList[cmd]
+		Rested.Print( string.format( "   %s %s -> %s",
+			cmd, info.help[1], info.help[2] ), false )
 	end
 end
-Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
+--Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
+function Rested.HelpReport( )
+	-- normally takes realm, name, charStruct
+	index = 1
+	if( #Rested.charList == 0 ) then
+		--Rested.Print( "Size of charList: "..#Rested.charList )
+		table.insert( Rested.charList, { 150, string.format( "%s:  Version %s", SLASH_RESTED1, RESTED_MSG_VERSION ) } )
+		local sortedKeys = {}
+		for text in pairs( Rested.commandList ) do
+			table.insert( sortedKeys, text )
+		end
+		table.sort( sortedKeys, function( a, b ) return string.lower(a) < string.lower(b) end )
+		for _, cmd in ipairs( sortedKeys ) do
+			index = index + 1
+			info = Rested.commandList[cmd]
+			table.insert( Rested.charList, { 150-(index * 0.01), string.format( "%s %s -> %s",
+					cmd, info.help[1], info.help[2] ) } )
+		end
+
+		return index
+	end
+	return 0
+end
+
+Rested.dropDownMenuTable["Help"] = "help"
+Rested.commandList["help"] = { ["help"] = {"","Show help"}, ["func"] = function()
+		Rested.PrintHelp()
+		Rested.reportName = "Help"
+		Rested.UIShowReport( Rested.HelpReport )
+	end
+}
 
 function Rested.ParseCmd( msg )
 	msg = string.lower( msg )

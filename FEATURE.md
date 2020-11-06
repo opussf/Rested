@@ -1,8 +1,34 @@
 # Feature document for Rested
 
+## Ignore
+
+Chars ignored for a LONG time, will have the date / time instead of # of days in the ignore report.
+* How many is too many days?  (90?)  -- Set this as an option.
+
+
+Extend the system to allow to ignore a toon for any amount of time.
+The ignore time is then set as the default.
+
+Re-ignoring a toon will reset the ignore time.
+
+## Help report
+
+Use the dispaly to show the help.
+
 ## Offline
 
 Create an offline report.
+
+## Auctions
+
+Track auctions
+
+https://www.townlong-yak.com/framexml/live/Blizzard_APIDocumentation#C_AuctionHouse.GetBrowseResults
+
+-- Research
+[ ] Figure out the set duration of the auction
+[ ] Determine if the auction is still active
+	* remove it before the expire date if it is not.
 
 ## Nag
 

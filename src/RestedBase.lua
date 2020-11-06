@@ -1,40 +1,64 @@
 -- RestedBase.lua
 -- Track 'base' data.
 
---[[
-RF.timeMultipliers = { [" "] = 1, ["s"] = 1, ["m"] = 60, ["h"] = 3600, ["d"] = 86400, ["w"] = 604800 }
-RF.timeMultiplierOrder = { "w", "d", "h", "m", "s" }
-function RF.TextToSeconds( textIn )
+Rested.timeMultipliers = { [" "] = 1, ["s"] = 1, ["m"] = 60, ["h"] = 3600, ["d"] = 86400, ["w"] = 604800 }
+-- RF.timeMultiplierOrder = { "w", "d", "h", "m", "s" }
+function Rested.TextToSeconds( textIn )
 	-- convert a string to seconds
-	-- the string is in the format of <number><unit>.....
-	-- returns seconds
-	local seconds, current = 0, 0
-	for i = 1, string.len( textIn ) do
-		local char = string.lower( strsub( textIn, i, i ) )
-		local multiplier = RF.timeMultipliers[char]
-		if multiplier then
-			current = current * multiplier
-			seconds = seconds + current
-			current = 0
-		elseif char == tostring( tonumber( char ) ) then
-			current = current * 10
-			current = current + tonumber( char )
+	-- the string is in the format of <number><unit>....
+	-- returns seconds or nil
+	if( textIn and strlen( textIn ) > 0 ) then
+		local seconds, current = 0, 0
+		local hasValue = false
+		for i = 1, string.len( textIn ) do
+			local char = string.lower( strsub( textIn, i, i ) )
+			local multiplier = Rested.timeMultipliers[char]
+			if multiplier then
+				current = current * multiplier
+				seconds = seconds + current
+				current = 0
+			elseif char == tostring( tonumber ( char ) ) then
+				hasValue = true
+				current = current * 10
+				current = current + tonumber( char )
+			end
+			--print( char..": "..seconds.." + ("..current.." * "..(multiplier or "")..")" )
 		end
-		--print( char..": "..seconds.." + ("..current.." * "..(multiplier or "")..")" )
+		seconds = seconds + current
+		--print( "Final seconds: ".. ( hasValue and seconds or "nil" ) )
+		return( hasValue and seconds or nil )
 	end
-	seconds = seconds + current
-	return seconds
 end
-]]
-
-
 
 -- ignore
 -- allows the user to ignore an alt for a bit of time (set with options)
 -- sets 'ignore' which is a timestamp for when to stop ignoring.
 -- absence of 'ignore' means to not ignore alt.
 function Rested.SetIgnore( param )
+	-- do the original search and ignore
 	if( param and strlen( param ) > 0 ) then
+		-- break the param into strings seperated by spaces
+		local charMatches = {}
+		for ignoreStr in string.gmatch( param, "%S+" ) do
+			table.insert( charMatches, ignoreStr )
+		end
+		-- test for time values from the back
+		local isTime = true
+		local seconds = 0
+		while( isTime ) do
+			secFromText = Rested.TextToSeconds( charMatches[#charMatches] )
+			if( secFromText ~= nil ) then
+				seconds = seconds + secFromText
+				Rested_options.ignoreTime = seconds
+				charMatches[#charMatches] = nil
+
+			else
+				isTime = false
+			end
+		end
+		param = table.concat( charMatches, " " )  -- concat with spaces
+		--print( "Param: "..param )
+
 		param = string.upper( param )
 		Rested.Print( "SetIgnore: "..param )
 		for realm in pairs( Rested_restedState ) do
@@ -61,13 +85,17 @@ end
 function Rested.IgnoredCharacters( realm, name, charStruct )
 	if( charStruct.ignore ) then
 		timeToGo = charStruct.ignore - time()
-		Rested.strOut = string.format( "%s: %s", SecondsToTime( timeToGo ), Rested.FormatName( realm, name ) )
+		if( timeToGo >= ( Rested_options.ignoreDateLimit and Rested_options.ignoreDateLimit or 7776000 ) ) then
+			Rested.strOut = string.format( "%s: %s", date( "%x %X", charStruct.ignore ), Rested.FormatName( realm, name ) )
+		else
+			Rested.strOut = string.format( "%s: %s", SecondsToTime( timeToGo ), Rested.FormatName( realm, name ) )
+		end
 		table.insert( Rested.charList, {(timeToGo/Rested_options.ignoreTime)*150, Rested.strOut} )
 		return 1
 	end
 	return 0
 end
-Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search>", "Ignore matched chars, or show ignored." } }
+Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search> [ignore Duration]", "Ignore matched chars, or show ignored." } }
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
 Rested.dropDownMenuTable["Ignore"] = "ignore"
 
