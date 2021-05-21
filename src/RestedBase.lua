@@ -260,7 +260,7 @@ function Rested.AllCharacters( realm, name, charStruct )
 		--(charStruct.xpNow / charStruct.xpMax) * 100,
 		select(1,Rested.FormatRested(charStruct)),
 		rn )
-	table.insert( Rested.charList, {(charStruct.lvlNow / Rested.maxLevel) * 150, Rested.strOut} )
+	table.insert( Rested.charList, {((charStruct.lvlNow + (charStruct.xpNow / charStruct.xpMax ))/ Rested.maxLevel) * 150, Rested.strOut} )
 	return 1
 end
 
