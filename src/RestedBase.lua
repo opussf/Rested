@@ -255,8 +255,8 @@ Rested.commandList["all"] = {["help"] = {"","Show all characters"}, ["func"] = f
 function Rested.AllCharacters( realm, name, charStruct )
 	-- 80 (15.5%): Realm:Name
 	rn = Rested.FormatName( realm, name )
-	Rested.strOut = string.format( "%0.1f (%s): %s",
-		charStruct.lvlNow + ((charStruct.xpNow / charStruct.xpMax )-0.05),
+	Rested.strOut = string.format( "%0.2f (%s): %s",
+		charStruct.lvlNow + ((charStruct.xpNow / charStruct.xpMax )),
 		--(charStruct.xpNow / charStruct.xpMax) * 100,
 		select(1,Rested.FormatRested(charStruct)),
 		rn )
