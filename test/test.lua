@@ -1324,7 +1324,7 @@ function test.test_NagReport_NotResting()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
-	assertEquals( "testRealm:testPlayer_lvl2 is NOT RESTING", Rested.charList[1][2] )
+	assertEquals( "2 :: 1 Hr 0 Min : testRealm:testPlayer_lvl2 NOT RESTING", Rested.charList[1][2] )
 end
 
 -- Offline tests
