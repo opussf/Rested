@@ -294,12 +294,10 @@ function Rested.NagCharacters( realm, name, charStruct )
 			return 1
 		end
 	end
-	--print( realm.." =? "..Rested.realm )
-	--print( name.." =? "..Rested.name )
-	if( not ( realm == Rested.realm and name == Rested.name ) and not charStruct.isResting ) then
-		Rested.strOut = string.format( "%s is NOT RESTING", rn )
-		--print( Rested.strOut )
-		table.insert( Rested.charList, { 150, Rested.strOut } )
+	useColor = useColor and ( realm == Rested.realm and name == Rested.name )
+	if( charStruct.isResting == false and not ( realm == Rested.realm and name == Rested.name ) ) then
+		Rested.strOut = string.format( reportStr .. " NOT RESTING", charStruct.lvlNow, SecondsToTime( timeSince ), rn )
+		table.insert( Rested.charList, { (timeSince/(Rested_options.staleStart))*150, Rested.strOut } )
 		return 1
 	end
 	return 0
