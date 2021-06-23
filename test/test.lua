@@ -635,7 +635,7 @@ function test.test_FormatRested_restedValue_beyondCurrentLevel()
 end
 
 -- Mounts
-require "RestedMounts"
+--require "RestedMounts"
 function test.test_Mounts_Report_SingleMount_halfLife()
 	now = time()
 	Rested_options.mountHistoryAge = 60
@@ -916,7 +916,7 @@ function test.test_StaleTime_Set_CanBeEqualToNag()
 end
 
 -- Professions
-require "RestedProfessions"
+--require "RestedProfessions"
 function test.test_Profession_01()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
@@ -924,7 +924,7 @@ function test.test_Profession_01()
 end
 
 -- gold
-require "RestedGold"
+--require "RestedGold"
 function test.before_gold()
 	oldMyCopper = myCopper
 end
@@ -1333,13 +1333,14 @@ function myPrint( str )
 	table.insert( stdOut, str )
 end
 function test.after_Offline()
-	require "Rested"
-	require "RestedUI"
-	require "RestedBase"
-	require "RestedDeaths"
-	require "RestedGuild"
-	require "RestediLvl"
-	require "RestedPlayed"
+	ParseTOC( "../src/Rested.toc" )
+--	require "Rested"
+--	require "RestedUI"
+--	require "RestedBase"
+--	require "RestedDeaths"
+--	require "RestedGuild"
+--	require "RestediLvl"
+--	require "RestedPlayed"
 end
 function test.notest_Offline_01()
 	stdOut = nil
