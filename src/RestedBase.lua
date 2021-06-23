@@ -294,6 +294,12 @@ function Rested.NagCharacters( realm, name, charStruct )
 			return 1
 		end
 	end
+	useColor = useColor and ( realm == Rested.realm and name == Rested.name )
+	if( charStruct.isResting == false and not ( realm == Rested.realm and name == Rested.name ) ) then
+		Rested.strOut = string.format( reportStr .. " NOT RESTING", charStruct.lvlNow, SecondsToTime( timeSince ), rn )
+		table.insert( Rested.charList, { (timeSince/(Rested_options.staleStart))*150, Rested.strOut } )
+		return 1
+	end
 	return 0
 end
 Rested.InitCallback( function()
