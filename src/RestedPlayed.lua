@@ -6,7 +6,7 @@ function Rested.StoreTimePlayed( total, currentLvl )
 end
 
 function Rested.TimePlayedRequest()
-	if not Rested.lastTimePlayedRequest or Rested.lastTimePlayedRequest+60 < time() then
+	if not Rested.lastTimePlayedRequest or Rested.lastTimePlayedRequest+600 < time() then
 		Rested.lastTimePlayedRequest = time()
 		RequestTimePlayed()
 	end
