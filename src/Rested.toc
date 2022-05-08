@@ -1,5 +1,5 @@
+## Title: Rested Reporter v@VERSION@
 ## Interface: @INTERFACE@
-## Title: Rested Reporter
 ## Notes: Rested Tracker for alts v@VERSION@
 ## Author: opussf
 ## Version: @VERSION@
