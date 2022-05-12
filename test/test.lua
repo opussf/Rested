@@ -882,6 +882,18 @@ function test.test_NagTime_Set_CanBeEqualToStale()
 	Rested.Command( "setNag 10d" )
 	assertEquals( 864000, Rested_options.nagStart )
 end
+function test.test_NagTime_Set_EmptyDoesNotChange()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setNag" )
+	assertEquals( 7 * 86400, Rested_options.nagStart )
+end
+function test.test_NagTime_Set_SetToZero()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 86400
+	Rested.Command( "setNag 0" )
+	assertEquals( 7 * 86400, Rested_options.nagStart )
+end
 
 -- set stale time
 function test.test_StaleTime_Set_Day()
@@ -914,6 +926,13 @@ function test.test_StaleTime_Set_CanBeEqualToNag()
 	Rested.Command( "setstale 7d" )
 	assertEquals( 604800, Rested_options.staleStart )
 end
+function test.test_StaleTime_Set_EmptyDoesNotChange()
+	Rested_options["nagStart"] = 7 * 86400
+	Rested_options["staleStart"] = 10 * 864000
+	Rested.Command( "setstale" )
+	assertEquals( 8640000, Rested_options.staleStart )
+end
+
 
 -- Professions
 --require "RestedProfessions"

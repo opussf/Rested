@@ -315,13 +315,17 @@ Rested.EventCallback( "PLAYER_ENTERING_WORLD", function()
 )
 function Rested.SetNag( inVal )
 	-- This sets the NagTime (maxCutOff) to a number of seconds -- change the name of the setting (and how the setting is used)
-	local previousNag = SecondsToTime( Rested_options.nagStart )
 	local newNag = Rested.DecodeTime( inVal, "d" )
-	if( newNag <= Rested_options.staleStart ) then
-		Rested_options["nagStart"] = newNag
-		Rested.Print( string.format( "nagStart changed from %s to %s", previousNag, SecondsToTime( newNag ) ) )
+	if newNag > 0 then
+		local previousNag = SecondsToTime( Rested_options.nagStart )
+		if( newNag <= Rested_options.staleStart ) then
+			Rested_options["nagStart"] = newNag
+			Rested.Print( string.format( "nagStart changed from %s to %s", previousNag, SecondsToTime( newNag ) ) )
+		else
+			Rested.Print( "nagStart cannot be greater than staleStart" )
+		end
 	else
-		Rested.Print( "nagStart cannot be greater than staleStart" )
+		Rested.Print( string.format( "nagStart is set at %s", SecondsToTime( Rested_options.nagStart ) ) )
 	end
 end
 Rested.commandList["setnag"] = {["help"] = {"#[s|m|h|d|w]", "Set the time before a max level character shows up in the nag report."},
@@ -350,13 +354,17 @@ function Rested.StaleCharacters( realm, name, charStruct )
 	return 0
 end
 function Rested.SetStale( inVal )
-	local previousStale = SecondsToTime( Rested_options.staleStart )
 	local newStale = Rested.DecodeTime( inVal, "d" )
-	if( newStale >= Rested_options.nagStart ) then
-		Rested_options["staleStart"] = newStale
-		Rested.Print( string.format( "staleStart changed from %s to %s", previousStale, SecondsToTime( newStale ) ) )
+	if newStale > 0 then
+		local previousStale = SecondsToTime( Rested_options.staleStart )
+		if( newStale >= Rested_options.nagStart ) then
+			Rested_options["staleStart"] = newStale
+			Rested.Print( string.format( "staleStart changed from %s to %s", previousStale, SecondsToTime( newStale ) ) )
+		else
+			Rested.Print( "staleStart cannot be less than nagStart" )
+		end
 	else
-		Rested.Print( "staleStart cannot be less than nagStart" )
+		Rested.Print( string.format( "staleStart is set at %s", SecondsToTime( Rested_options.staleStart ) ) )
 	end
 end
 Rested.commandList["setstale"] = {["help"] = {"#[s|m|h|d|w]", "Set the time before a max level character shows up as stale."},
