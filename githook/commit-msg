@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Do the easy local stuff first.
+GITABORTMSG="Aborting commit due to empty commit message"
+
+# exit on 0 file size (no commit msg)
+if [ -s $1 ]; then  # file size is non-zero
+	# Find the first comment line
+	COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
+	#echo "COMMENT_LINE: (($COMMENT_LINE))"
+	if [ -n "$COMMENT_LINE" ]; then  # COMMENT_LINE is non-zero length
+		#echo "Found a comment line at: $COMMENT_LINE"
+		MSG=`head -n$(($COMMENT_LINE-1)) $1`
+		#echo "MSG: $MSG"
+
+		if [ -n "$MSG" ]; then  # MSG is non-zero
+			TAIL=`tail -n+$COMMENT_LINE $1`
+			#echo "TAIL: $TAIL"
+		else
+			#echo "Exiting on 0 length message"
+			echo $GITABORTMSG
+			exit 1
+		fi
+	else
+		#echo "Commit line is zero"
+		MSG=`cat $1`
+		TAIL=""
+	fi
+	#echo "MSG: $MSG\nTAIL: $TAIL"
+
+	# get the random msg
+	MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/random')
+	#Assign a default message if it cannot connect
+	MOD=${MOD:-"<no random message>"}
+
+	# modify the commit file
+	echo "$MSG\n\n$MOD\n$TAIL" > $1
+else
+	#echo "empty commit file"
+	echo $GITABORTMSG
+	exit 1
+fi
