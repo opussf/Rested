@@ -1,6 +1,6 @@
-## Title: Rested Reporter v@VERSION@
+## Title: Rested Reporter
 ## Interface: @INTERFACE@
-## Notes: Rested Tracker for alts v@VERSION@
+## Notes: Rested Tracker for alts (@VERSION@)
 ## Author: opussf
 ## Version: @VERSION@
 ## Description: Track stats for your alts.

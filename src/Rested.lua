@@ -43,7 +43,7 @@ Rested.maxPlayerLevelTable = {  -- MAX_PLAYER_LEVEL_TABLE is an existing table. 
 	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
 	[7]=(time()>1534118400 and 120 or 110), -- Aug 13, 2018  -- validate this
 	[8]=(time()>1602547200 and 60 or 120), -- Oct 13, 2020
-	[9]=(time()>1669344880 and 70 or 60), -- Nov 25, 2022 -- validate this
+	[9]=(time()>1669680000 and 70 or 60), -- Nov 29, 2022 -- validate this
 	[10]=120,
 }
 
