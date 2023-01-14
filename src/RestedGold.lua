@@ -20,9 +20,10 @@ function Rested.GoldReport( realm, name, charStruct )
 		Rested.goldSum = 0
 		Rested.reportName = "Gold"
 	end
-	Rested.goldSum = Rested.goldSum + charStruct.gold
 
 	local c = charStruct.gold or 0
+	Rested.goldSum = Rested.goldSum + c
+
 	Rested.goldMax = math.max( Rested.goldMax or 1, c )
 	local g = math.floor(c / 10000); c = c - ( g * 10000 )
 	local s = math.floor(c / 100);   c = c - ( s * 100 )
