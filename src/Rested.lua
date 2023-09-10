@@ -306,15 +306,7 @@ function Rested.EventCallback( event, callback )
 
 	if not Rested[event] then
 		-- create function if it does not exist
-		--print( "CREATE function for event: "..event )
 		Rested[event] = function( ... )
-			--[[
-			Rested.Print( string.format( "%s-->%s (%i)<--%s",
-					(UnitAffectingCombat( "player" ) and COLOR_RED or ""),
-					event,
-					#Rested.eventFunctions[event],
-					(UnitAffectingCombat( "player" ) and COLOR_END or "") ) )
-			]]
 			if Rested.eventFunctions[event] then
 				for _, func in pairs( Rested.eventFunctions[event] ) do
 					func( ... )
