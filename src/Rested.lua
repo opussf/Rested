@@ -60,7 +60,6 @@ function Rested.OnUpdate( elapsed )
 		func( elapsed )
 	end
 end
-
 function Rested.Print( msg, showName )
 	-- print to the chat frame
 	-- set showName to false to suppress the addon name printing
@@ -70,7 +69,7 @@ function Rested.Print( msg, showName )
 	DEFAULT_CHAT_FRAME:AddMessage( msg )
 end
 function Rested.PrintHelp( command )
-	command = string.lower(command)
+	command = command and string.lower(command)
 	Rested.Print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") by "..RESTED_MSG_AUTHOR )
 	local sortedKeys = {}
 	for text in pairs( Rested.commandList ) do
