@@ -9,6 +9,7 @@ RestedUIFrame = CreateFrame()
 RestedUIFrame_TitleText = CreateFontString()
 RestedScrollFrame_VSlider = CreateFrame()
 RestedUIFrame_TitleText = CreateFontString()
+UIDropDownMenu_SetText = function() end
 
 ParseTOC( "../src/Rested.toc" )
 
@@ -1558,6 +1559,28 @@ function test.test_AuctionReport_ExipredReminders()
 	Rested.VARIABLES_LOADED()
 	Rested.MakeReminderSchedule()
 	assertEquals( "testRealm:testPlayer2 has 1 expired auctions.", Rested.reminders[time()+60][1] )
+end
+-- Nag timeOut
+----------
+function test.test_SetNagTimeOut_report_nil()
+	Rested_options.nagTimeOut = nil
+	Rested.Command( "setNagTimeout" )
+	assertIsNil( Rested_options.nagTimeOut )
+end
+function test.test_SetNagTimeOut_report_set()
+	Rested_options.nagTimeOut = 302
+	Rested.Command( "setNagTimeout" )
+	assertEquals( 302, Rested_options.nagTimeOut )
+end
+function test.test_SetNagTimeOut_set_nonnil()
+	Rested_options.nagTimeOut = 60
+	Rested.Command( "setNagTimeout 1m30s" )
+	assertEquals( 90, Rested_options.nagTimeOut )
+end
+function test.test_SetNagTimeOut_set_nil()
+	Rested_options.nagTimeOut = 60
+	Rested.Command( "setNagTimeout 0" )
+	assertIsNil( Rested_options.nagTimeOut )
 end
 
 test.run()
