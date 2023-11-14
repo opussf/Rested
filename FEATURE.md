@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## NoNag
+
+A bit like Ignore, but just for the nag report.
+
 ## Ignore
 
 Chars ignored for a LONG time, will have the date / time instead of # of days in the ignore report.
