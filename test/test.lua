@@ -1582,5 +1582,18 @@ function test.test_SetNagTimeOut_set_nil()
 	Rested.Command( "setNagTimeout 0" )
 	assertIsNil( Rested_options.nagTimeOut )
 end
+-- NoNag
+-----------
+function test.test_NoNag_set_01()
+	Rested_restedState["testRealm"] = {["testPlayer"] =
+			{["initAt"]=6372,["updated"]=6372}}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "noNag . 1h")
+	assertEquals( time() + 3600, Rested_restedState["testRealm"]["testPlayer"]["nonag"] )
+end
+function test.test_NoNag_set_02()
+	Rested.Command( "noNag testPlayer 2h" )
+end
 
 test.run()

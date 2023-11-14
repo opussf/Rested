@@ -12,7 +12,5 @@ for n in $(seq -f "%05g" 9999 1) ; do
 		until $(~/Scripts/checkFileChanged.sh ./test/test.lua); do
 			sleep 1
 		done
-	else
-		ls -alt $reportFile
 	fi
 done
