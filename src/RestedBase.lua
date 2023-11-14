@@ -385,8 +385,9 @@ function Rested.SetNoNag( param )
 				isTime = false
 			end
 		end
+		Rested_options.noNagTime = Rested_options.noNagTime or (7 * 86400)
 		param = table.concat( charMatches, " " )  -- concat with spaces
-		print( "Param: "..param )
+
 		param = string.upper( param )
 		Rested.Print( "NoNag: "..param )
 		for realm in pairs( Rested_restedState ) do
@@ -401,14 +402,18 @@ function Rested.SetNoNag( param )
 	end
 end
 function Rested.UpdateNoNag( realm, name, charStruct )
-	if( charStruct.nonag and time() >= charStruct.nonag ) then
+	if( charStruct.nonag and
+			( time() >= charStruct.nonag or (Rested.realm == realm and Rested.name == name) ) ) then
 		charStruct.nonag = nil
 	end
 end
 
-Rested.commandList["nonag"] = {["func"] = Rested.SetNoNag, ["help"] = {"<search> [ignore duration]", "Remove matched chars from the nag list for duration, or until visited." } }
+Rested.commandList["nonag"] = {
+		["func"] = Rested.SetNoNag,
+		["help"] = { "<search> [ignore duration]", "Remove matched chars from the nag list for duration, or until visited." },
+		["desc"] = {"Remove this player from the nag report for duration time, or until visited."}
+}
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateNoNag, true ); end )
-
 
 -- Stale characters
 Rested.dropDownMenuTable["Stale"] = "stale"
