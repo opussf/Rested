@@ -560,6 +560,7 @@ function test.test_Ignore_IgnoreReport_ShortTime()
 	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "ignore test Realm 1d 12h" )
 	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
@@ -575,6 +576,7 @@ function test.test_Ignore_IgnoreReport_LongTime()
 	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "ignore test Realm 100d" )
 	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
@@ -591,6 +593,7 @@ function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "ignore test Realm 100d" )
 	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
@@ -1594,6 +1597,12 @@ function test.test_NoNag_set_01()
 end
 function test.test_NoNag_set_02()
 	Rested.Command( "noNag testPlayer 2h" )
+end
+-- UIManagement
+-------------
+function test.test_UIReset()
+	Rested.Command( "uireset" )
+	-- @TODO: determine how to test
 end
 
 test.run()
