@@ -19,7 +19,7 @@ function Rested.Rewards_Update( ... )
 		end
 	end
 	if countActivities > 0 then
-		Rested.me.weelkyActivity = countActivities
+		Rested.me.weeklyActivity = countActivities
 	end
 end
 
@@ -52,8 +52,8 @@ function Rested.VaultReport( realm, name, charStruct )
 	if charStruct.weeklyRewards then
 		table.insert( Rested.charList, { 150, rn } )
 		return 1
-	elseif charStruct.weelkyActivity then
-		table.insert( Rested.charList, { charStruct.weelkyActivity * (150 / Rested.maxActivities), string.format( "%s: %i/%i", rn, charStruct.weelkyActivity, Rested.maxActivities )})
+	elseif charStruct.weeklyActivity then
+		table.insert( Rested.charList, { charStruct.weeklyActivity * (150 / Rested.maxActivities), string.format( "%s: %i/%i", rn, charStruct.weekklyActivity, Rested.maxActivities )})
 		return 1
 	end
 end
