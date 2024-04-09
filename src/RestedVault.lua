@@ -1,10 +1,9 @@
 -- RestedVault.lua
-Rested.maxActivities = 9
 
 function Rested.Rewards_Update( ... )
-	print( "WEEKLY_REWARDS_UPDATE:" )
+	-- print( "WEEKLY_REWARDS_UPDATE:" )
 	Rested.me.weeklyRewards = ( C_WeeklyRewards.HasAvailableRewards() or nil )
-	print( "Has Available Rewards: "..(Rested.me.weeklyRewards and "True" or "False"))
+	-- print( "Has Available Rewards: "..(Rested.me.weeklyRewards and "True" or "False"))
 	activities = { "Dungeon", "PvP", "Raid" }
 	countActivities, Rested.maxActivities = 0, 0
 	for k,name in ipairs( activities ) do
@@ -20,11 +19,35 @@ function Rested.Rewards_Update( ... )
 	end
 	if countActivities > 0 then
 		Rested.me.weeklyActivity = countActivities
+		Rested.me.weeklyResetAt = Rested.GetWeeklyQuestResetTime()
+		print( "Weekly reset happens at: "..date( "%c", Rested.me.weeklyResetAt ) )
+		Rested.Command( "vault" )
+		Rested.autoCloseAfter = Rested_options.nagTimeOut and time()+Rested_options.nagTimeOut or nil
 	end
+end
+
+function Rested.GetWeeklyQuestResetTime()
+	local now = time()
+	local region = GetCurrentRegion()
+	local dayOffset = { 2, 1, 0, 6, 5, 4, 3 }
+	local regionDayOffset = { { 2, 1, 0, 6, 5, 4, 3 }, { 4, 3, 2, 1, 0, 6, 5 }, { 3, 2, 1, 0, 6, 5, 4 }, { 4, 3, 2, 1, 0, 6, 5 }, { 4, 3, 2, 1, 0, 6, 5 } }
+	local nextDailyReset = GetQuestResetTime()
+	local utc = date( "!*t", now + nextDailyReset )
+	local reset = regionDayOffset[region][utc.wday] * 86400 + now + nextDailyReset
+
+	return reset, reset-604800
 end
 
 function Rested.Rewards_ItemChanged( ... )
 	print( "WEEKLY_REWARDS_ITEM_CHANGED:" )
+end
+
+function Rested.CurrentWeekly_to_Rewards( realm, name, charStruct )
+	if charStruct.weeklyResetAt and charStruct.weeklyResetAt <= Rested.previousWeekReset and charStruct.weeklyActivity then
+		charStruct.weeklyRewards = true
+		charStruct.weeklyResetAt = nil
+		charStruct.weeklyActivity = nil
+	end
 end
 
 -- function Rested.Rewards_Hide( ... )
@@ -32,11 +55,16 @@ end
 -- end
 
 Rested.EventCallback( "WEEKLY_REWARDS_UPDATE", Rested.Rewards_Update )
+Rested.EventCallback( "ZONE_CHANGED_NEW_AREA", Rested.Rewards_Update )
 Rested.EventCallback( "WEEKLY_REWARDS_ITEM_CHANGED", Rested.Rewards_ItemChanged )
 -- Rested.EventCallback( "WEEKLY_REWARDS_HIDE", Rested.Rewards_Hide )
 
 Rested.InitCallback( function()
 		LoadAddOn("Blizzard_WeeklyRewards")
+		WeeklyRewardsFrame:Show()
+		_, Rested.previousWeekReset = Rested.GetWeeklyQuestResetTime()
+		Rested.ForAllChars( Rested.CurrentWeekly_to_Rewards, true )
+		WeeklyRewardsFrame:Hide()
 	end
 )
 
@@ -50,10 +78,12 @@ Rested.commandList["vault"] = { ["help"] = {"","Show vault info"}, ["func"] = fu
 function Rested.VaultReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
 	if charStruct.weeklyRewards then
-		table.insert( Rested.charList, { 150, rn } )
+		table.insert( Rested.charList, { 150, "Claim: "..rn } )
 		return 1
 	elseif charStruct.weeklyActivity then
-		table.insert( Rested.charList, { charStruct.weeklyActivity * (150 / Rested.maxActivities), string.format( "%s: %i/%i", rn, charStruct.weekklyActivity, Rested.maxActivities )})
+		table.insert( Rested.charList, { charStruct.weeklyActivity * (150 / Rested.maxActivities), string.format( "%i/%i: %s", charStruct.weeklyActivity, Rested.maxActivities, rn )})
 		return 1
 	end
 end
+
+Rested.maxActivities = 9
