@@ -16,7 +16,7 @@ function Rested.Rewards_Update( ... )
 				count = count + 1
 			end
 			if info.progress > 0 and info.progress < info.threshold then
-				print( string.format( "Vault %s Rewards: %i/%i", name, info.progress, info.threshold ) )
+				print( string.format( "Vault %s Rewards Rank %d: %i/%i", name, info.index, info.progress, info.threshold ) )
 			end
 		end
 	end
@@ -86,7 +86,7 @@ function Rested.VaultReport( realm, name, charStruct )
 	elseif charStruct.weeklyActivity then
 
 		table.insert( Rested.charList, {
-				(charStruct.weeklyActivity.Dungeon or 0 + charStruct.weeklyActivity.PvP or 0 + charStruct.weeklyActivity.Raid or 0) * (150 / Rested.maxActivities),
+				((charStruct.weeklyActivity.Dungeon or 0) + (charStruct.weeklyActivity.PvP or 0) + (charStruct.weeklyActivity.Raid or 0)) * (150 / Rested.maxActivities),
 				string.format( "%i/%i/%i: %s",
 						charStruct.weeklyActivity.Raid, charStruct.weeklyActivity.Dungeon, charStruct.weeklyActivity.PvP, rn
 				)}
