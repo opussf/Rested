@@ -16,7 +16,7 @@ function Rested.Rewards_Update( ... )
 				count = count + 1
 			end
 			if info.progress > 0 and info.progress < info.threshold then
-				print( string.format( "%s: (%i) %i/%i", name, info.index, info.progress, info.threshold ) )
+				print( string.format( "Vault %s Rewards: %i/%i", name, info.progress, info.threshold ) )
 			end
 		end
 	end
