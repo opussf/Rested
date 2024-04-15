@@ -88,7 +88,7 @@ function Rested.VaultReport( realm, name, charStruct )
 		table.insert( Rested.charList, {
 				((charStruct.weeklyActivity.Dungeon or 0) + (charStruct.weeklyActivity.PvP or 0) + (charStruct.weeklyActivity.Raid or 0)) * (150 / Rested.maxActivities),
 				string.format( "%i/%i/%i: %s",
-						charStruct.weeklyActivity.Raid, charStruct.weeklyActivity.Dungeon, charStruct.weeklyActivity.PvP, rn
+						(charStruct.weeklyActivity.Raid or 0), (charStruct.weeklyActivity.Dungeon or 0), (charStruct.weeklyActivity.PvP or 0), rn
 				)}
 		)
 		return 1
