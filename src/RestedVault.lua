@@ -71,6 +71,21 @@ Rested.InitCallback( function()
 	end
 )
 
+function Rested.VaultHasRewards( realm, name, struct )
+	returnStruct = {}
+	reminderTime = time() + 60
+	if struct.weeklyRewards then
+		table.insert( returnStruct[reminderTime],
+				string.format( "%s has unclaimed vault items.",
+							Rested.FormatName( realm, name ), 1
+				)
+		)
+	end
+	return returnStruct
+end
+
+Rested.ReminderCallback( Rested.VaultHasRewards )
+
 Rested.dropDownMenuTable["Vault"] = "vault"
 Rested.commandList["vault"] = { ["help"] = {"","Show vault info"}, ["func"] = function()
 		Rested.reportName = "Vault Report"
