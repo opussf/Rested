@@ -74,7 +74,10 @@ Rested.InitCallback( function()
 function Rested.VaultHasRewards( realm, name, struct )
 	returnStruct = {}
 	reminderTime = time() + 60
-	if struct.weeklyRewards then
+	if( not returnStruct[reminderTime] ) then
+		returnStruct[reminderTime] = {}
+	end
+	if( struct.weeklyRewards ) then
 		table.insert( returnStruct[reminderTime],
 				string.format( "%s has unclaimed vault items.",
 							Rested.FormatName( realm, name ), 1
