@@ -1,5 +1,25 @@
 # Feature document for Rested
 
+## GreatVault
+
+Add a report and track how many possible rewards are in the great vault.
+
+-- Figure out how to determine if the great vault rewards are claimed.
+
+Events:
+WEEKLY_REWARDS_UPDATE
+WEEKLY_REWARDS_ITEM_CHANGED
+WEEKLY_REWARDS_HIDE
+
+Possible requirement:
+LoadAddOn("Blizzard_WeeklyRewards")
+
+Possible methods:
+C_WeeklyRewards.GetActivities(activityType);
+C_WeeklyRewards.GetActivityEncounterInfo(activityType, activity.index);
+C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id);
+
+
 ## NoNag
 
 A bit like Ignore, but just for the nag report.
