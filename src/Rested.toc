@@ -20,3 +20,5 @@ RestedGold.lua
 
 RestedProfessions.lua
 RestedAuctions.lua
+
+RestedVault.lua
