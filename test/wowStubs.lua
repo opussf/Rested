@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  February 18 2024
--- Revision:  9.2
+-- Date    :  April 23 2024
+-- Revision:  9.2.1
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -795,6 +795,7 @@ function GetAchievementNumCriteria( achievementID )
 	end
 end
 function GetCurrentRegion()
+	-- @TODO: find region info
 	return 1
 end
 function GetSpecialization()
@@ -1138,6 +1139,7 @@ function GetPlayerInfoByGUID( playerGUID )
 	return "Warlock", "Warlock", "Human", "Human", 3, "testPlayer", "testRealm"
 end
 function GetQuestResetTime()
+	-- @TODO: Find out more about this
 	return 5
 end
 function GetRaidRosterInfo( raidIndex )
@@ -1225,10 +1227,12 @@ function GetUnitSpeed( lookupStr )
 end
 --[[
 function HasNewMail()
+	-- @TODO: Research this
 	return true
 end
 ]]
 function GetWeeklyQuestResetTime()
+	-- @TODO: Research this
 	return 15
 end
 function GetXPExhaustion()
