@@ -18,15 +18,16 @@ function Rested.SaveGuildInfo( ... )
 end
 function Rested.GetGuildRep( )
 	-- Return the rep for the guild only
-	for factionIndex = 1, GetNumFactions() do
-		local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
-				canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex);
-		if isCollapsed then
-			ExpandFactionHeader(factionIndex)
-			return
-		end
-		if name == Rested_restedState[Rested.realm][Rested.name].guildName then
-			return earnedValue, bottomValue, topValue
+	for factionIndex = 1, C_Reputation.GetNumFactions() do
+		local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
+		if factionData then
+			if factionData.name == "Guild" and factionData.isCollapsed then
+				C_Reputation.ExpandFactionHeader(factionIndex)
+				return
+			end
+			if factionData.name == Rested_restedState[Rested.realm][Rested.name].guildName then
+				return factionData.currentStanding, factionData.currentReationThreshold, factionData.nextReactionThreshold
+			end
 		end
 	end
 end
