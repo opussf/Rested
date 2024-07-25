@@ -20,6 +20,9 @@ function Rested.GetGuildRep( )
 	-- Return the rep for the guild only
 	for factionIndex = 1, C_Reputation.GetNumFactions() do
 		local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
+		-- { hasBonusRepGain(b), description(s), isHeaderWithRep(b), isHeader(b), currentReationThreshold(i), canSetInactive(b),
+		--   atWarWith(b), isWatched(b), isCollapsed(b), canToggleAtWar(b), nextReationThreshold(i), factionID(i) -1169 (guild?),
+		--   name(s) "Guild", currentStanding(i), isAccountWide(b), isChild(b), reaction(i) = 4  --  see globals.FACTION_STANDING_LABEL1 = "Hated" }
 		if factionData then
 			if factionData.name == "Guild" and factionData.isCollapsed then
 				C_Reputation.ExpandFactionHeader(factionIndex)
