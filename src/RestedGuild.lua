@@ -8,7 +8,7 @@ function Rested.SaveGuildInfo( ... )
 	Rested_restedState[Rested.realm][Rested.name].guildName = gName or nil
 	Rested_restedState[Rested.realm][Rested.name].guildRank = gName and gRankName or nil
 	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gName and gRankIndex or nil
-	local rep, bottom, top = Rested.GetGuildRep()
+	local rep, bottom, top, reaction = Rested.GetGuildRep()
 	bottom = 0
 	--rep = rep - bottom; top = top - bottom; bottom = 0
 	Rested_restedState[Rested.realm][Rested.name].guildRep = gName and rep or nil
@@ -29,7 +29,7 @@ function Rested.GetGuildRep( )
 				return
 			end
 			if factionData.name == Rested_restedState[Rested.realm][Rested.name].guildName then
-				return factionData.currentStanding, factionData.currentReationThreshold, factionData.nextReactionThreshold
+				return factionData.currentStanding, factionData.currentReationThreshold, factionData.nextReactionThreshold, factionData.reaction
 			end
 		end
 	end
@@ -48,8 +48,9 @@ function Rested.GuildStandingReport( realm, name, charStruct )
 	local lineCount = 0
 	if charStruct.guildName then
 		lineCount = 1
-		Rested.strOut = string.format( "%s :: %s",
+		Rested.strOut = string.format( "%s :%s: %s",
 				charStruct.guildName,
+				(charStruct.guildRankIndex and _G["FACTION_STANDING_LABEL"..charStruct.guildRankIndex] or ""),
 				rn )
 		table.insert( Rested.charList,
 				{ ( ( charStruct.guildRep or 0 ) / ( ( ( charStruct.guildTop or 0 ) - ( charStruct.guildBottom or 0 ) ) + 1 ) ) * 150,
