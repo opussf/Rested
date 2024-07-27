@@ -229,9 +229,9 @@ COMBATLOG_OBJECT_AFFILIATION_OUTSIDER = 8
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s dies, you gain %d experience."
 COMBATLOG_XPGAIN_EXHAUSTION1 = "%s dies, you gain %d experience. (%s exp %s bonus)"
 
---			TT.fName, TT.fDescription, TT.fStandingId, TT.fBottomValue, TT.fTopValue, TT.fEarnedValue, TT.fAtWarWith,
---					TT.fCanToggleAtWar, TT.fIsHeader, TT.fIsCollapsed, TT.fIsWatched, TT.isChild, TT.factionID,
---					TT.hasBonusRepGain, TT.canBeLFGBonus = GetFactionInfo(factionIndex);
+-- { hasBonusRepGain(b), description(s), isHeaderWithRep(b), isHeader(b), currentReationThreshold(i), canSetInactive(b),
+--   atWarWith(b), isWatched(b), isCollapsed(b), canToggleAtWar(b), nextReationThreshold(i), factionID(i) -1169 (guild?),
+--   name(s) "Guild", currentStanding(i), isAccountWide(b), isChild(b), reaction(i) = 4  --  see globals.FACTION_STANDING_LABEL1 = "Hated" }
 FactionInfo = {
 	{ ["name"] = "Classic", ["description"] = "", ["standingID"] = 4, ["bottomValue"] = 0, ["topValue"] = 3000, ["earnedValue"] = 0,
 		["atWarWith"] = false, ["canToggleAtWar"] = true, ["isHeader"] = true, ["isCollapsed"] = false, ["hasRep"] = false,
