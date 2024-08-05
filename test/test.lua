@@ -51,115 +51,115 @@ function test.test_RealmLevelCreated()
 	-- current realm table is added if it does not exist.
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertTrue( Rested_restedState["testRealm"] )
+	assertTrue( Rested_restedState["Test Realm"] )
 end
 function test.test_RealmLevelPreserved()
 	-- do not overwrite a previous realm table
-	Rested_restedState["testRealm"] = {["aPlayer"] = {["initAt"]=6372 }}
+	Rested_restedState["Test Realm"] = {["aPlayer"] = {["initAt"]=6372 }}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( 6372, Rested_restedState["testRealm"]["aPlayer"].initAt )
+	assertEquals( 6372, Rested_restedState["Test Realm"]["aPlayer"].initAt )
 end
 function test.test_PlayerLevelCreated()
 	-- current player table is added if it does not exist.
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 end
 function test.test_PlayerLevelPreserved()
 	-- do not overwrite a previous player table
-	Rested_restedState["testRealm"] = {["testPlayer"] = {["initAt"]=6372 }}
+	Rested_restedState["Test Realm"] = {["testPlayer"] = {["initAt"]=6372 }}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( 6372, Rested_restedState["testRealm"]["testPlayer"].initAt )
+	assertEquals( 6372, Rested_restedState["Test Realm"]["testPlayer"].initAt )
 end
 function test.test_PlayerClassIsSet()
 	-- player class is set
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Warlock", Rested_restedState["testRealm"]["testPlayer"].class )
+	assertEquals( "Warlock", Rested_restedState["Test Realm"]["testPlayer"].class )
 end
 function test.test_PlayerClassIsReset()
 	-- player class is reset - always over write this - many paths to this state
-	Rested_restedState["testRealm"] = {["testPlayer"] =
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["initAt"]=6372,["class"]="Warrior"}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Warlock", Rested_restedState["testRealm"]["testPlayer"].class )
+	assertEquals( "Warlock", Rested_restedState["Test Realm"]["testPlayer"].class )
 end
 function test.test_PlayerFactionIsSet()
 	-- player class is set
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Alliance", Rested_restedState["testRealm"]["testPlayer"].faction )
+	assertEquals( "Alliance", Rested_restedState["Test Realm"]["testPlayer"].faction )
 end
 function test.test_PlayerFactionIsReset()
 	-- player class is reset - always over write this - many paths to this state
-	Rested_restedState["testRealm"] = {["testPlayer"] =
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["initAt"]=6372,["faction"]="Horde"}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Alliance", Rested_restedState["testRealm"]["testPlayer"].faction )
+	assertEquals( "Alliance", Rested_restedState["Test Realm"]["testPlayer"].faction )
 end
 function test.test_PlayerRaceIsSet()
 	-- player class is set
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Human", Rested_restedState["testRealm"]["testPlayer"].race )
+	assertEquals( "Human", Rested_restedState["Test Realm"]["testPlayer"].race )
 end
 function test.test_PlayerRaceIsReset()
 	-- player class is reset - always over write this - many paths to this state
-	Rested_restedState["testRealm"] = {["testPlayer"] =
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["initAt"]=6372,["race"]="Orc"}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Human", Rested_restedState["testRealm"]["testPlayer"].race )
+	assertEquals( "Human", Rested_restedState["Test Realm"]["testPlayer"].race )
 end
 function test.test_PlayerGenderIsSet()
 	-- player class is set
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Female", Rested_restedState["testRealm"]["testPlayer"].gender )
+	assertEquals( "Female", Rested_restedState["Test Realm"]["testPlayer"].gender )
 end
 function test.test_PlayerGenderIsReset()
 	-- player class is reset - always over write this - many paths to this state
-	Rested_restedState["testRealm"] = {["testPlayer"] =
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["initAt"]=6372,["gender"]="Male"}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( "Female", Rested_restedState["testRealm"]["testPlayer"].gender )
+	assertEquals( "Female", Rested_restedState["Test Realm"]["testPlayer"].gender )
 end
 function test.testPlayerUpdatedIsSet()
 	-- this should always be updated.
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( time(), Rested_restedState["testRealm"]["testPlayer"].updated )
+	assertEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated )
 end
 function test.testPlayerUpdatedIsUpdated()
 	-- this should always be updated.
-	Rested_restedState["testRealm"] = {["testPlayer"] =
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["initAt"]=6372,["updated"]=6372}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( time(), Rested_restedState["testRealm"]["testPlayer"].updated )
+	assertEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated )
 end
 function test.testPlayerIgnoreIsCleared()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 -- other base functions
 -- FormatName
 function test.test_FormatName_CurrentToon()
 	Rested.ADDON_LOADED()
-	rn = Rested.FormatName( "testRealm", "testPlayer" )
-	assertEquals( COLOR_GREEN.."testRealm:testPlayer"..COLOR_END, rn )
+	rn = Rested.FormatName( "Test Realm", "testPlayer" )
+	assertEquals( COLOR_GREEN.."Test Realm:testPlayer"..COLOR_END, rn )
 end
 function test.test_FormatName_CurrentToon_noColor()
 	Rested.ADDON_LOADED()
-	rn = Rested.FormatName( "testRealm", "testPlayer", false )
-	assertEquals( "testRealm:testPlayer", rn )
+	rn = Rested.FormatName( "Test Realm", "testPlayer", false )
+	assertEquals( "Test Realm:testPlayer", rn )
 end
 function test.test_FormatName_DiffRealm()
 	Rested.ADDON_LOADED()
@@ -168,8 +168,8 @@ function test.test_FormatName_DiffRealm()
 end
 function test.test_FormatName_DiffName()
 	Rested.ADDON_LOADED()
-	rn = Rested.FormatName( "testRealm", "otherPlayer" )
-	assertEquals( "testRealm:otherPlayer", rn )
+	rn = Rested.FormatName( "Test Realm", "otherPlayer" )
+	assertEquals( "Test Realm:otherPlayer", rn )
 end
 function test.test_FormatName_DiffRealm_DiffName()
 	Rested.ADDON_LOADED()
@@ -183,7 +183,7 @@ end
 function test.test_ForAllChars_returnsCount()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -194,7 +194,7 @@ end
 function test.test_ForAllChars_returnsCount_ignoreChar()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
@@ -205,7 +205,7 @@ end
 function test.test_ForAllChars_returnsCount_includeIgnoreChar()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
@@ -218,7 +218,7 @@ end
 function test.test_ForAllChars_filter_lvlNow_ignored()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
@@ -229,7 +229,7 @@ end
 function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar_10()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
@@ -240,7 +240,7 @@ end
 function test.test_ForAllChars_filter_lvlNow_includeIgnoreChar_2()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
@@ -251,7 +251,7 @@ end
 function test.test_ForAllChars_callBack_returnsNil()
 	now = time()
 	Rested_restedState = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = time()+3600 } }
@@ -361,7 +361,7 @@ end
 function test.test_Reminders_makeReminderSchedule_oneChar()
 	originalReminderFunctions = Rested.reminderFunctions
 	Rested.reminderFunctions = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
 	Rested.ReminderCallback(
 		function( realm, name, struct )
@@ -370,13 +370,13 @@ function test.test_Reminders_makeReminderSchedule_oneChar()
 	)
 	Rested.MakeReminderSchedule()
 	Rested.reminderFunctions = originalReminderFunctions
-	assertEquals( "testPlayer-testRealm is resting.", Rested.reminders[0][1] )
+	assertEquals( "testPlayer-Test Realm is resting.", Rested.reminders[0][1] )
 end
 function test.test_Reminders_makeReminderSchedule_badReturnStruct()
 	-- test if the reminder function does not return an expected table
 	originalReminderFunctions = Rested.reminderFunctions
 	Rested.reminderFunctions = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isRested"] = true, ["updated"] = time() } }
 	Rested.ReminderCallback( function() return true; end )
 	Rested.MakeReminderSchedule()
@@ -387,7 +387,7 @@ function test.test_Reminders_makeReminderSchedule_oneChar_isIgnored()
 	-- ignored char should not show up in reminders
 	originalReminderFunctions = Rested.reminderFunctions
 	Rested.reminderFunctions = {}
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time(), ["ignore"] = time()+60 } }
 	Rested.ReminderCallback(
 		function( realm, name, struct )
@@ -413,17 +413,17 @@ end
 function test.test_Ignore_SetIgnore_name()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore testplayer" )
-	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time()+ 604800, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_realm()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -433,7 +433,7 @@ end
 function test.test_Ignore_SetIgnore_partial()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -443,29 +443,29 @@ end
 function test.test_Ignore_SetIgnore_dot()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore ." )
 	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
-	assertEquals( time()+ 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time()+ 604800, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.notest_Ignore_SetIgnore_noParam()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore" )
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
-	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.notest_Ignore_clearIgnore_TiedTo_PLAYER_ENTERING_WORLD()
 	-- TODO:  Fix this
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600, ["ignore"] = now-5 } }
@@ -477,23 +477,23 @@ end
 function test.test_Ignore_SetIgnore_name_withTime_60seconds()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 60" )
-	assertEquals( time() + 60, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_name_withTime_minute()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1m" )
-	assertEquals( time() + 60, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_name_withTime_minute_setsOption()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 5m" )
 	assertEquals( 300, Rested_options.ignoreTime )
@@ -501,34 +501,34 @@ end
 function test.test_Ignore_SetIgnore_name_withTime_hour()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1h" )
-	assertEquals( time() + 3600, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_name_withTime_day()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1d" )
-	assertEquals( time() + 86400, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 86400, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_name_withTime_week()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1w" )
-	assertEquals( time() + 604800, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 604800, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_name_withTime_1year()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 52w" )
-	assertEquals( time() + 31449600, Rested_restedState["testRealm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 31449600, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	now = time()
@@ -558,57 +558,57 @@ function test.test_Ignore_IgnoreReport_ShortTime()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
-	Rested_restedState["test Realm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	Rested.Command( "ignore test Realm 1d 12h" )
-	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	Rested.Command( "ignore test 1d 12h" )
+	assertEquals( time() + 129600, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
 	test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
-	assertEquals( "1 Day 12 Hr: test Realm:testPlayer", Rested.charList[1][2] )
+	assertEquals( "1 Day 12 Hr: |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_Ignore_IgnoreReport_LongTime()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
-	Rested_restedState["test Realm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "ignore test Realm 100d" )
-	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	assertEquals( time() + 8640000, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
 	test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
-	expected = string.format( "%s: test Realm:testPlayer", date( "%x %X", now + 8640000 ) )
+	expected = string.format( "%s: |cff00ff00Test Realm:testPlayer|r", date( "%x %X", now + 8640000 ) )
 	assertEquals( expected, Rested.charList[1][2] )
 end
 function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
-	Rested_restedState["test Realm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	Rested.Command( "ignore test Realm 100d" )
-	assertEquals( time() + 8640000, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	Rested.Command( "ignore test 100d" )
+	assertEquals( time() + 8640000, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
 	test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
-	expected = string.format( "%s: test Realm:testPlayer", date( "%x %X", now + 8640000 ) )
+	expected = string.format( "%s: |cff00ff00Test Realm:testPlayer|r", date( "%x %X", now + 8640000 ) )
 	assertEquals( expected, Rested.charList[1][2] )
 end
 -- Rested.me
 function test.test_RestedMe_isSet()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( Rested_restedState["testRealm"]["testPlayer"], Rested.me, "Rested.me should be set, and point to the current toon." )
+	assertEquals( Rested_restedState["Test Realm"]["testPlayer"], Rested.me, "Rested.me should be set, and point to the current toon." )
 end
 
 -- FormatRested
@@ -645,7 +645,7 @@ function test.test_Mounts_Report_SingleMount_halfLife()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-30] = "Garn Nighthowl",
 		} }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -660,7 +660,7 @@ function test.test_Mounts_Report_SingleMount_Recent()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()] = "Garn Nighthowl",
 		} }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -675,7 +675,7 @@ function test.test_Mounts_Report_SingleMount_Oldest()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-59] = "Garn Nighthowl",
 		} }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -689,7 +689,7 @@ function test.test_Mounts_Report_NoMounts()
 	now = time()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -704,7 +704,7 @@ function test.test_Mounts_Report_TwoMounts_Same()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-59] = "Garn Nighthowl", [time()-30] = "Garn Nighthowl"
 		} }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -719,7 +719,7 @@ function test.test_Mounts_Report_TwoMounts_Diff()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-60] = "Garn Nighthowl", [time()-30] = "Other Mount"
 		} }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -734,7 +734,7 @@ function test.test_Mounts_Report_TwoMounts_TooOldMount()
 	Rested_options.mountHistoryAge = 60
 	Rested_misc = { ["mountHistory"] = { [time()-120] = "Garn Nighthowl", [time()-30] = "Other Mount"
 		} }
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -755,17 +755,17 @@ end
 function test.test_Remove_oneAlt()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
-	Rested_restedState["testRealm"]["otherPlayer"] =
+	Rested_restedState["Test Realm"]["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 }
 	Rested.Command( "rm otherPlayer" )
-	assertIsNil( Rested_restedState["testRealm"]["otherPlayer"] )
+	assertIsNil( Rested_restedState["Test Realm"]["otherPlayer"] )
 end
 function test.test_Remove_pruneEmptyRealm()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -775,77 +775,77 @@ end
 function test.test_Remove_notCurrentToon()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "rm testPlayer" )
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 end
 function test.test_Remove_withRealm()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"]["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
 	Rested.Command( "rm testPlayer-otherRealm" )
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
 function test.test_Remove_withRealm_colon()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"]["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
 	Rested.Command( "rm testPlayer:otherRealm" )
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 	assertIsNil( Rested_restedState["otherRealm"]["testPlayer"] )
 end
 function test.test_Remove_realmWithSpace()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["other Realm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["other Realm"]["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
 	Rested.Command( "rm testPlayer-other Realm" )
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 	assertIsNil( Rested_restedState["other Realm"]["testPlayer"] )
 end
 function test.test_Remove_realmWithPunc()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["Blade's Edge"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["Blade's Edge"]["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
 	Rested.Command( "rm testPlayer-blade's edge" )
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 	assertIsNil( Rested_restedState["Blade's Edge"]["testPlayer"] )
 end
 function test.test_Remove_realmWithPunc_incomplete()
 	Rested.ADDON_LOADED()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["Blade's Edge"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["Blade's Edge"]["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 }
 	Rested.Command( "rm testPlayer-blade" )
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"] )
 	assertIsNil( Rested_restedState["Blade's Edge"]["testPlayer"] )
 end
 
@@ -962,7 +962,7 @@ function test.test_Gold_01()
 	Rested.PLAYER_ENTERING_WORLD()
 
 	Rested.SaveGold()
-	assertEquals( 847394, Rested_restedState["testRealm"]["testPlayer"].gold )
+	assertEquals( 847394, Rested_restedState["Test Realm"]["testPlayer"].gold )
 	test.after_gold()
 end
 function test.test_Gold_Report_01()
@@ -978,7 +978,7 @@ function test.test_Gold_Report_01()
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = time(), ["gold"] = 872648 } }
 
 	Rested.ForAllChars( Rested.GoldReport )
-	assertEquals( "87g 26s 48c :: goldRealm:goldPlayer", Rested.charList[1][2] )
+	assertEquals( "87g 26s 48c :: goldRealm:goldPlayer", Rested.charList[2][2] )
 	test.after_gold()
 end
 
@@ -1026,7 +1026,7 @@ loadfile( "../src/Rested_Export.lua" )()  -- Rested_Export reads from arg, not a
 function test.notest_Reminders_makeReminders_noMaxLvl()
 	now = time()
 	print( "maxLevel = "..Rested.maxLevel )
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 89, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time() } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["updated"] = time() } }
@@ -1067,85 +1067,85 @@ function test.test_BaseData_lvlNow()
 	-- lvlNow always gets set
 	Rested_restedState = {}
 	Rested.ADDON_LOADED()
-	assertEquals( 60, Rested_restedState["testRealm"]["testPlayer"]["lvlNow"] )
+	assertEquals( 60, Rested_restedState["Test Realm"]["testPlayer"]["lvlNow"] )
 end
 function test.test_BaseData_lvlNow_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertEquals( 60, Rested_restedState["testRealm"]["testPlayer"]["lvlNow"] )
+	assertEquals( 60, Rested_restedState["Test Realm"]["testPlayer"]["lvlNow"] )
 end
 function test.test_BaseData_lvlNow_PLAYER_XP_UPDATE()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_XP_UPDATE()
-	assertEquals( 60, Rested_restedState["testRealm"]["testPlayer"]["lvlNow"] )
+	assertEquals( 60, Rested_restedState["Test Realm"]["testPlayer"]["lvlNow"] )
 end
 function test.test_BaseData_lvlNow_PLAYER_UPDATE_RESTING()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_UPDATE_RESTING()
-	assertEquals( 60, Rested_restedState["testRealm"]["testPlayer"]["lvlNow"] )
+	assertEquals( 60, Rested_restedState["Test Realm"]["testPlayer"]["lvlNow"] )
 end
 function test.test_BaseData_lvlNow_UPDATE_EXHAUSTION()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.UPDATE_EXHAUSTION()
-	assertEquals( 60, Rested_restedState["testRealm"]["testPlayer"]["lvlNow"] )
+	assertEquals( 60, Rested_restedState["Test Realm"]["testPlayer"]["lvlNow"] )
 end
 function test.test_BaseData_lvlNow_CHANNEL_UI_UPDATE()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["lvlNow"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.CHANNEL_UI_UPDATE()
-	assertEquals( 60, Rested_restedState["testRealm"]["testPlayer"]["lvlNow"] )
+	assertEquals( 60, Rested_restedState["Test Realm"]["testPlayer"]["lvlNow"] )
 end
 function test.test_BaseData_xpNow_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["xpNow"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["xpNow"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertEquals( 100, Rested_restedState["testRealm"]["testPlayer"]["xpNow"] )
+	assertEquals( 100, Rested_restedState["Test Realm"]["testPlayer"]["xpNow"] )
 end
 function test.test_BaseData_xpMax_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["xpMax"] = 2 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["xpMax"] = 2 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertEquals( 1000, Rested_restedState["testRealm"]["testPlayer"]["xpMax"] )
+	assertEquals( 1000, Rested_restedState["Test Realm"]["testPlayer"]["xpMax"] )
 end
 function test.test_BaseData_isResting_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["isResting"] = false } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["isResting"] = false } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertTrue( Rested_restedState["testRealm"]["testPlayer"]["isResting"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["isResting"] )
 end
 function test.test_BaseData_rested_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["rested"] = 918273987 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["rested"] = 918273987 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertEquals( 3618, Rested_restedState["testRealm"]["testPlayer"]["rested"] )
+	assertEquals( 3618, Rested_restedState["Test Realm"]["testPlayer"]["rested"] )
 end
 function test.test_BaseData_restedPC_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["restedPC"] = 918273987 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["restedPC"] = 918273987 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertEquals( 361.8, Rested_restedState["testRealm"]["testPlayer"]["restedPC"] )
+	assertEquals( 361.8, Rested_restedState["Test Realm"]["testPlayer"]["restedPC"] )
 end
 function test.test_BaseData_RestedReminder()
 	now = time()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.reminderFunctions = {}
 	Rested.ReminderCallback( Rested.RestedReminderValues )
 	Rested.MakeReminderSchedule()
-	assertEquals( "|cff00ff00RESTED:|r 5 days until testRealm:testPlayer is fully rested.", Rested.reminders[now+428400][1] )
+	assertEquals( "|cff00ff00RESTED:|r 5 days until Test Realm:testPlayer is fully rested.", Rested.reminders[now+428400][1] )
 end
 -- RestedDeaths
 function test.test_RestedDeaths_deaths_PLAYER_ENTERING_WORLD()
-	Rested_restedState["testRealm"] = { ["testPlayer"] = { ["deaths"] = 918273987 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["deaths"] = 918273987 } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
-	assertEquals( 42, Rested_restedState["testRealm"]["testPlayer"]["deaths"] )
+	assertEquals( 42, Rested_restedState["Test Realm"]["testPlayer"]["deaths"] )
 end
 
 --
@@ -1169,7 +1169,7 @@ function test.test_NagReport_MaxLevel_InNagRange()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_MaxLevel"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_MaxLevel"] =
 			{ ["lvlNow"] = Rested.maxLevel, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
 			["updated"] = now-(8*86400) } }
 
@@ -1178,14 +1178,14 @@ function test.test_NagReport_MaxLevel_InNagRange()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
-	assertEquals( "90 :: 8 Day 0 Hr : testRealm:testPlayer_MaxLevel", Rested.charList[1][2] )
+	assertEquals( "90 :: 8 Day 0 Hr : Test Realm:testPlayer_MaxLevel", Rested.charList[1][2] )
 end
 function test.test_NagReport_MaxLevel_LessThanNagRange()
 	now = time()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_MaxLevel"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_MaxLevel"] =
 			{ ["lvlNow"] = Rested.maxLevel, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
 			["updated"] = now-(6*86400) } }
 
@@ -1201,7 +1201,7 @@ function test.test_NagReport_MaxLevel_GreaterThanNagRange()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_MaxLevel"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_MaxLevel"] =
 			{ ["lvlNow"] = Rested.maxLevel, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
 			["updated"] = now-(10.2*86400) } }
 
@@ -1218,7 +1218,7 @@ function test.notest_NagReport_Leveling_RestedLessThanLevel_Resting_True()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
 			["updated"] = now-(2*86400) } }
 
@@ -1234,7 +1234,7 @@ function test.notest_NagReport_Leveling_RestedLessThanLevel_Resting_False()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 0,
 			["updated"] = now-(2*86400) } }
 
@@ -1250,7 +1250,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
 			["updated"] = now-(8.5*86400) } }
 
@@ -1258,7 +1258,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
-	assertEquals( "2 :: |cff00ff00127.5%|r : testRealm:testPlayer_lvl2", Rested.charList[1][2] )
+	assertEquals( "2 :: |cff00ff00127.5%|r : Test Realm:testPlayer_lvl2", Rested.charList[1][2] )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
 	-- fix this
@@ -1266,7 +1266,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 0,
 			["updated"] = now-(8.5*86400) } }
 
@@ -1282,7 +1282,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanMax_Resting_True()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 0,
 			["updated"] = now-(17*86400) } }
 
@@ -1297,7 +1297,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanMax_Resting_False()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 0,
 			["updated"] = now-(70*86400) } }
 
@@ -1312,7 +1312,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resti
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = true, ["restedPC"] = 150,
 			["updated"] = now-(1*86400) } }
 
@@ -1327,7 +1327,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resti
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150,
 			["updated"] = now-(1*86400) } }
 
@@ -1340,14 +1340,14 @@ end
 function test.test_NagReport_NotResting()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer_lvl2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer_lvl2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150,
 			["updated"] = now-(1*3600) } }
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
-	assertEquals( "2 :: 1 Hr 0 Min : testRealm:testPlayer_lvl2 NOT RESTING", Rested.charList[1][2] )
+	assertEquals( "2 :: 1 Hr 0 Min : Test Realm:testPlayer_lvl2 NOT RESTING", Rested.charList[1][2] )
 end
 
 -- Offline tests
@@ -1388,7 +1388,7 @@ end
 function test.test_AuctionReport_newAuction_12hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150,
 			["updated"] = now-(1*86400),
 			["Auctions"] = {
@@ -1400,12 +1400,12 @@ function test.test_AuctionReport_newAuction_12hours()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	--test.showCharList()
-	assertEquals( "1 (12 Hr 0 Min to go) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (12 Hr 0 Min to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_newAuction_24hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			["Auctions"] = {
 				[550] = {
@@ -1416,12 +1416,12 @@ function test.test_AuctionReport_newAuction_24hours()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	--test.showCharList()
-	assertEquals( "1 (1 Day 0 Hr to go) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (1 Day 0 Hr to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_newAuction_48hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			["Auctions"] = {
 				[550] = {
@@ -1432,12 +1432,12 @@ function test.test_AuctionReport_newAuction_48hours()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	--test.showCharList()
-	assertEquals( "1 (2 Day 0 Hr to go) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (2 Day 0 Hr to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_clearOldAuction_12hours_Init()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			["Auctions"] = {
 				[550] = {
@@ -1448,14 +1448,14 @@ function test.test_AuctionReport_clearOldAuction_12hours_Init()
 	Rested.VARIABLES_LOADED()  -- calls init functions
 	Rested.ForAllChars( Rested.AuctionsReport )
 	--test.showCharList()
-	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["Auctions"] )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["Auctions"] )
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.test_AuctionReport_clearOldAuction_12hours_PLAYER_ENTERING_WORLD()
 	now = time()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()  -- calls init functions
-	Rested_restedState["testRealm"]["testPlayer"]["Auctions"] = {
+	Rested_restedState["Test Realm"]["testPlayer"]["Auctions"] = {
 			[550] = {
 				["created"] = now-(12*3600) - 5,  -- 12 hours, 5 seconds ago
 				["duration"] = 12 * 3600
@@ -1464,80 +1464,80 @@ function test.test_AuctionReport_clearOldAuction_12hours_PLAYER_ENTERING_WORLD()
 	Rested.PLAYER_ENTERING_WORLD()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	--test.showCharList()
-	assertIsNil( Rested_restedState["testRealm"]["testPlayer"]["Auctions"] )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["Auctions"] )
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.test_AuctionReport_CreateAuction_PostCommodity_12Hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			} }
 	Rested.VARIABLES_LOADED()
 	C_AuctionHouse.PostCommodity( {}, 1, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
 	Rested.AUCTION_HOUSE_AUCTION_CREATED( 15 )  -- This event has a payload....  The auction ID
-	assertEquals( 12*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][15].duration )
+	assertEquals( 12*3600, Rested_restedState["Test Realm"]["testPlayer"]["Auctions"][15].duration )
 end
 function test.test_AuctionReport_CreateAuction_PostCommodity_24Hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			} }
 	Rested.VARIABLES_LOADED()
 	C_AuctionHouse.PostCommodity( {}, 2, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
 	Rested.AUCTION_HOUSE_AUCTION_CREATED( 15 )  -- This event has a payload....  The auction ID
-	assertEquals( 24*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][15].duration )
+	assertEquals( 24*3600, Rested_restedState["Test Realm"]["testPlayer"]["Auctions"][15].duration )
 end
 function test.test_AuctionReport_CreateAuction_PostCommodity_48Hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			} }
 	Rested.VARIABLES_LOADED()
 	C_AuctionHouse.PostCommodity( {}, 3, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
 	Rested.AUCTION_HOUSE_AUCTION_CREATED( 15 )  -- This event has a payload....  The auction ID
-	assertEquals( 48*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][15].duration )
+	assertEquals( 48*3600, Rested_restedState["Test Realm"]["testPlayer"]["Auctions"][15].duration )
 end
 function test.test_AuctionReport_CreateAuction_PostItem_12Hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			} }
 	Rested.VARIABLES_LOADED()
 	C_AuctionHouse.PostItem( {}, 1, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
 	Rested.AUCTION_HOUSE_AUCTION_CREATED( 16 )  -- This event has a payload....  The auction ID
-	assertEquals( 12*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][16].duration )
+	assertEquals( 12*3600, Rested_restedState["Test Realm"]["testPlayer"]["Auctions"][16].duration )
 end
 function test.test_AuctionReport_CreateAuction_PostCommodity_24Hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			} }
 	Rested.VARIABLES_LOADED()
 	C_AuctionHouse.PostItem( {}, 2, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
 	Rested.AUCTION_HOUSE_AUCTION_CREATED( 16 )  -- This event has a payload....  The auction ID
-	assertEquals( 24*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][16].duration )
+	assertEquals( 24*3600, Rested_restedState["Test Realm"]["testPlayer"]["Auctions"][16].duration )
 end
 function test.test_AuctionReport_CreateAuction_PostCommodity_48Hours()
 	now = time()
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 200000, ["isResting"] = false, ["restedPC"] = 150, ["updated"] = now-(1*86400),
 			} }
 	Rested.VARIABLES_LOADED()
 	C_AuctionHouse.PostItem( {}, 3, 1, 1 ) -- item(table), durationKey, quantiy, unitPrice
 	Rested.AUCTION_HOUSE_AUCTION_CREATED( 16 )  -- This event has a payload....  The auction ID
-	assertEquals( 48*3600, Rested_restedState["testRealm"]["testPlayer"]["Auctions"][16].duration )
+	assertEquals( 48*3600, Rested_restedState["Test Realm"]["testPlayer"]["Auctions"][16].duration )
 end
 function test.test_AuctionReport_ExpiredAuction_Report()
 	now = time()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()  -- calls init functions
-	Rested_restedState["testRealm"]["testPlayer"]["Auctions"] = {
+	Rested_restedState["Test Realm"]["testPlayer"]["Auctions"] = {
 			[550] = {
 				["created"] = now-(12*3600) - 5,  -- 12 hours, 5 seconds ago
 				["duration"] = 12 * 3600
@@ -1545,13 +1545,13 @@ function test.test_AuctionReport_ExpiredAuction_Report()
 	}
 	Rested.ForAllChars( Rested.AuctionsReport )
 	--test.showCharList()
-	assertEquals( "1 (EXPIRED) |cff00ff00testRealm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (EXPIRED) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_ExipredReminders()
 	now = time()
 	Rested.reminders = {}
 	Rested.ADDON_LOADED()
-	Rested_restedState["testRealm"] = { ["testPlayer2"] =
+	Rested_restedState["Test Realm"] = { ["testPlayer2"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["updated"] = time(), ["restedPC"] = 150,
 			["Auctions"] = {
 				[550] = {
@@ -1561,7 +1561,7 @@ function test.test_AuctionReport_ExipredReminders()
 	} } }
 	Rested.VARIABLES_LOADED()
 	Rested.MakeReminderSchedule()
-	assertEquals( "testRealm:testPlayer2 has 1 expired auctions.", Rested.reminders[time()+60][1] )
+	assertEquals( "Test Realm:testPlayer2 has 1 expired auctions.", Rested.reminders[time()+60][1] )
 end
 -- Nag timeOut
 ----------
@@ -1588,12 +1588,12 @@ end
 -- NoNag
 -----------
 function test.test_NoNag_set_01()
-	Rested_restedState["testRealm"] = {["testPlayer"] =
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["initAt"]=6372,["updated"]=6372}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "noNag . 1h")
-	assertEquals( time() + 3600, Rested_restedState["testRealm"]["testPlayer"]["nonag"] )
+	assertEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"] )
 end
 function test.test_NoNag_set_02()
 	Rested.Command( "noNag testPlayer 2h" )
