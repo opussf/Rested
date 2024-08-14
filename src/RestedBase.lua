@@ -180,7 +180,7 @@ function Rested.FullyRested( realm, name, charStruct )
 	-- 80 (15.5%): Realm:Name
 	local rn = Rested.FormatName( realm, name )
 	local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
-	if restedVal >= 150 then
+	if restedVal >= (Rested.maxRestedByRace[charStruct.race] or 150) then
 		Rested.strOut = string.format("%d %s",
 				charStruct.lvlNow,
 				rn)
