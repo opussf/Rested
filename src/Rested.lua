@@ -167,7 +167,7 @@ function Rested.FormatRested( charStruct )
 	rs.restedOutStr = string.format( "%0.1f%%", rs.restedVal )
 	rs.maxRestedPC = Rested.maxRestedByRace[charStruct.race] or 150
 
-	if( rs.restedVal >= rs.maxRestedPC ) then -- 150% of current is the 'max'
+	if( rs.restedVal >= (rs.maxRestedPC - 0.01) ) then -- 150% of current is the 'max'
 		rs.restedOutStr = COLOR_GREEN.."Fully Rested"..COLOR_END
 		rs.timeTillRested = nil
 	else
