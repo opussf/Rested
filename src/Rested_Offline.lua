@@ -44,7 +44,7 @@ end
 
 -- WoWAPI functions that are not needed, and special ones that are
 -- Taken mostly from wowStubs.lua
-GetAddOnMetadata = function() end
+C_AddOns = {["GetAddOnMetadata"] = function() end}
 GetXPExhaustion = function() end
 UnitXPMax = function() end
 function SecondsToTime( secondsIn, noSeconds, notAbbreviated, maxCount )
@@ -210,10 +210,11 @@ end
 
 if( tocFile and FileExists( tocFile ) and
 		accountPath and dataFile and FileExists( dataFile ) ) then
+	sharedTable = {}
 	tocFileTable = TableFromTOC( tocFile )
 	package.path = srcFilePath..pathSeparator.."?.lua;" .. package.path
 	for _,f in pairs( tocFileTable ) do
-		require( f )
+		assert( loadfile( srcFilePath..pathSeparator..f..".lua" ) )( "Rested", sharedTable )
 	end
 	-- Call init Functions
 	Rested.showNumBars = 50

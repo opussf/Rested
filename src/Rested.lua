@@ -447,7 +447,6 @@ function Rested.VARIABLES_LOADED( ... )
 	Rested.me.updated = time()
 	-- ALWAYS remove the ignore timer for the current player
 	Rested.me.ignore = nil
-	Rested.me.maxRestedPC = Rested.maxRestedByRace[Rested.me.race] or 150
 
 	-- init other modules
 	for _,func in pairs( Rested.initFunctions ) do

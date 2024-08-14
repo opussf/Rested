@@ -261,7 +261,7 @@ function Rested.NagCharacters( realm, name, charStruct )
 			timeSince >= Rested_options.nagStart and
 			timeSince <= Rested_options.staleStart ) then
 		Rested.strOut = string.format( reportStr, charStruct.lvlNow, SecondsToTime( timeSince ), rn )
-		table.insert( Rested.charList, {(timeSince/(Rested_options.staleStart))*Rested.me.maxRestedPC, Rested.strOut} )
+		table.insert( Rested.charList, {(timeSince/(Rested_options.staleStart))*(Rested.maxRestedByRace[charStruct.race] or 150), Rested.strOut} )
 		return 1
 	end
 	if( charStruct.lvlNow < Rested.maxLevel and charStruct.restedPC <= (Rested.maxRestedByRace[charStruct.race] or 150)-1 ) then -- leveling character
@@ -277,7 +277,7 @@ function Rested.NagCharacters( realm, name, charStruct )
 	useColor = useColor and ( realm == Rested.realm and name == Rested.name )
 	if( charStruct.isResting == false and not ( realm == Rested.realm and name == Rested.name ) ) then
 		Rested.strOut = string.format( reportStr .. " NOT RESTING", charStruct.lvlNow, SecondsToTime( timeSince ), rn )
-		table.insert( Rested.charList, { (timeSince/(Rested_options.staleStart))*Rested.me.maxRestedPC, Rested.strOut } )
+		table.insert( Rested.charList, { (timeSince/(Rested_options.staleStart))*(Rested.maxRestedByRace[charStruct.race] or 150), Rested.strOut } )
 		return 1
 	end
 	return 0
