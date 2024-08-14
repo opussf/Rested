@@ -164,7 +164,7 @@ function Rested.RestedReminderValues( realm, name, struct )
 		local restRate = Rested.restedRates[struct.isResting]
 		local restAdded = restRate * timeSince
 		local restedVal = struct.restedPC + restAdded
-		local restedAt = now + ( ( 150 - restedVal ) / restRate )
+		local restedAt = now + ( ( (Rested.maxRestedByRace[struct.race] or 150) - restedVal ) / restRate )
 		for diff, format in pairs( Rested.reminderValues ) do
 			reminderTime = tonumber( restedAt - diff )
 			if( reminderTime > now ) then
@@ -230,7 +230,7 @@ function Rested.RestingCharacters( realm, name, charStruct )
 	-- takes the realm, name, charStruct
 	-- appends to the global Rested.charList
 	-- returns 1 on success, 0 on fail
-	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC <= 149) or
+	if (charStruct.lvlNow ~= Rested.maxLevel and charStruct.restedPC <= (Rested.maxRestedByRace[charStruct.race] or 150)-1) or
 			(realm == Rested.realm and name == Rested.name) then
 		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
 		Rested.strOut = string.format("% 2d%s %s", charStruct.lvlNow, code, restedStr)
@@ -291,10 +291,10 @@ function Rested.NagCharacters( realm, name, charStruct )
 			timeSince >= Rested_options.nagStart and
 			timeSince <= Rested_options.staleStart ) then
 		Rested.strOut = string.format( reportStr, charStruct.lvlNow, SecondsToTime( timeSince ), rn )
-		table.insert( Rested.charList, {(timeSince/(Rested_options.staleStart))*150, Rested.strOut} )
+		table.insert( Rested.charList, {(timeSince/(Rested_options.staleStart))*Rested.me.maxRestedPC, Rested.strOut} )
 		return 1
 	end
-	if( charStruct.lvlNow < Rested.maxLevel and charStruct.restedPC <= 149 ) then -- leveling character
+	if( charStruct.lvlNow < Rested.maxLevel and charStruct.restedPC <= (Rested.maxRestedByRace[charStruct.race] or 150)-1 ) then -- leveling character
 		local restedStr, restedVal, code, timeTillRested = Rested.FormatRested( charStruct )
 		rs = Rested.formatRestedStruct  -- side effect of FormatRested()
 		if( ( not rs.lvlPCLeft or restedVal >= rs.lvlPCLeft ) and -- lvlPCLeft is not set if you are fully rested
@@ -307,7 +307,7 @@ function Rested.NagCharacters( realm, name, charStruct )
 	useColor = useColor and ( realm == Rested.realm and name == Rested.name )
 	if( charStruct.isResting == false and not ( realm == Rested.realm and name == Rested.name ) ) then
 		Rested.strOut = string.format( reportStr .. " NOT RESTING", charStruct.lvlNow, SecondsToTime( timeSince ), rn )
-		table.insert( Rested.charList, { (timeSince/(Rested_options.staleStart))*150, Rested.strOut } )
+		table.insert( Rested.charList, { (timeSince/(Rested_options.staleStart))*Rested.me.maxRestedPC, Rested.strOut } )
 		return 1
 	end
 	return 0

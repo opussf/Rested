@@ -29,6 +29,7 @@ Rested.reminders = {}
 Rested.genders={ "", "Male", "Female" }
 Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 Rested.rateStruct = {[0] = {(5/(32*3600)), "-"}, [1] = {(5/(8*3600)), "+"} }
+Rested.maxRestedByRace = { ["Pandaren"] = 300 } -- Pandaren have 300% rested pool
 -- report code that needs to show up 'early'
 Rested.reportName = ""
 Rested.dropDownMenuTable = {}
@@ -45,7 +46,7 @@ Rested.maxPlayerLevelTable = {  -- MAX_PLAYER_LEVEL_TABLE is an existing table. 
 	[8]=(time()>1602547200 and 60 or 120), -- Oct 13, 2020
 	[9]=(time()>1669680000 and 70 or 60), -- Nov 29, 2022 -- validate this
 	[10]=(time()>1724310000 and 80 or 70), -- Aug 22, 2024
-	[11]=70
+	[11]=80
 }
 
 -- Load / init functions
@@ -164,8 +165,9 @@ function Rested.FormatRested( charStruct )
 	rs.restAdded = rs.restRate * rs.timeSince
 	rs.restedVal = rs.restAdded + ( charStruct.restedPC or 0 )
 	rs.restedOutStr = string.format( "%0.1f%%", rs.restedVal )
+	rs.maxRestedPC = Rested.maxRestedByRace[charStruct.race] or 150
 
-	if( rs.restedVal >= 150 ) then -- 150% of current is the 'max'
+	if( rs.restedVal >= rs.maxRestedPC ) then -- 150% of current is the 'max'
 		rs.restedOutStr = COLOR_GREEN.."Fully Rested"..COLOR_END
 		rs.timeTillRested = nil
 	else
@@ -174,7 +176,7 @@ function Rested.FormatRested( charStruct )
 			if( rs.restedVal >= rs.lvlPCLeft ) then -- rested beyond the current level
 				rs.restedOutStr = COLOR_GREEN..rs.restedOutStr..COLOR_END
 			end
-			rs.timeTillRested = ( 150 - rs.restedVal ) / rs.restRate   -- restedVal is %, restedRate is %/s,
+			rs.timeTillRested = ( rs.maxRestedPC - rs.restedVal ) / rs.restRate   -- restedVal is %, restedRate is %/s,
 
 		end
 	end
@@ -442,6 +444,7 @@ function Rested.VARIABLES_LOADED( ... )
 	Rested.me.updated = time()
 	-- ALWAYS remove the ignore timer for the current player
 	Rested.me.ignore = nil
+	Rested.me.maxRestedPC = Rested.maxRestedByRace[Rested.me.race] or 150
 
 	-- init other modules
 	for _,func in pairs( Rested.initFunctions ) do

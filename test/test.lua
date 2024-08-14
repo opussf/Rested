@@ -24,6 +24,7 @@ function test.before()
 	Rested_options = {}
 	Rested_restedState = {}
 	Rested.OnLoad()
+	--Rested.SaveRestedState()
 end
 function test.after()
 end
