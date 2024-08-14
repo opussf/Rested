@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
 -- Date    :  August 13 2024
--- Revision:  9.4.3-15-gc76f99a
+-- Revision:  9.4.4
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -903,6 +903,8 @@ function C_AddOns.GetNumAddOns()
 end
 function C_AddOns.LoadAddOn( addonName )
 end
+function C_AddOns.DisableAddOn( addonName, playerName )
+end
 
 C_Container = {}
 C_Container.SortBagsRightToLeft = false -- this is normal
@@ -1349,8 +1351,6 @@ end
 function IsResting()
 	return true
 end
-function LoadAddOn()
-end
 function NumTaxiNodes()
 	-- http://www.wowwiki.com/API_NumTaxiNodes
 	local count = 0
@@ -1560,7 +1560,7 @@ function C_UnitAuras.GetAuraDataByIndex( unit, index )
 	-- @TODO: Look this up to get a better idea of what this function does.
 	-- Returns an auraData table
 	if( UnitAuras[unit] and UnitAuras[unit][index] ) then
-		return UnitAuras[unit][index][1]
+		return UnitAuras[unit][index]
 	end
 end
 function UnitClass( who )
