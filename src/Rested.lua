@@ -236,26 +236,29 @@ function Rested.PruneByAge( struct, ageSeconds )
 		end
 	end
 end
-function Rested.DecodeTime( strIn, defaultUnit )
+Rested.timeMultipliers = { [" "] = 1, ["s"] = 1, ["m"] = 60, ["h"] = 3600, ["d"] = 86400, ["w"] = 604800 }
+function Rested.TextToSeconds( strIn, defaultUnit )
 	-- take a string (1d1h) and convert to seconds, return the seconds
-	local multipliers = {[" "]=1, ["s"]=1, ["m"]=60, ["h"]= 3600, ["d"]= 86400, ["w"]= 604800 }
-	local total, current = 0, 0
-	for c in strIn:gmatch(".") do
-		if( multipliers[c] ) then
-			current = current * multipliers[c]
-			total = total + current
-			current = 0
-			defaultUnit = nil  -- clear this if a unit is given
-		elseif( tonumber(c) ~= nil ) then
-			current = ( current * 10 ) + tonumber( c )
+	if( strIn and strlen( strIn ) > 0 ) then
+		local seconds, current, hasValue = 0, 0, false
+		for c in strIn:gmatch(".") do
+			if( Rested.timeMultipliers[c] ) then
+				current = current * Rested.timeMultipliers[c]
+				seconds = seconds + current
+				current = 0
+				defaultUnit = nil  -- clear this if a unit is given
+			elseif( tonumber(c) ~= nil ) then
+				hasValue = true
+				current = ( current * 10 ) + tonumber( c )
+			end
 		end
-	end
-	total = total + current
-	if( defaultUnit and multipliers[defaultUnit] ) then
-		total = total * multipliers[defaultUnit]
-	end
+		seconds = seconds + current
+		if( defaultUnit and Rested.timeMultipliers[defaultUnit] ) then
+			seconds = seconds * Rested.timeMultipliers[defaultUnit]
+		end
 
-	return total
+		return( hasValue and seconds or nil )
+	end
 end
 -- remove
 -- There is always the requirement to remove alts no longer being tracked

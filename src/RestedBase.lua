@@ -1,35 +1,6 @@
 -- RestedBase.lua
 -- Track 'base' data.
 
-Rested.timeMultipliers = { [" "] = 1, ["s"] = 1, ["m"] = 60, ["h"] = 3600, ["d"] = 86400, ["w"] = 604800 }
--- RF.timeMultiplierOrder = { "w", "d", "h", "m", "s" }
-function Rested.TextToSeconds( textIn )
-	-- convert a string to seconds
-	-- the string is in the format of <number><unit>....
-	-- returns seconds or nil
-	if( textIn and strlen( textIn ) > 0 ) then
-		local seconds, current = 0, 0
-		local hasValue = false
-		for i = 1, string.len( textIn ) do
-			local char = string.lower( strsub( textIn, i, i ) )
-			local multiplier = Rested.timeMultipliers[char]
-			if multiplier then
-				current = current * multiplier
-				seconds = seconds + current
-				current = 0
-			elseif char == tostring( tonumber ( char ) ) then
-				hasValue = true
-				current = current * 10
-				current = current + tonumber( char )
-			end
-			--print( char..": "..seconds.." + ("..current.." * "..(multiplier or "")..")" )
-		end
-		seconds = seconds + current
-		--print( "Final seconds: ".. ( hasValue and seconds or "nil" ) )
-		return( hasValue and seconds or nil )
-	end
-end
-
 -- ignore
 -- allows the user to ignore an alt for a bit of time (set with options)
 -- sets 'ignore' which is a timestamp for when to stop ignoring.
@@ -51,7 +22,6 @@ function Rested.SetIgnore( param )
 				seconds = seconds + secFromText
 				Rested_options.ignoreTime = seconds
 				charMatches[#charMatches] = nil
-
 			else
 				isTime = false
 			end
@@ -326,7 +296,7 @@ Rested.EventCallback( "PLAYER_ENTERING_WORLD", function()
 )
 function Rested.SetNag( inVal )
 	-- This sets the NagTime (maxCutOff) to a number of seconds -- change the name of the setting (and how the setting is used)
-	local newNag = Rested.DecodeTime( inVal, "d" )
+	local newNag = ( Rested.TextToSeconds( inVal, "d" ) or 0 )
 	if newNag > 0 then
 		local previousNag = SecondsToTime( Rested_options.nagStart )
 		if( newNag <= Rested_options.staleStart ) then
@@ -349,7 +319,7 @@ function Rested.SetNagTimeOut( inVal )
 	if( inVal == "" ) then
 		Rested.Print( "NagTimeOut currently set to: "..previousTimeOut )
 	else
-		local newTimeOut = Rested.DecodeTime( inVal, "d" )
+		local newTimeOut = Rested.TextToSeconds( inVal, "d" )
 		--print( "newTimeOut: "..newTimeOut )
 		if newTimeOut >= 0 then
 			Rested_options["nagTimeOut"] = newTimeOut
@@ -438,7 +408,7 @@ function Rested.StaleCharacters( realm, name, charStruct )
 	return 0
 end
 function Rested.SetStale( inVal )
-	local newStale = Rested.DecodeTime( inVal, "d" )
+	local newStale = ( Rested.TextToSeconds( inVal, "d" ) or 0 )
 	if newStale > 0 then
 		local previousStale = SecondsToTime( Rested_options.staleStart )
 		if( newStale >= Rested_options.nagStart ) then

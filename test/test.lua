@@ -1605,5 +1605,30 @@ function test.test_UIReset()
 	Rested.Command( "uireset" )
 	-- @TODO: determine how to test
 end
+function test.test_TextToSeconds_01()
+	assertEquals( 15, Rested.TextToSeconds( "15" ) )
+end
+function test.test_TextToSeconds_02()
+	assertEquals( 30, Rested.TextToSeconds( "30s" ) )
+end
+function test.test_TextToSeconds_03()
+	assertEquals( 90, Rested.TextToSeconds( "1m30s" ) )
+end
+function test.test_TextToSeconds_04()
+	assertEquals( 90, Rested.TextToSeconds( "30s1m" ) )
+end
+function test.test_TextToSeconds_05()
+	assertEquals( 3690, Rested.TextToSeconds( "30s1m1h" ) )
+end
+function test.test_TextToSeconds_06()
+	assertEquals( 90090, Rested.TextToSeconds( "30s1m1h1d" ) )
+end
+function test.test_TextToSeconds_07()
+	assertEquals( 694890, Rested.TextToSeconds( "30s1m1h1d1w" ) )
+end
+function test.test_TextToSeconds_08()
+	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
+end
+
 
 test.run()
