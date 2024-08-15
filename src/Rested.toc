@@ -1,6 +1,6 @@
-## Interface: @INTERFACE@
 ## Title: Rested Reporter
-## Notes: Rested Tracker for alts v@VERSION@
+## Interface: @INTERFACE@
+## Notes: Rested Tracker for alts (@VERSION@)
 ## Author: opussf
 ## Version: @VERSION@
 ## Description: Track stats for your alts.
@@ -19,5 +19,7 @@ RestediLvl.lua
 RestedMounts.lua
 RestedGold.lua
 
-RestedAzerite.lua
 RestedProfessions.lua
+RestedAuctions.lua
+
+RestedVault.lua

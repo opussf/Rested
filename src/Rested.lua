@@ -1,6 +1,7 @@
-RESTED_MSG_ADDONNAME = "Rested Reporter"
-RESTED_MSG_VERSION   = GetAddOnMetadata("Rested","Version")
-RESTED_MSG_AUTHOR    = GetAddOnMetadata("Rested","Author")
+RESTED_SLUG, Rested  = ...
+RESTED_MSG_ADDONNAME = C_AddOns.GetAddOnMetadata( RESTED_SLUG, "Title" )
+RESTED_MSG_VERSION   = C_AddOns.GetAddOnMetadata( RESTED_SLUG, "Version" )
+RESTED_MSG_AUTHOR    = C_AddOns.GetAddOnMetadata( RESTED_SLUG, "Author" )
 
 -- Colours
 COLOR_RED = "|cffff0000"
@@ -19,7 +20,6 @@ Rested_restedState = {}
 Rested_options = {}
 Rested_misc = {}
 
-Rested = {}
 Rested.commandList = {}  -- ["cmd"] = { ["func"] = reference, ["help"] = {"parameters", "help string"} }
 Rested.initFunctions = {}
 Rested.onUpdateFunctions = {}
@@ -29,6 +29,7 @@ Rested.reminders = {}
 Rested.genders={ "", "Male", "Female" }
 Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 Rested.rateStruct = {[0] = {(5/(32*3600)), "-"}, [1] = {(5/(8*3600)), "+"} }
+Rested.maxRestedByRace = { ["Pandaren"] = 300 } -- Pandaren have 300% rested pool
 -- report code that needs to show up 'early'
 Rested.reportName = ""
 Rested.dropDownMenuTable = {}
@@ -42,9 +43,10 @@ Rested.maxPlayerLevelTable = {  -- MAX_PLAYER_LEVEL_TABLE is an existing table. 
 	[5]=(time()>1415750400 and 100 or 90),
 	[6]=(time()>1471737600 and 110 or 100), -- Sep 28, 2016  -- validate this
 	[7]=(time()>1534118400 and 120 or 110), -- Aug 13, 2018  -- validate this
-	[8]=120,
-	[9]=120,
-	[10]=120,
+	[8]=(time()>1602547200 and 60 or 120), -- Oct 13, 2020
+	[9]=(time()>1669680000 and 70 or 60), -- Nov 29, 2022 -- validate this
+	[10]=(time()>1724709600 and 80 or 70), -- Aug 22, 2024 @ 15:00 PDT
+	[11]=80
 }
 
 -- Load / init functions
@@ -60,7 +62,6 @@ function Rested.OnUpdate( elapsed )
 		func( elapsed )
 	end
 end
-
 function Rested.Print( msg, showName )
 	-- print to the chat frame
 	-- set showName to false to suppress the addon name printing
@@ -69,15 +70,59 @@ function Rested.Print( msg, showName )
 	end
 	DEFAULT_CHAT_FRAME:AddMessage( msg )
 end
-function Rested.PrintHelp()
+function Rested.PrintHelp( command )
+	command = command and string.lower(command)
 	Rested.Print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") by "..RESTED_MSG_AUTHOR )
-	for cmd, info in pairs( Rested.commandList ) do
-		Rested.Print( string.format( "%s %s %s -> %s",
-			SLASH_RESTED1, cmd, info.help[1], info.help[2] ), false )
+	local sortedKeys = {}
+	for text in pairs( Rested.commandList ) do
+		table.insert( sortedKeys, text )
+	end
+	table.sort( sortedKeys, function( a, b ) return string.lower(a) < string.lower(b) end )
+	for _, cmd in ipairs( sortedKeys ) do
+		info = Rested.commandList[cmd]
+		if command and command == cmd then
+			Rested.Print( string.format( "  %s %s -> %s",
+				cmd, info.help[1], info.help[2] ), false )
+			if info.desc then
+				for _, l in ipairs( info.desc ) do
+					Rested.Print( l, false )
+				end
+			end
+		elseif command == "" then
+			Rested.Print( string.format( "   %s %s -> %s",
+				cmd, info.help[1], info.help[2] ), false )
+		end
 	end
 end
-Rested.commandList["help"] = { ["help"] = {"", "Show help"}, ["func"] = Rested.PrintHelp }
-
+function Rested.HelpReport( )
+	-- normally takes realm, name, charStruct
+	index = 1
+	if( #Rested.charList == 0 ) then
+		--Rested.Print( "Size of charList: "..#Rested.charList )
+		table.insert( Rested.charList, { 150, string.format( "%s:  Version %s", SLASH_RESTED1, RESTED_MSG_VERSION ) } )
+		local sortedKeys = {}
+		for text in pairs( Rested.commandList ) do
+			table.insert( sortedKeys, text )
+		end
+		table.sort( sortedKeys, function( a, b ) return string.lower(a) < string.lower(b) end )
+		for _, cmd in ipairs( sortedKeys ) do
+			index = index + 1
+			info = Rested.commandList[cmd]
+			table.insert( Rested.charList, { 150-(index * 0.01), string.format( "%s %s -> %s",
+					cmd, info.help[1], info.help[2] ) } )
+		end
+		return index
+	end
+	return 0
+end
+Rested.dropDownMenuTable["Help"] = "help"
+Rested.commandList["help"] = { ["help"] = {"<command>","Show help. Specific info for command if given."}, ["func"] = function(...)
+		Rested.PrintHelp(...)
+		Rested.reportName = "Help"
+		Rested.UIShowReport( Rested.HelpReport )
+	end,
+	["desc"] = {"Show help for each command."}
+}
 function Rested.ParseCmd( msg )
 	msg = string.lower( msg )
 	if msg then
@@ -120,8 +165,9 @@ function Rested.FormatRested( charStruct )
 	rs.restAdded = rs.restRate * rs.timeSince
 	rs.restedVal = rs.restAdded + ( charStruct.restedPC or 0 )
 	rs.restedOutStr = string.format( "%0.1f%%", rs.restedVal )
+	rs.maxRestedPC = Rested.maxRestedByRace[charStruct.race] or 150
 
-	if( rs.restedVal >= 150 ) then -- 150% of current is the 'max'
+	if( rs.restedVal >= (rs.maxRestedPC - 0.01) ) then -- 150% of current is the 'max'
 		rs.restedOutStr = COLOR_GREEN.."Fully Rested"..COLOR_END
 		rs.timeTillRested = nil
 	else
@@ -130,7 +176,7 @@ function Rested.FormatRested( charStruct )
 			if( rs.restedVal >= rs.lvlPCLeft ) then -- rested beyond the current level
 				rs.restedOutStr = COLOR_GREEN..rs.restedOutStr..COLOR_END
 			end
-			rs.timeTillRested = ( 150 - rs.restedVal ) / rs.restRate   -- restedVal is %, restedRate is %/s,
+			rs.timeTillRested = ( rs.maxRestedPC - rs.restedVal ) / rs.restRate   -- restedVal is %, restedRate is %/s,
 
 		end
 	end
@@ -190,26 +236,29 @@ function Rested.PruneByAge( struct, ageSeconds )
 		end
 	end
 end
-function Rested.DecodeTime( strIn, defaultUnit )
+Rested.timeMultipliers = { [" "] = 1, ["s"] = 1, ["m"] = 60, ["h"] = 3600, ["d"] = 86400, ["w"] = 604800 }
+function Rested.TextToSeconds( strIn, defaultUnit )
 	-- take a string (1d1h) and convert to seconds, return the seconds
-	local multipliers = {[" "]=1, ["s"]=1, ["m"]=60, ["h"]= 3600, ["d"]= 86400, ["w"]= 604800 }
-	local total, current = 0, 0
-	for c in strIn:gmatch(".") do
-		if( multipliers[c] ) then
-			current = current * multipliers[c]
-			total = total + current
-			current = 0
-			defaultUnit = nil  -- clear this if a unit is given
-		elseif( tonumber(c) ~= nil ) then
-			current = ( current * 10 ) + tonumber( c )
+	if( strIn and strlen( strIn ) > 0 ) then
+		local seconds, current, hasValue = 0, 0, false
+		for c in strIn:gmatch(".") do
+			if( Rested.timeMultipliers[c] ) then
+				current = current * Rested.timeMultipliers[c]
+				seconds = seconds + current
+				current = 0
+				defaultUnit = nil  -- clear this if a unit is given
+			elseif( tonumber(c) ~= nil ) then
+				hasValue = true
+				current = ( current * 10 ) + tonumber( c )
+			end
 		end
-	end
-	total = total + current
-	if( defaultUnit and multipliers[defaultUnit] ) then
-		total = total * multipliers[defaultUnit]
-	end
+		seconds = seconds + current
+		if( defaultUnit and Rested.timeMultipliers[defaultUnit] ) then
+			seconds = seconds * Rested.timeMultipliers[defaultUnit]
+		end
 
-	return total
+		return( hasValue and seconds or nil )
+	end
 end
 -- remove
 -- There is always the requirement to remove alts no longer being tracked
@@ -270,15 +319,7 @@ function Rested.EventCallback( event, callback )
 
 	if not Rested[event] then
 		-- create function if it does not exist
-		--print( "CREATE function for event: "..event )
 		Rested[event] = function( ... )
-			--[[
-			Rested.Print( string.format( "%s-->%s (%i)<--%s",
-					(UnitAffectingCombat( "player" ) and COLOR_RED or ""),
-					event,
-					#Rested.eventFunctions[event],
-					(UnitAffectingCombat( "player" ) and COLOR_END or "") ) )
-			]]
 			if Rested.eventFunctions[event] then
 				for _, func in pairs( Rested.eventFunctions[event] ) do
 					func( ... )

@@ -74,6 +74,10 @@ function Rested.UIOnUpdate( arg1 )
 		Rested.UIlastUpdate = time() + 1 -- only update once a second
 		Rested.UIUpdateFrame()
 	end
+	if( Rested.autoCloseAfter and Rested.autoCloseAfter <= time() ) then
+		RestedUIFrame:Hide()
+		Rested.autoCloseAfter = nil
+	end
 end
 
 function Rested.UIShowReport( reportFunction )
@@ -85,7 +89,14 @@ function Rested.UIShowReport( reportFunction )
 
 	Rested.UIUpdateFrame()
 	UIDropDownMenu_SetText( RestedUIFrame.DropDownMenu, Rested.reportName )
+	Rested.autoCloseAfter = nil
 end
+
+function Rested.ResetUIPosition()
+	RestedUIFrame:ClearAllPoints()
+	RestedUIFrame:SetPoint("LEFT", "$parent", "LEFT")
+end
+Rested.commandList["uireset"] = { ["help"] = {"","Reset the location of the UI frame"}, ["func"] = Rested.ResetUIPosition }
 
 -- DropDown code
 function Rested.UIDropDownOnClick( self, cmd )

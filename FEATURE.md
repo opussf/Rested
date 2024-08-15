@@ -5,9 +5,59 @@ Create a display that will show the upcoming alerts.
 
 This is an experimental feature.
 
+## GreatVault
+
+Add a report and track how many possible rewards are in the great vault.
+
+-- Figure out how to determine if the great vault rewards are claimed.
+
+Events:
+WEEKLY_REWARDS_UPDATE
+WEEKLY_REWARDS_ITEM_CHANGED
+WEEKLY_REWARDS_HIDE
+
+Possible requirement:
+LoadAddOn("Blizzard_WeeklyRewards")
+
+Possible methods:
+C_WeeklyRewards.GetActivities(activityType);
+C_WeeklyRewards.GetActivityEncounterInfo(activityType, activity.index);
+C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id);
+
+
+## NoNag
+
+A bit like Ignore, but just for the nag report.
+
+## Ignore
+
+Chars ignored for a LONG time, will have the date / time instead of # of days in the ignore report.
+* How many is too many days?  (90?)  -- Set this as an option.
+
+
+Extend the system to allow to ignore a toon for any amount of time.
+The ignore time is then set as the default.
+
+Re-ignoring a toon will reset the ignore time.
+
+## Help report
+
+Use the dispaly to show the help.
+
 ## Offline
 
 Create an offline report.
+
+## Auctions
+
+Track auctions
+
+https://www.townlong-yak.com/framexml/live/Blizzard_APIDocumentation#C_AuctionHouse.GetBrowseResults
+
+-- Research
+[ ] Figure out the set duration of the auction
+[ ] Determine if the auction is still active
+	* remove it before the expire date if it is not.
 
 ## Nag
 

@@ -8,7 +8,7 @@ function Rested.SaveGuildInfo( ... )
 	Rested_restedState[Rested.realm][Rested.name].guildName = gName or nil
 	Rested_restedState[Rested.realm][Rested.name].guildRank = gName and gRankName or nil
 	Rested_restedState[Rested.realm][Rested.name].guildRankIndex = gName and gRankIndex or nil
-	local rep, bottom, top = Rested.GetGuildRep()
+	local rep, bottom, top, reaction = Rested.GetGuildRep()
 	bottom = 0
 	--rep = rep - bottom; top = top - bottom; bottom = 0
 	Rested_restedState[Rested.realm][Rested.name].guildRep = gName and rep or nil
@@ -17,17 +17,11 @@ function Rested.SaveGuildInfo( ... )
 	--Rested.Print(string.format("%s :: %i - %i - %i", gName or "None", bottom, rep, top))
 end
 function Rested.GetGuildRep( )
-	-- Return the rep for the guild only
-	for factionIndex = 1, GetNumFactions() do
-		local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith,
-				canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex);
-		if isCollapsed then
-			ExpandFactionHeader(factionIndex)
-			return
-		end
-		if name == Rested_restedState[Rested.realm][Rested.name].guildName then
-			return earnedValue, bottomValue, topValue
-		end
+	-- C_Reputation.GetGuildFactionData
+	factionData = C_Reputation.GetGuildFactionData()
+	if factionData and factionData.name == Rested_restedState[Rested.realm][Rested.name].guildName then
+		-- Rested.Print("Guild FactionData: "..factionData.name..":"..factionData.reaction..":"..factionData.currentStanding )
+		return factionData.currentStanding, factionData.currentReationThreshold, factionData.nextReactionThreshold, factionData.reaction
 	end
 end
 
@@ -44,8 +38,9 @@ function Rested.GuildStandingReport( realm, name, charStruct )
 	local lineCount = 0
 	if charStruct.guildName then
 		lineCount = 1
-		Rested.strOut = string.format( "%s :: %s",
+		Rested.strOut = string.format( "%s :%s: %s",
 				charStruct.guildName,
+				(charStruct.guildRankIndex and _G["FACTION_STANDING_LABEL"..charStruct.guildRankIndex] or ""),
 				rn )
 		table.insert( Rested.charList,
 				{ ( ( charStruct.guildRep or 0 ) / ( ( ( charStruct.guildTop or 0 ) - ( charStruct.guildBottom or 0 ) ) + 1 ) ) * 150,
