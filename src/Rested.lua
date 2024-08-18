@@ -29,6 +29,7 @@ Rested.reminders = {}
 Rested.genders={ "", "Male", "Female" }
 Rested.filterKeys = { "class", "race", "faction", "lvlNow", "gender" }
 Rested.rateStruct = {[0] = {(5/(32*3600)), "-"}, [1] = {(5/(8*3600)), "+"} }
+Rested.rateModByRace = { ["Pandaren"] = 2 }
 Rested.maxRestedByRace = { ["Pandaren"] = 300 } -- Pandaren have 300% rested pool
 -- report code that needs to show up 'early'
 Rested.reportName = ""
@@ -162,6 +163,7 @@ function Rested.FormatRested( charStruct )
 	rs.timeSince = time() - ( charStruct.updated or charStruct.initAt or 0 )
 
 	rs.restRate, rs.code = unpack( Rested.rateStruct[(charStruct.isResting and 1 or 0)] )
+	rs.restRate = rs.restRate * ( Rested.rateModByRace[charStruct.race] or 1 )
 	rs.restAdded = rs.restRate * rs.timeSince
 	rs.restedVal = rs.restAdded + ( charStruct.restedPC or 0 )
 	rs.restedOutStr = string.format( "%0.1f%%", rs.restedVal )
