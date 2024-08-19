@@ -27,6 +27,9 @@
 	[ ]  Has buff
 
 
+[ ] Version alert
+
+
 
 If any character does something at the DMF,  then flag others to also do DMF
 
