@@ -73,7 +73,7 @@ function Rested.Print( msg, showName )
 end
 function Rested.PrintHelp( command )
 	command = command and string.lower(command)
-	Rested.Print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") by "..RESTED_MSG_AUTHOR )
+	Rested.Print( RESTED_MSG_ADDONNAME.." (v"..RESTED_MSG_VERSION..") by "..RESTED_MSG_AUTHOR )
 	local sortedKeys = {}
 	for text in pairs( Rested.commandList ) do
 		table.insert( sortedKeys, text )
@@ -100,7 +100,7 @@ function Rested.HelpReport( )
 	index = 1
 	if( #Rested.charList == 0 ) then
 		--Rested.Print( "Size of charList: "..#Rested.charList )
-		table.insert( Rested.charList, { 150, string.format( "%s:  Version %s", SLASH_RESTED1, RESTED_MSG_VERSION ) } )
+		table.insert( Rested.charList, { 150, string.format( "%s:  Version v%s", SLASH_RESTED1, RESTED_MSG_VERSION ) } )
 		local sortedKeys = {}
 		for text in pairs( Rested.commandList ) do
 			table.insert( sortedKeys, text )
@@ -456,5 +456,5 @@ function Rested.VARIABLES_LOADED( ... )
 	end
 
 	RestedFrame:UnregisterEvent( "VARIABLES_LOADED" )
-	print( RESTED_MSG_ADDONNAME.." ("..RESTED_MSG_VERSION..") Loaded" )
+	Rested.Print( RESTED_MSG_ADDONNAME.." (v"..RESTED_MSG_VERSION..") Loaded", false )
 end

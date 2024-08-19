@@ -23,6 +23,7 @@ function test.before()
 	Rested.lastReminderUpdate = nil
 	Rested_options = {}
 	Rested_restedState = {}
+	chatLog = {}
 	Rested.OnLoad()
 	--Rested.SaveRestedState()
 end
@@ -452,7 +453,7 @@ function test.test_Ignore_SetIgnore_dot()
 	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
 	assertEquals( time()+ 604800, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 end
-function test.notest_Ignore_SetIgnore_noParam()
+function test.test_Ignore_SetIgnore_noParam()
 	now = time()
 	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
@@ -1175,7 +1176,6 @@ function test.test_NagReport_MaxLevel_InNagRange()
 			["updated"] = now-(8*86400) } }
 
 	Rested.VARIABLES_LOADED()
-	print( Rested_options.nagStart )
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
@@ -1191,7 +1191,6 @@ function test.test_NagReport_MaxLevel_LessThanNagRange()
 			["updated"] = now-(6*86400) } }
 
 	Rested.VARIABLES_LOADED()
-	print( Rested_options.nagStart )
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
@@ -1207,14 +1206,12 @@ function test.test_NagReport_MaxLevel_GreaterThanNagRange()
 			["updated"] = now-(10.2*86400) } }
 
 	Rested.VARIABLES_LOADED()
-	print( Rested_options.nagStart )
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
-function test.notest_NagReport_Leveling_RestedLessThanLevel_Resting_True()
-	-- TODO: fix this
+function test.test_NagReport_Leveling_RestedLessThanLevel_Resting_True()
 	now = time()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400
