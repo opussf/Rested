@@ -1,19 +1,13 @@
 #!/usr/bin/env lua
 
 require "wowTest"
-
-RestedOptionsFrame_NagTimeSliderText = CreateFontString()
-RestedOptionsFrame_NagTimeSlider = CreateFrame()
-RestedFrame = CreateFrame()
-RestedUIFrame = CreateFrame()
-RestedUIFrame_TitleText = CreateFontString()
-RestedScrollFrame_VSlider = CreateFrame()
-RestedUIFrame_TitleText = CreateFontString()
-UIDropDownMenu_SetText = function() end
+test.outFileName = "testOut.xml"
+test.coberturaFileName = "../coverage.xml"  -- to enable coverage output
 
 ParseTOC( "../src/Rested.toc" )
 
-test.outFileName = "testOut.xml"
+RestedUIFrame_TitleText = CreateFontString()
+UIDropDownMenu_SetText = function() end
 
 -- addon setup
 function test.before()
