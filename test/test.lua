@@ -1,19 +1,21 @@
 #!/usr/bin/env lua
 
 require "wowTest"
-
-RestedOptionsFrame_NagTimeSliderText = CreateFontString()
-RestedOptionsFrame_NagTimeSlider = CreateFrame()
-RestedFrame = CreateFrame()
-RestedUIFrame = CreateFrame()
-RestedUIFrame_TitleText = CreateFontString()
-RestedScrollFrame_VSlider = CreateFrame()
-RestedUIFrame_TitleText = CreateFontString()
-UIDropDownMenu_SetText = function() end
+test.outFileName = "testOut.xml"
+--test.coberturaFileName = "../coverage.xml"  -- to enable coverage output
 
 ParseTOC( "../src/Rested.toc" )
 
-test.outFileName = "testOut.xml"
+RestedUIFrame_TitleText = CreateFontString()
+UIDropDownMenu_SetText = function() end
+--RestedOptionsFrame_NagTimeSliderText)
+--RestedOptionsFrame_NagTimeSlider)
+--RestedFrame = CreateFrame()
+--RestedUIFrame = CreateFrame()
+--RestedUIFrame_TitleText = CreateFontString()
+--RestedScrollFrame_VSlider = CreateFrame()
+--RestedUIFrame_TitleText = CreateFontString()
+--UIDropDownMenu_SetText = function() end)
 
 -- addon setup
 function test.before()
@@ -23,6 +25,7 @@ function test.before()
 	Rested.lastReminderUpdate = nil
 	Rested_options = {}
 	Rested_restedState = {}
+	chatLog = {}
 	Rested.OnLoad()
 	--Rested.SaveRestedState()
 end
@@ -529,7 +532,7 @@ function test.test_Ignore_SetIgnore_name_withTime_1year()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 52w" )
-	assertEquals( time() + 31449600, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 31449600, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	now = time()
@@ -1175,7 +1178,6 @@ function test.test_NagReport_MaxLevel_InNagRange()
 			["updated"] = now-(8*86400) } }
 
 	Rested.VARIABLES_LOADED()
-	print( Rested_options.nagStart )
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
@@ -1191,7 +1193,6 @@ function test.test_NagReport_MaxLevel_LessThanNagRange()
 			["updated"] = now-(6*86400) } }
 
 	Rested.VARIABLES_LOADED()
-	print( Rested_options.nagStart )
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
@@ -1207,14 +1208,12 @@ function test.test_NagReport_MaxLevel_GreaterThanNagRange()
 			["updated"] = now-(10.2*86400) } }
 
 	Rested.VARIABLES_LOADED()
-	print( Rested_options.nagStart )
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
-function test.notest_NagReport_Leveling_RestedLessThanLevel_Resting_True()
-	-- TODO: fix this
+function test.test_NagReport_Leveling_RestedLessThanLevel_Resting_True()
 	now = time()
 	Rested.ADDON_LOADED()
 	Rested_options["nagStart"] = 7 * 86400

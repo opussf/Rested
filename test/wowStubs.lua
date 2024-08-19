@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  August 13 2024
--- Revision:  9.4.4
+-- Date    :  August 19 2024
+-- Revision:  9.5
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -12,6 +12,7 @@
 -- * Create test.lua  - Add #!/usr/bin/env lua
 -- * require "wowTest"
 -- * set test.outFileName to an ouput.xml file
+-- * set test.coberturaFileName = "../coverage.xml" to enable coverage output
 -- * Parse the TOC - ParseTOC( "../src/sonthing.toc" )
 -- * Setup any 'Normal Frames'
 
