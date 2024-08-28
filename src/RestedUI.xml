@@ -162,4 +162,40 @@
 			<OnMouseUp>Rested.UIOnDragStop()</OnMouseUp>
 		</Scripts>
 	</Frame>
+	<Frame name="RestedCSV" toplevel="false" parent="UIParent" enableMouse="true" movable="false">
+		<Size x="600" y="400"/>
+		<Anchors><Anchor point="CENTER"/></Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0" g="0" b="0"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<EditBox name="$parent_EditBox" multiLine="true">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="BOTTOMRIGHT"><Offset x="-5" y="30"/></Anchor>
+				</Anchors>
+				<FontString name="CSVFont" inherits="ChatFontNormal"/>
+			</EditBox>
+			<Button name="$parent_Close" inherits="UIPanelButtonTemplate" text="Close">
+				<Size><AbsDimension x="120" y="24"/></Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
+						<Offset><AbsDimension x="-5" y="-5"/></Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>RestedCSV:Hide();</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>tinsert(UISpecialFrames, self:GetName());C_T;self:Hide();</OnLoad>
+			<OnShow>PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);</OnShow>
+			<OnHide>PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);</OnHide>
+		</Scripts>
+	</Frame>
 </Ui>
