@@ -193,9 +193,7 @@
 			</Button>
 		</Frames>
 		<Scripts>
-			<OnLoad>tinsert(UISpecialFrames, self:GetName());C_T;self:Hide();</OnLoad>
-			<OnShow>PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);</OnShow>
-			<OnHide>PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);</OnHide>
+			<OnLoad>tinsert(UISpecialFrames, self:GetName());self:Hide();</OnLoad>
 		</Scripts>
 	</Frame>
 </Ui>
