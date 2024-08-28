@@ -1628,6 +1628,14 @@ end
 function test.test_TextToSeconds_08()
 	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
 end
-
+-- CSV
+-------------
+function test.test_CSV_01()
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
+			{["faction"]="Alliance",["race"]="Human",["class"]="Warlock",["gender"]="Female",["lvlNow"]=80,["iLvl"]=500}}
+	Rested.Command( "csv" )
+	print( Rested_csv )
+	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500\n", Rested_csv)
+end
 
 test.run()
