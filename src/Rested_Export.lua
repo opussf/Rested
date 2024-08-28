@@ -153,6 +153,15 @@ function ExportJSON()
 	return strOut
 end
 function ExportCSV()
+	strOut = "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\n"
+	for realm, chars in sorted_pairs( Rested_restedState ) do
+		for name, charStruct in sorted_pairs( chars ) do
+			strOut = strOut .. string.format( "%s,%s,%s,%s,%s,%s,%i,%i\n",
+				realm, name, charStruct.faction, charStruct.race, charStruct.class,
+				charStruct.gender, charStruct.lvlNow, charStruct.iLvl )
+		end
+	end
+	return strOut
 end
 
 function sorted_pairs( tableIn )
@@ -171,7 +180,8 @@ end
 
 functionList = {
 	["xml"] = ExportXML,
-	["json"] = ExportJSON
+	["json"] = ExportJSON,
+	["csv"] = ExportCSV
 }
 
 func = functionList[string.lower( exportType )]
