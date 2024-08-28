@@ -152,6 +152,8 @@ function ExportJSON()
 	strOut = strOut .. "}}"
 	return strOut
 end
+function ExportCSV()
+end
 
 function sorted_pairs( tableIn )
 	local keys = {}
