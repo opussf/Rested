@@ -173,7 +173,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<EditBox name="$parent_EditBox" multiLine="true">
+			<EditBox name="$parent_EditBox" multiLine="false">
 				<Anchors>
 					<Anchor point="TOPLEFT"/>
 					<Anchor point="BOTTOMRIGHT"><Offset x="-5" y="30"/></Anchor>
@@ -193,7 +193,7 @@
 			</Button>
 		</Frames>
 		<Scripts>
-			<OnLoad>tinsert(UISpecialFrames, self:GetName());self:Hide();</OnLoad>
+			<OnLoad>self:Hide();</OnLoad>
 		</Scripts>
 	</Frame>
 </Ui>
