@@ -14,7 +14,7 @@ function Rested.MakeCSV()
 	RestedCSV_EditBox:HighlightText()
 	RestedCSV:Show()
 	C_Timer.After(15, function() RestedCSV:Hide(); end)
-	Rested.Print("CSV report created. /reload or log out to save.")
+	Rested.Print("CSV report created. Ctrl-C to copy CSV content to the clipboard.")
 end
 
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv=nil; end )
