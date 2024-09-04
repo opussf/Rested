@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  August 25 2024
--- Revision:  9.5-2-gba37ab3
+-- Date    :  September 3 2024
+-- Revision:  9.5-6-gb590ae9
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -1265,17 +1265,7 @@ function GetTradeSkillRecipeLink( index )
 	return TradeSkillItems[index].elink
 end
 function GetUnitName( lookupStr )
-	lookupStr = string.lower( lookupStr )
-	-- return the player's UnitName if asking for "player"
-	if lookupStr == "player" then
-		return UnitName( lookupStr )
-	end
-	_, _, partyType, partyIndex = string.find( lookupStr, "(%S+)(%d+)" )
-	partyIndex = tonumber( partyIndex )
-	-- only return the indexed playername if the party type matches, and the index exists
-	if( myParty[partyType] and myParty.roster[partyIndex] ) then
-		return myParty.roster[partyIndex]
-	end
+	error("This is deprecated")
 end
 function GetUnitSpeed( lookupStr )
 	lookupStr = string.lower( lookupStr )
@@ -1568,8 +1558,15 @@ end
 function UnitClass( who )
 	return Units[who].class, Units[who].classCAPS, Units[who].classIndex
 end
+function UnitExists( who )
+	return Units[who] and true or nil
+end
 function UnitGUID( who )
 	return "playerGUID"
+end
+function UnitGroupRolesAssigned( who )
+	print( "UnitGroupRolesAssigned( "..who.." )")
+	return Units[who].role
 end
 function UnitHealthMax( who )
 	-- http://wowwiki.wikia.com/wiki/API_UnitHealth
