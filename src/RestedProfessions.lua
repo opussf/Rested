@@ -27,7 +27,7 @@ function Rested.ScanTradeSkill()
 
 			rLink = C_TradeSkillUI.GetRecipeItemLink( recipeID )
 			Rested.me["tradeCD"] = Rested.me["tradeCD"] or {}
-			Rested.me.tradeCD[recipeID] = {["cdTS"] = cdSeconds + time(), ["category"] = recipeInfoTable.name }
+			Rested.me.tradeCD[recipeID] = {["cdTS"] = math.floor(cdSeconds + time()), ["category"] = recipeInfoTable.name }
 		end
 	end
 end
