@@ -18,4 +18,4 @@ function Rested.MakeCSV()
 end
 
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv=nil; end )
-Rested.commandList["csv"] = {["help"] = {"","Make CSV export"}, ["func"] = Rested.MakeCSV }
+Rested.commandList["csv"] = {["help"] = {"","Make CSV export"}, ["func"] = Rested.MakeCSV, ["desc"] = {"Export character data in CSV format."} }
