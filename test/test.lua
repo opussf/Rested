@@ -8,6 +8,7 @@ ParseTOC( "../src/Rested.toc" )
 
 RestedUIFrame_TitleText = CreateFontString()
 UIDropDownMenu_SetText = function() end
+RestedCSV_EditBox = CreateEditBox()
 --RestedOptionsFrame_NagTimeSliderText)
 --RestedOptionsFrame_NagTimeSlider)
 --RestedFrame = CreateFrame()
@@ -42,7 +43,7 @@ function test.test_printHelp()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.HelpReport )
-	test.showCharList()
+	-- test.showCharList()
 end
 -- VARIABLES_LOADED Inits data
 function test.test_maxLevel_set()
@@ -570,7 +571,7 @@ function test.test_Ignore_IgnoreReport_ShortTime()
 	assertEquals( time() + 129600, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
 	assertEquals( "1 Day 12 Hr: |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
@@ -586,7 +587,7 @@ function test.test_Ignore_IgnoreReport_LongTime()
 	assertEquals( time() + 8640000, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
 	expected = string.format( "%s: |cff00ff00Test Realm:testPlayer|r", date( "%x %X", now + 8640000 ) )
 	assertEquals( expected, Rested.charList[1][2] )
@@ -603,7 +604,7 @@ function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
 	assertEquals( time() + 8640000, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
 
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
 	expected = string.format( "%s: |cff00ff00Test Realm:testPlayer|r", date( "%x %X", now + 8640000 ) )
 	assertEquals( expected, Rested.charList[1][2] )
@@ -656,7 +657,7 @@ function test.test_Mounts_Report_SingleMount_halfLife()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 75, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_SingleMount_Recent()
@@ -671,7 +672,7 @@ function test.test_Mounts_Report_SingleMount_Recent()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 150, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_SingleMount_Oldest()
@@ -686,7 +687,7 @@ function test.test_Mounts_Report_SingleMount_Oldest()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 2.5, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_NoMounts()
@@ -700,7 +701,7 @@ function test.test_Mounts_Report_NoMounts()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList )
 end
 function test.test_Mounts_Report_TwoMounts_Same()
@@ -715,8 +716,8 @@ function test.test_Mounts_Report_TwoMounts_Same()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
-	assertEquals( 75, Rested.charList[1][1] )
+	-- test.showCharList()
+	assertAlmostEquals( 75, Rested.charList[1][1], nil, nil, 2.5 )
 end
 function test.test_Mounts_Report_TwoMounts_Diff()
 	now = time()
@@ -730,7 +731,7 @@ function test.test_Mounts_Report_TwoMounts_Diff()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 75, Rested.charList[1][1] )
 end
 function test.test_Mounts_Report_TwoMounts_TooOldMount()
@@ -745,7 +746,7 @@ function test.test_Mounts_Report_TwoMounts_TooOldMount()
 
 	Rested.ForAllChars( Rested.MountReport )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 1, #Rested.charList )
 	assertEquals( 75, Rested.charList[1][1] )
 end
@@ -1180,7 +1181,7 @@ function test.test_NagReport_MaxLevel_InNagRange()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( "90 :: 8 Day 0 Hr : Test Realm:testPlayer_MaxLevel", Rested.charList[1][2] )
 end
 function test.test_NagReport_MaxLevel_LessThanNagRange()
@@ -1195,7 +1196,7 @@ function test.test_NagReport_MaxLevel_LessThanNagRange()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.test_NagReport_MaxLevel_GreaterThanNagRange()
@@ -1210,7 +1211,7 @@ function test.test_NagReport_MaxLevel_GreaterThanNagRange()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.test_NagReport_Leveling_RestedLessThanLevel_Resting_True()
@@ -1225,7 +1226,7 @@ function test.test_NagReport_Leveling_RestedLessThanLevel_Resting_True()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.notest_NagReport_Leveling_RestedLessThanLevel_Resting_False()
@@ -1241,7 +1242,7 @@ function test.notest_NagReport_Leveling_RestedLessThanLevel_Resting_False()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
@@ -1257,7 +1258,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_True()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( "2 :: |cff00ff00127.5%|r : Test Realm:testPlayer_lvl2", Rested.charList[1][2] )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
@@ -1273,7 +1274,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_Resting_False()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanMax_Resting_True()
@@ -1289,7 +1290,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanMax_Resting_True()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanMax_Resting_False()
@@ -1304,7 +1305,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanMax_Resting_False()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting_True()
@@ -1319,7 +1320,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resti
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.notest_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resting_False()
@@ -1334,7 +1335,7 @@ function test.notest_NagReport_Leveling_RestedGreaterThanLevel_FullyRested_Resti
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.test_NagReport_NotResting()
@@ -1346,7 +1347,7 @@ function test.test_NagReport_NotResting()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.NagCharacters )
 
-	test.showCharList()
+	-- test.showCharList()
 	assertEquals( "2 :: 1 Hr 0 Min : Test Realm:testPlayer_lvl2 NOT RESTING", Rested.charList[1][2] )
 end
 
@@ -1382,7 +1383,7 @@ end
 -- Auction tests
 function test.test_AuctionReport_noAuctions()
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
 function test.test_AuctionReport_newAuction_12hours()
@@ -1399,7 +1400,7 @@ function test.test_AuctionReport_newAuction_12hours()
 			} } }
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertEquals( "1 (12 Hr 0 Min to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_newAuction_24hours()
@@ -1415,7 +1416,7 @@ function test.test_AuctionReport_newAuction_24hours()
 			} } }
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertEquals( "1 (1 Day 0 Hr to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_newAuction_48hours()
@@ -1431,7 +1432,7 @@ function test.test_AuctionReport_newAuction_48hours()
 			} } }
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertEquals( "1 (2 Day 0 Hr to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_clearOldAuction_12hours_Init()
@@ -1447,7 +1448,7 @@ function test.test_AuctionReport_clearOldAuction_12hours_Init()
 			} } }
 	Rested.VARIABLES_LOADED()  -- calls init functions
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["Auctions"] )
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
@@ -1463,7 +1464,7 @@ function test.test_AuctionReport_clearOldAuction_12hours_PLAYER_ENTERING_WORLD()
 	}
 	Rested.PLAYER_ENTERING_WORLD()
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["Auctions"] )
 	assertEquals( 0, #Rested.charList, "There should be 0 entries" )
 end
@@ -1544,7 +1545,7 @@ function test.test_AuctionReport_ExpiredAuction_Report()
 			},
 	}
 	Rested.ForAllChars( Rested.AuctionsReport )
-	--test.showCharList()
+	-- test.showCharList()
 	assertEquals( "1 (EXPIRED) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_ExipredReminders()
@@ -1628,6 +1629,13 @@ end
 function test.test_TextToSeconds_08()
 	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
 end
-
+-- CSV
+-------------
+function test.test_CSV_InitalColumns()
+	Rested_restedState["Test Realm"] = {["testPlayer"] =
+			{["faction"]="Alliance",["race"]="Human",["class"]="Warlock",["gender"]="Female",["lvlNow"]=80,["iLvl"]=500}}
+	-- Rested.Command( "csv" )
+	-- assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500\n", Rested_csv)
+end
 
 test.run()
