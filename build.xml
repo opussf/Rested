@@ -157,12 +157,15 @@
 		</fail>
 	</target>
 
-	<target name="curse" depends="package" description="Copy files to the local curseforge path">
+	<target name="curse" depends="clean, package" description="Copy files to the local curseforge path">
 		<property name="curse.dir" location="${ant.project.name}-cf"/>
 		<exec executable="git" dir="${curse.dir}" failifexecutionfails="true" errorproperty="">
 			<arg line="reset --hard HEAD" />
 		</exec>
-		<copy todir="${curse.dir}">
+		<exec executable="git" dir="${curse.dir}" failifexecutionfails="true" errorproperty="">
+			<arg line="rm -rf ." />
+		</exec>
+		<copy todir="${curse.dir}" verbose="true">
 			<fileset dir="${package.dir}"/>
 		</copy>
 		<exec executable="git" dir="${curse.dir}" failifexecutionfails="true" errorproperty="">
