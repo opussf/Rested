@@ -109,8 +109,104 @@ function Rested.ReminderCooldowns( realm, name, charStruct )
 	return returnStruct
 end
 Rested.ReminderCallback( Rested.ReminderCooldowns )
+-----------
+-- Concentration
+-----------
+function Rested.GetConcentration()
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	local concentrationCurrencyID = C_TradeSkillUI.GetConcentrationCurrencyID( professionInfo.professionID )
+	if concentrationCurrencyID and concentrationCurrencyID>0 then
+		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo( concentrationCurrencyID )
+		--if currencyInfo.quantity < currencyInfo.maxQuantity then
+		Rested.me["concentration"] = Rested.me["concentration"] or {}
+		profName = professionInfo.professionName
+		for long, short in pairs( Rested.ProfNameMap ) do
+			profName = string.gsub( profName, long, short )
+		end
+		Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
+		Rested.me.concentration[profName].ts = time()
+		Rested.me.concentration[profName].value = currencyInfo.quantity
+		Rested.me.concentration[profName].max = currencyInfo.maxQuantity
+		-- else
+		-- 	Rested.me.concentration[professionInfo.professionName] = nil
+		-- end
+	end
+end
+Rested.ConcentrationRateGain = 1/360  -- 1 per 6 min
+Rested.ProfNameMap = {
+	["Khaz Algar"] = "Khaz",
+	["Dragon Isles"] = "Dragon"
+}
+function Rested.ProfConcentrationReport( realm, name, charStruct )
+	count = 0
+	if( charStruct.concentration ) then
+		for profName, struct in pairs( charStruct.concentration ) do
+			needToMax = struct.max - struct.value
+			timeToMax = struct.ts + ( needToMax / Rested.ConcentrationRateGain )
+			timeSince = time() - struct.ts
+			current = math.min( struct.max, struct.value + (timeSince * Rested.ConcentrationRateGain) )
+			table.insert( Rested.charList, { ( struct.value / struct.max ) * 150,
+					string.format( "%s%i %s :: %s",
+						(needToMax > 0 and SecondsToTime( (struct.max - current) / Rested.ConcentrationRateGain ).." " or ""),
+						current, profName, Rested.FormatName( realm, name ) ) } )
+			count = count + 1
+		end
+	end
+	return count
+end
+Rested.EventCallback( "TRADE_SKILL_LIST_UPDATE", Rested.GetConcentration )
+Rested.EventCallback( "VIGNETTES_UPDATED", Rested.GetConcentration )
+
+Rested.dropDownMenuTable["Prof Conc"] = "conc"
+Rested.commandList["conc"] = { ["help"] = {"","Profession concentration"}, ["func"] = function()
+		Rested.reportName = "Prof Concentration"
+		Rested.UIShowReport( Rested.ProfConcentrationReport )
+	end
+}
 
 --[[
+
+SecondsToTime( charStruct.totalPlayed )
+
+
+C_TradeSkillUI.GetConcentrationCurrencyID(C_TradeSkillUI.GetChildProfessionInfo().professionID)
+
+GetProfessionInfo( 8 ) = Engineering  (202?)
+
+
+
+C_TradeSkillUI.GetBaseProfessionInfo()
+C_TradeSkillUI.GetChildProfessionInfo().professionID
+{
+			Name = "ProfessionInfo",
+			Type = "Structure",
+			Fields =
+			{
+				{ Name = "profession", Type = "Profession", Nilable = true },
+				{ Name = "professionID", Type = "number", Nilable = false },
+				{ Name = "sourceCounter", Type = "number", Nilable = false },
+				{ Name = "professionName", Type = "cstring", Nilable = false },
+				{ Name = "expansionName", Type = "cstring", Nilable = false },
+				{ Name = "skillLevel", Type = "number", Nilable = false },
+				{ Name = "maxSkillLevel", Type = "number", Nilable = false },
+				{ Name = "skillModifier", Type = "number", Nilable = false },
+				{ Name = "isPrimaryProfession", Type = "bool", Nilable = false },
+				{ Name = "parentProfessionID", Type = "number", Nilable = true },
+				{ Name = "parentProfessionName", Type = "cstring", Nilable = true },
+			},
+		},
+
+
+/dump C_TradeSkillUI.GetConcentrationCurrencyID(C_TradeSkillUI.GetChildProfessionInfo().professionID)
+
+
+C_CurrencyInfo.GetCurrencyInfo( tonumber( currencyID ) ).quantity      .maxQuantity
+
+
+
+
+
+
 175880
 
 function Rested.Cooldowns( realm, name, charStruct )
