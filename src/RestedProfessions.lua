@@ -10,7 +10,6 @@ function Rested.SaveProfessionInfo()
 		Rested.me["prof"..num.."skill"] = skillLevel
 		Rested.me["prof"..num.."maxSkill"] = maxSkillLevel
 	end
-
 end
 function Rested.ScanTradeSkill()
 	local recipeTable = C_TradeSkillUI.GetAllRecipeIDs()
@@ -79,8 +78,9 @@ function Rested.Cooldowns( realm, name, charStruct )
 			recipeSum[struct.category].count = recipeSum[struct.category].count + 1
 		end
 		for category, struct in pairs( recipeSum ) do
+			secondsToGo = struct.ts - time()
 			Rested.strOut = string.format( "%s %s : %s",
-					date( "%m/%d %H:%M", struct.ts ),
+					(secondsToGo > 0 and SecondsToTime( secondsToGo ) or date( "%m/%d %H:%M", struct.ts )),
 					rn,
 					category )
 			table.insert( Rested.charList,

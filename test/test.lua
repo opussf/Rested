@@ -942,13 +942,18 @@ function test.test_StaleTime_Set_EmptyDoesNotChange()
 	assertEquals( 8640000, Rested_options.staleStart )
 end
 
-
 -- Professions
---require "RestedProfessions"
-function test.test_Profession_01()
+function test.test_Profession_SaveInfo()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.SaveProfessionInfo()
+	assertEquals( "prof1", Rested_restedState["Test Realm"]["testPlayer"]["prof1"] )
+end
+function test.notest_Profession_Concentration()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.GetConcentration()
+	test.dump( Rested_restedState )
 end
 
 -- gold
@@ -1634,8 +1639,9 @@ end
 function test.test_CSV_InitalColumns()
 	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["faction"]="Alliance",["race"]="Human",["class"]="Warlock",["gender"]="Female",["lvlNow"]=80,["iLvl"]=500}}
-	-- Rested.Command( "csv" )
-	-- assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500\n", Rested_csv)
+	Rested.Command( "csv" )
+	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500\n", Rested_csv)
 end
+--
 
 test.run()
