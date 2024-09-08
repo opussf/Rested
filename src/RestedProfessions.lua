@@ -80,7 +80,7 @@ function Rested.Cooldowns( realm, name, charStruct )
 		for category, struct in pairs( recipeSum ) do
 			secondsToGo = struct.ts - time()
 			Rested.strOut = string.format( "%s : %s :: %s",
-					(secondsToGo > 0 and SecondsToTime( secondsToGo ) or date( "%m/%d %H:%M", struct.ts )),
+					(secondsToGo > 0 and SecondsToTime( secondsToGo ) or COLOR_RED..date( "%m/%d %H:%M", struct.ts )..COLOR_END),
 					category,
 					rn )
 			table.insert( Rested.charList,
