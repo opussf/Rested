@@ -79,10 +79,10 @@ function Rested.Cooldowns( realm, name, charStruct )
 		end
 		for category, struct in pairs( recipeSum ) do
 			secondsToGo = struct.ts - time()
-			Rested.strOut = string.format( "%s %s : %s",
+			Rested.strOut = string.format( "%s : %s :: %s",
 					(secondsToGo > 0 and SecondsToTime( secondsToGo ) or date( "%m/%d %H:%M", struct.ts )),
-					rn,
-					category )
+					category,
+					rn )
 			table.insert( Rested.charList,
 					{ struct.pc, Rested.strOut } )
 			count = count + 1
