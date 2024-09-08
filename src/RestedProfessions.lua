@@ -145,7 +145,6 @@ function Rested.ProfConcentrationReport( realm, name, charStruct )
 			timeToMax = struct.ts + ( needToMax / Rested.ConcentrationRateGain )
 			timeSince = time() - struct.ts
 			current = math.min( struct.max, math.floor( struct.value + (timeSince * Rested.ConcentrationRateGain) ) )
-			print( name..":"..needToMax )
 			table.insert( Rested.charList, { ( current / struct.max ) * 150,
 					string.format( "%4i: %s%s :: %s",
 						current,
