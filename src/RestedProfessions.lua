@@ -117,49 +117,49 @@ Rested.ProfNameMap = {
 	["Dragon Isles"] = "Dragon"
 }
 function Rested.GetConcentration()
---	Rested.Print( "GetConcentration()" )
-	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local concentrationCurrencyID = C_TradeSkillUI.GetConcentrationCurrencyID( professionInfo.professionID )
-	if concentrationCurrencyID and concentrationCurrencyID>0 then
-		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo( concentrationCurrencyID )
-		profName = professionInfo.professionName
-		for long, short in pairs( Rested.ProfNameMap ) do
-			profName = string.gsub( profName, long, short )
-		end
-		if currencyInfo.quantity < currencyInfo.maxQuantity then
-			Rested.me["concentration"] = Rested.me["concentration"] or {}
-			Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
-			Rested.me.concentration[profName].value = currencyInfo.quantity
-			Rested.me.concentration[profName].max = currencyInfo.maxQuantity
-			Rested.me.concentration[profName].ts = time()
-		else
-			Rested.me.concentration[profName] = nil
+	-- Rested.Print( "GetConcentration()" )
+	local professionInfos = C_TradeSkillUI.GetChildProfessionInfos()
+	for i, professionInfo in pairs( professionInfos ) do
+		local concentrationCurrencyID = C_TradeSkillUI.GetConcentrationCurrencyID( professionInfo.professionID )
+		if concentrationCurrencyID and concentrationCurrencyID>0 then
+			local currencyInfo = C_CurrencyInfo.GetCurrencyInfo( concentrationCurrencyID )
+			profName = professionInfo.professionName
+			for long, short in pairs( Rested.ProfNameMap ) do
+				profName = string.gsub( profName, long, short )
+			end
+			if currencyInfo.quantity < currencyInfo.maxQuantity then
+				Rested.me["concentration"] = Rested.me["concentration"] or {}
+				Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
+				Rested.me.concentration[profName].value = currencyInfo.quantity
+				Rested.me.concentration[profName].max = currencyInfo.maxQuantity
+				Rested.me.concentration[profName].ts = time()
+			elseif Rested.me.concentration then
+				Rested.me.concentration[profName] = nil
+			end
 		end
 	end
-	-- local knownProfs = {}
-	-- for num, index in pairs( {GetProfessions()} ) do -- index is the profession number, num is 1,2
-	-- 	name = GetProfessionInfo( index )
-	-- 	if name then table.insert( knownProfs, name ) end-- add Name
-	-- end
-	-- if knownProfs[1] and knownProfs[1] ~= nil and Rested.me.concentration then
-	-- 	local count = 0
-	-- 	for profName, _ in pairs( Rested.me.concentration ) do
-	-- 		found = false
-	-- 		for _, searchTerm in pairs( knownProfs ) do
-	-- 			if searchTerm and string.find( profName, searchTerm ) then found = true end
-	-- 		end
-	-- 		if not found then
-	-- 			Rested.Print( "Pruning "..profName )
-	-- 			Rested.me.concentration[profName] = nil
-	-- 		else
-	-- 			count = count + 1
-	-- 		end
-	-- 	end
-	-- end
-	-- if count == 0 then
-	-- 	Rested.Print("remove structure")
-	-- 	Rested.me.concentration = nil
-	-- end
+	local knownProfs = {}
+	for num, index in pairs( {GetProfessions()} ) do -- index is the profession number, num is 1,2
+		name = GetProfessionInfo( index )
+		if name then table.insert( knownProfs, name ) end-- add Name
+	end
+	local count = 0
+	if knownProfs[1] and knownProfs[1] ~= nil and Rested.me.concentration then
+		for profName, _ in pairs( Rested.me.concentration ) do
+			found = false
+			for _, searchTerm in pairs( knownProfs ) do
+				if searchTerm and string.find( profName, searchTerm ) then found = true end
+			end
+			if not found then
+				Rested.me.concentration[profName] = nil
+			else
+				count = count + 1
+			end
+		end
+	end
+	if count == 0 then
+		Rested.me.concentration = nil
+	end
 end
 Rested.ConcentrationRateGain = 1/360  -- 1 per 6 min
 function Rested.ProfConcentrationReport( realm, name, charStruct )
@@ -181,7 +181,7 @@ function Rested.ProfConcentrationReport( realm, name, charStruct )
 	return count
 end
 Rested.EventCallback( "TRADE_SKILL_LIST_UPDATE", Rested.GetConcentration )
-Rested.EventCallback( "VIGNETTES_UPDATED", Rested.GetConcentration )
+Rested.EventCallback( "TRADE_SKILL_NAME_UPDATE", Rested.GetConcentration )
 
 Rested.dropDownMenuTable["Prof Conc"] = "conc"
 Rested.commandList["conc"] = { ["help"] = {"","Profession concentration"}, ["func"] = function()
