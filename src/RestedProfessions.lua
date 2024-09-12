@@ -112,31 +112,56 @@ Rested.ReminderCallback( Rested.ReminderCooldowns )
 -----------
 -- Concentration
 -----------
-function Rested.GetConcentration()
-	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local concentrationCurrencyID = C_TradeSkillUI.GetConcentrationCurrencyID( professionInfo.professionID )
-	if concentrationCurrencyID and concentrationCurrencyID>0 then
-		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo( concentrationCurrencyID )
-		--if currencyInfo.quantity < currencyInfo.maxQuantity then
-		Rested.me["concentration"] = Rested.me["concentration"] or {}
-		profName = professionInfo.professionName
-		for long, short in pairs( Rested.ProfNameMap ) do
-			profName = string.gsub( profName, long, short )
-		end
-		Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
-		Rested.me.concentration[profName].ts = time()
-		Rested.me.concentration[profName].value = currencyInfo.quantity
-		Rested.me.concentration[profName].max = currencyInfo.maxQuantity
-		-- else
-		-- 	Rested.me.concentration[professionInfo.professionName] = nil
-		-- end
-	end
-end
-Rested.ConcentrationRateGain = 1/360  -- 1 per 6 min
 Rested.ProfNameMap = {
 	["Khaz Algar"] = "Khaz",
 	["Dragon Isles"] = "Dragon"
 }
+function Rested.GetConcentration()
+--	Rested.Print( "GetConcentration()" )
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	local concentrationCurrencyID = C_TradeSkillUI.GetConcentrationCurrencyID( professionInfo.professionID )
+	if concentrationCurrencyID and concentrationCurrencyID>0 then
+		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo( concentrationCurrencyID )
+		profName = professionInfo.professionName
+		for long, short in pairs( Rested.ProfNameMap ) do
+			profName = string.gsub( profName, long, short )
+		end
+		if currencyInfo.quantity < currencyInfo.maxQuantity then
+			Rested.me["concentration"] = Rested.me["concentration"] or {}
+			Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
+			Rested.me.concentration[profName].value = currencyInfo.quantity
+			Rested.me.concentration[profName].max = currencyInfo.maxQuantity
+			Rested.me.concentration[profName].ts = time()
+		else
+			Rested.me.concentration[profName] = nil
+		end
+	end
+	-- local knownProfs = {}
+	-- for num, index in pairs( {GetProfessions()} ) do -- index is the profession number, num is 1,2
+	-- 	name = GetProfessionInfo( index )
+	-- 	if name then table.insert( knownProfs, name ) end-- add Name
+	-- end
+	-- if knownProfs[1] and knownProfs[1] ~= nil and Rested.me.concentration then
+	-- 	local count = 0
+	-- 	for profName, _ in pairs( Rested.me.concentration ) do
+	-- 		found = false
+	-- 		for _, searchTerm in pairs( knownProfs ) do
+	-- 			if searchTerm and string.find( profName, searchTerm ) then found = true end
+	-- 		end
+	-- 		if not found then
+	-- 			Rested.Print( "Pruning "..profName )
+	-- 			Rested.me.concentration[profName] = nil
+	-- 		else
+	-- 			count = count + 1
+	-- 		end
+	-- 	end
+	-- end
+	-- if count == 0 then
+	-- 	Rested.Print("remove structure")
+	-- 	Rested.me.concentration = nil
+	-- end
+end
+Rested.ConcentrationRateGain = 1/360  -- 1 per 6 min
 function Rested.ProfConcentrationReport( realm, name, charStruct )
 	count = 0
 	if( charStruct.concentration ) then
@@ -164,3 +189,23 @@ Rested.commandList["conc"] = { ["help"] = {"","Profession concentration"}, ["fun
 		Rested.UIShowReport( Rested.ProfConcentrationReport )
 	end
 }
+
+function Rested.Junk()
+	Rested.Print( "TRADE_SKILL_NAME_UPDATE: Junk()" )
+	local knownProfs = {}
+	for num, index in pairs( {GetProfessions()} ) do -- index is the profession number, num is 1,2
+		name = GetProfessionInfo( index )
+		if name then print( name ) end
+		if name then table.insert( knownProfs, name ) end-- add Name
+	end
+	Rested.Print( #knownProfs, knownProfs[1], knownProfs[2] )
+end
+
+Rested.EventCallback( "TRADE_SKILL_NAME_UPDATE", Rested.Junk )
+
+
+--[[
+/dump C_TradeSkillUI.GetChildProfessionInfos()
+
+
+]]
