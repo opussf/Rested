@@ -190,22 +190,29 @@ Rested.commandList["conc"] = { ["help"] = {"","Profession concentration"}, ["fun
 	end
 }
 
-function Rested.Junk()
-	Rested.Print( "TRADE_SKILL_NAME_UPDATE: Junk()" )
-	local knownProfs = {}
-	for num, index in pairs( {GetProfessions()} ) do -- index is the profession number, num is 1,2
-		name = GetProfessionInfo( index )
-		if name then print( name ) end
-		if name then table.insert( knownProfs, name ) end-- add Name
+function Rested.ProfConcentrationReminders( realm, name, charStruct )
+	returnStruct = {}
+	if charStruct.concentration then
+		for profName, profStruct in pairs( charStruct.concentration ) do
+			currentQuantity = math.min( profStruct.value + ((time() - profStruct.ts) * Rested.ConcentrationRateGain), profStruct.max )
+			fullPercent = currentQuantity / profStruct.max
+			if currentQuantity == profStruct.max then
+				returnStruct[time()+15] = { Rested.FormatName( realm, name ).." has full "..profName.." concentration." }
+			elseif fullPercent > 0.75 then
+				returnStruct[time()+15] = { Rested.FormatName( realm, name ).." has more than 75% "..profName.." concentration." }
+			elseif fullPercent > 0.5 then
+				returnStruct[time()+15] = { Rested.FormatName( realm, name ).." has more than half "..profName.." concentration." }
+			end
+			for targetQuantity = profStruct.value, profStruct.max do
+				if targetQuantity % 100 == 0 then
+					secondsAtTarget = profStruct.ts + ((targetQuantity-profStruct.value) / Rested.ConcentrationRateGain)
+					returnStruct[secondsAtTarget] = returnStruct[secondsAtTarget] or {}
+					table.insert( returnStruct[secondsAtTarget], Rested.FormatName( realm, name ).." has "..targetQuantity.." "..profName.." concentration." )
+				end
+			end
+		end
 	end
-	Rested.Print( #knownProfs, knownProfs[1], knownProfs[2] )
+	return returnStruct
 end
 
-Rested.EventCallback( "TRADE_SKILL_NAME_UPDATE", Rested.Junk )
-
-
---[[
-/dump C_TradeSkillUI.GetChildProfessionInfos()
-
-
-]]
+Rested.ReminderCallback( Rested.ProfConcentrationReminders )
