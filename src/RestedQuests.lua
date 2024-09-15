@@ -1,9 +1,9 @@
 -- RestedQuests.lua
 
-function Rested.QuestCommand( strIn )
+function Rested.QuestCommand( strIn, retryCount )
 	qcount = 0
 	for qnum in string.gmatch( strIn, "([0-9]+)[,]*" ) do
-		Rested.Print( "Checking quest: "..qnum )
+		-- Rested.Print( "Checking quest: "..qnum )
 		title = C_QuestLog.GetTitleForQuestID( qnum )
 		completed = C_QuestLog.IsQuestFlaggedCompleted( qnum )
 		if title then
@@ -17,6 +17,9 @@ function Rested.QuestCommand( strIn )
 			qcount = qcount + 1
 
 			Rested.Print( qnum..":"..title..":"..(completed and "DONE" or "Available") )
+		elseif not retryCount or retryCount <= 5 then
+			Rested.Print( "Retrying questID: "..qnum )
+			C_Timer.After( 1, function() Rested.QuestCommand( qnum, (retryCount and retryCount + 1 or 1) ) end )
 		end
 	end
 	Rested.reportName = "Quests"
