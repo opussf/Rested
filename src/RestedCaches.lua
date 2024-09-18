@@ -28,6 +28,7 @@ function Rested.CachesReport( realm, name, charStruct )
 	end
 end
 
+Rested.reportReverseSort["Caches"] = true
 Rested.dropDownMenuTable["Caches"] = "caches"
 Rested.commandList["caches"] = { ["help"] = {"","Caches opened."}, ["func"] = function()
 		Rested.reportName = "Caches"
