@@ -11,7 +11,7 @@ function Rested.GetCompletedCaches()
 end
 function Rested.CachesReport( realm, name, charStruct )
 	if charStruct.weeklyCacheCount then
-		table.insert( Rested.charList, { time() - charStruct.updated,
+		table.insert( Rested.charList, { (charStruct.weeklyCacheCount / #Rested.cacheQuests) * 150 ,
 			string.format( "%i :: %s", charStruct.weeklyCacheCount, Rested.FormatName( realm, name ) )
 		} )
 		return 1
