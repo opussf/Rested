@@ -8,7 +8,7 @@ function Rested.GetCompletedCaches()
 	for _,qnum in ipairs( Rested.cacheQuests ) do
 		count = count + (C_QuestLog.IsQuestFlaggedCompleted(qnum) and 1 or 0)
 	end
-	if count > 0 and not Rested.me.weeklyCacheCount or count ~= Rested.me.weeklyCacheCount then
+	if count > 0 and (not Rested.me.weeklyCacheCount or count ~= Rested.me.weeklyCacheCount) then
 		Rested.me.weeklyCacheCount = count
 		Rested.me.weeklyCacheTS = time()
 	end
