@@ -1638,9 +1638,9 @@ end
 -------------
 function test.test_CSV_InitalColumns()
 	Rested_restedState["Test Realm"] = {["testPlayer"] =
-			{["faction"]="Alliance",["race"]="Human",["class"]="Warlock",["gender"]="Female",["lvlNow"]=80,["iLvl"]=500}}
+			{["faction"]="Alliance",["race"]="Human",["class"]="Warlock",["gender"]="Female",["lvlNow"]=80,["iLvl"]=500,["gold"]=20000},}
 	Rested.Command( "csv" )
-	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500\n", Rested_csv)
+	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl,Copper,Prof1,Prof2,Prof3,Prof4,Prof5\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500,20000,,,,,\n", Rested_csv)
 end
 --
 
