@@ -56,11 +56,21 @@ function Rested.QuestUpdate()
 		end
 	end
 end
+function Rested.QuestRemoved( questID, flag )
+	questID = tostring(questID)
+	-- Event payload is questID, and a boolean flag
+	if Rested.me.quests and Rested.me.quests[questID] then
+		Rested.me.quests[questID].completed = true   -- make an abandoned flag?
+		Rested.me.quests[questID].completedTS = time()
+	end
+end
 
 Rested.dropDownMenuTable["Quests"] = "quests"
 Rested.commandList["quests"] = { ["help"] = {"","Quests [questnum,...]"}, ["func"] = Rested.QuestCommand }
+Rested.reportReverseSort["Quests"] = true
 Rested.EventCallback( "QUEST_LOG_UPDATE", Rested.QuestUpdate )
 Rested.EventCallback( "QUEST_ACCEPTED", Rested.QuestCommand )
+Rested.EventCallback( "QUEST_REMOVED", Rested.QuestRemoved )
 
 --[[
 Track quest completion.   Per character.
