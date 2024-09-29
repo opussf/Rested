@@ -60,6 +60,7 @@ end
 Rested.dropDownMenuTable["Quests"] = "quests"
 Rested.commandList["quests"] = { ["help"] = {"","Quests [questnum,...]"}, ["func"] = Rested.QuestCommand }
 Rested.EventCallback( "QUEST_LOG_UPDATE", Rested.QuestUpdate )
+Rested.EventCallback( "QUEST_ACCEPTED", Rested.QuestCommand )
 
 --[[
 Track quest completion.   Per character.
