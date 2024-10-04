@@ -31,6 +31,14 @@ This is a way to not see a toon for a while (say to make sure they are rested, o
 
 
 Change Log:
+3.13    - Added: Track the quests that reward the Cache Rewards
+        - Added: Option to allow report to be sorted in reverse (ascending instead of default descending)
+3.12.2  - Fixed: Concentration reminders
+3.12.1  - Added: Concentration reminders
+3.12    - Cleaned: Trade Cooldowns
+        - Added: Trade Concentration
+3.11    - Added: CSV export
+        - Fixed: Recording Cooldowns for Professions
 3.10.1  - Fixed: Pandarian also gain rested at 2x the rate.
 3.10    - Added: Structure to allow Pandarian to track 300% rested pool.
         - Structure: Use the table given by the client.

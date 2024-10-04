@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  September 3 2024
--- Revision:  9.5-6-gb590ae9
+-- Date    :  September 9 2024
+-- Revision:  9.5-7-gca7d6cc
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -1929,6 +1929,14 @@ end
 ----------
 C_Timer = {}
 function C_Timer.After( seconds, callback )
+end
+
+----------
+-- C_QuestLog
+----------
+C_QuestLog = {}
+function C_QuestLog.IsQuestFlaggedCompleted()
+	return false
 end
 
 -- A SAX parser takes a content handler, which provides these methods:

@@ -159,27 +159,27 @@ end
 function test.test_FormatName_CurrentToon()
 	Rested.ADDON_LOADED()
 	rn = Rested.FormatName( "Test Realm", "testPlayer" )
-	assertEquals( COLOR_GREEN.."Test Realm:testPlayer"..COLOR_END, rn )
+	assertEquals( COLOR_GREEN.."testPlayer:Test Realm"..COLOR_END, rn )
 end
 function test.test_FormatName_CurrentToon_noColor()
 	Rested.ADDON_LOADED()
 	rn = Rested.FormatName( "Test Realm", "testPlayer", false )
-	assertEquals( "Test Realm:testPlayer", rn )
+	assertEquals( "testPlayer:Test Realm", rn )
 end
 function test.test_FormatName_DiffRealm()
 	Rested.ADDON_LOADED()
 	rn = Rested.FormatName( "otherRealm", "testPlayer" )
-	assertEquals( "otherRealm:testPlayer", rn )
+	assertEquals( "testPlayer:otherRealm", rn )
 end
 function test.test_FormatName_DiffName()
 	Rested.ADDON_LOADED()
 	rn = Rested.FormatName( "Test Realm", "otherPlayer" )
-	assertEquals( "Test Realm:otherPlayer", rn )
+	assertEquals( "otherPlayer:Test Realm", rn )
 end
 function test.test_FormatName_DiffRealm_DiffName()
 	Rested.ADDON_LOADED()
 	rn = Rested.FormatName( "otherRealm", "otherPlayer" )
-	assertEquals( "otherRealm:otherPlayer", rn )
+	assertEquals( "otherPlayer:otherRealm", rn )
 end
 -- ForAllChars
 function test.returnOne( realm, name, cstruct )
@@ -573,7 +573,7 @@ function test.test_Ignore_IgnoreReport_ShortTime()
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
 	-- test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
-	assertEquals( "1 Day 12 Hr: |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 Day 12 Hr: |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
 function test.test_Ignore_IgnoreReport_LongTime()
 	-- the ignore report changes based on how long the char is ignored for.
@@ -589,7 +589,7 @@ function test.test_Ignore_IgnoreReport_LongTime()
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
 	-- test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
-	expected = string.format( "%s: |cff00ff00Test Realm:testPlayer|r", date( "%x %X", now + 8640000 ) )
+	expected = string.format( "%s: |cff00ff00testPlayer:Test Realm|r", date( "%x %X", now + 8640000 ) )
 	assertEquals( expected, Rested.charList[1][2] )
 end
 function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
@@ -606,7 +606,7 @@ function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
 	Rested.ForAllChars( Rested.IgnoredCharacters, true )  -- need to report on ignored toons
 	-- test.showCharList()
 	assertEquals( 1, #Rested.charList, "There should be 1 entry" )
-	expected = string.format( "%s: |cff00ff00Test Realm:testPlayer|r", date( "%x %X", now + 8640000 ) )
+	expected = string.format( "%s: |cff00ff00testPlayer:Test Realm|r", date( "%x %X", now + 8640000 ) )
 	assertEquals( expected, Rested.charList[1][2] )
 end
 -- Rested.me
@@ -942,13 +942,18 @@ function test.test_StaleTime_Set_EmptyDoesNotChange()
 	assertEquals( 8640000, Rested_options.staleStart )
 end
 
-
 -- Professions
---require "RestedProfessions"
-function test.test_Profession_01()
+function test.test_Profession_SaveInfo()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.SaveProfessionInfo()
+	assertEquals( "prof1", Rested_restedState["Test Realm"]["testPlayer"]["prof1"] )
+end
+function test.notest_Profession_Concentration()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.GetConcentration()
+	test.dump( Rested_restedState )
 end
 
 -- gold
@@ -983,7 +988,7 @@ function test.test_Gold_Report_01()
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = time(), ["gold"] = 872648 } }
 
 	Rested.ForAllChars( Rested.GoldReport )
-	assertEquals( "87g 26s 48c :: goldRealm:goldPlayer", Rested.charList[2][2] )
+	assertEquals( "87g 26s 48c :: goldPlayer:goldRealm", Rested.charList[2][2] )
 	test.after_gold()
 end
 
@@ -1182,7 +1187,7 @@ function test.test_NagReport_MaxLevel_InNagRange()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	-- test.showCharList()
-	assertEquals( "90 :: 8 Day 0 Hr : Test Realm:testPlayer_MaxLevel", Rested.charList[1][2] )
+	assertEquals( "90 :: 8 Day 0 Hr : testPlayer_MaxLevel:Test Realm", Rested.charList[1][2] )
 end
 function test.test_NagReport_MaxLevel_LessThanNagRange()
 	now = time()
@@ -1348,7 +1353,7 @@ function test.test_NagReport_NotResting()
 	Rested.ForAllChars( Rested.NagCharacters )
 
 	-- test.showCharList()
-	assertEquals( "2 :: 1 Hr 0 Min : Test Realm:testPlayer_lvl2 NOT RESTING", Rested.charList[1][2] )
+	assertEquals( "2 :: 1 Hr 0 Min : testPlayer_lvl2:Test Realm NOT RESTING", Rested.charList[1][2] )
 end
 
 -- Offline tests
@@ -1401,7 +1406,7 @@ function test.test_AuctionReport_newAuction_12hours()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	-- test.showCharList()
-	assertEquals( "1 (12 Hr 0 Min to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (12 Hr 0 Min to go) |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_newAuction_24hours()
 	now = time()
@@ -1417,7 +1422,7 @@ function test.test_AuctionReport_newAuction_24hours()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	-- test.showCharList()
-	assertEquals( "1 (1 Day 0 Hr to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (1 Day 0 Hr to go) |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_newAuction_48hours()
 	now = time()
@@ -1433,7 +1438,7 @@ function test.test_AuctionReport_newAuction_48hours()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.AuctionsReport )
 	-- test.showCharList()
-	assertEquals( "1 (2 Day 0 Hr to go) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (2 Day 0 Hr to go) |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
 function test.test_AuctionReport_clearOldAuction_12hours_Init()
 	now = time()
@@ -1546,9 +1551,9 @@ function test.test_AuctionReport_ExpiredAuction_Report()
 	}
 	Rested.ForAllChars( Rested.AuctionsReport )
 	-- test.showCharList()
-	assertEquals( "1 (EXPIRED) |cff00ff00Test Realm:testPlayer|r", Rested.charList[1][2] )
+	assertEquals( "1 (EXPIRED) |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
-function test.test_AuctionReport_ExipredReminders()
+function test.test_AuctionReport_ExpiredReminders()
 	now = time()
 	Rested.reminders = {}
 	Rested.ADDON_LOADED()
@@ -1562,7 +1567,7 @@ function test.test_AuctionReport_ExipredReminders()
 	} } }
 	Rested.VARIABLES_LOADED()
 	Rested.MakeReminderSchedule()
-	assertEquals( "Test Realm:testPlayer2 has 1 expired auctions.", Rested.reminders[time()+60][1] )
+	assertEquals( "testPlayer2:Test Realm has 1 expired auctions.", Rested.reminders[time()+60][1] )
 end
 -- Nag timeOut
 ----------
