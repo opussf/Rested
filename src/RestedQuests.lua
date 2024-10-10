@@ -31,10 +31,14 @@ function Rested.QuestReport( realm, name, charStruct )
 	count = 0
 	if Rested.realm == realm and Rested.name == name and charStruct.quests then
 		for qnum, qinfo in pairs( charStruct.quests ) do
-			table.insert( Rested.charList, { time() - (qinfo.completed and qinfo.completedTS or qinfo.addedTS),
-					string.format( "%6i: %s :: %s",
-						qnum, (qinfo.completed and "COMPLETE" or "progress"), qinfo.title ) } )
-			count = count + 1
+			if qinfo.completed and qinfo.completedTS < time() - 160 then
+				charStruct.quests[qnum] = nil
+			else
+				table.insert( Rested.charList, { time() - (qinfo.completed and qinfo.completedTS or qinfo.addedTS),
+						string.format( "%6i: %s :: %s",
+							qnum, (qinfo.completed and "COMPLETE" or "progress"), qinfo.title ) } )
+				count = count + 1
+			end
 		end
 	end
 	return count
