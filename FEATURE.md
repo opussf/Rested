@@ -1,5 +1,15 @@
 # Feature document for Rested
 
+## Resize
+
+Thanks a lot for this neat addon :D
+Would you mind add a resizing handle at the botton of the window so we can resized it to display more toons at the same time?
+
+There is a scroll handle, but it is not working (default camera zoom keys are bypassing it and it can't be handled too).
+
+Thanks in advance for your help.
+Best regards.
+
 ## GreatVault
 
 Add a report and track how many possible rewards are in the great vault.
