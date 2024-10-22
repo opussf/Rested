@@ -22,6 +22,8 @@ Mouse Wheel has been enabled for scrolling, look into camera zoom keys?
 
 *OPTIONS* *OPTIONS* *OPTIONS*
 
+Scroll Child is 'extra'?
+
 ## GreatVault
 
 Add a report and track how many possible rewards are in the great vault.
