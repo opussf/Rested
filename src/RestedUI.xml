@@ -13,6 +13,10 @@
 
 	<Frame name="RestedUIFrame" toplevel="false" parent="UIParent" enableMouse="true" movable="true" resizable="true">
 		<Size x="316" y="125" />
+		<ResizeBounds>
+			<minResize x="316" y="125"/>
+			<maxResize x="316" y="600"/>
+		</ResizeBounds>
 		<Anchors>
 			<Anchor point="LEFT"/>
 		</Anchors>

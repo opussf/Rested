@@ -10,7 +10,10 @@ Rested.reportReverseSort = {} -- ["reportName"] = nil|true (for reverse)
 function Rested.UIBuildBars()
 	if( not Rested.bars ) then
 		Rested.bars = {}
-		for idx = 1, Rested.showNumBars do
+	end
+	local count = #Rested.bars
+	if ( Rested.showNumBars > count ) then
+		for idx = count+1, Rested.showNumBars do
 			Rested.bars[idx] = {}
 			local item = CreateFrame("StatusBar", "Rested_ItemBar"..idx, RestedScrollContents, "Rested_RestedBarTemplate")
 			Rested.bars[idx].bar = item
@@ -26,7 +29,12 @@ function Rested.UIBuildBars()
 			Rested.bars[idx].text = text
 			text:SetPoint("TOPLEFT", item, "TOPLEFT", 5, 0)
 		end
-		--print( "Bars built" )
+	elseif ( Rested.showNumBars < count ) then
+		for idx = Rested.showNumBars+1, count do
+			Rested.bars[idx].bar:SetValue(0)
+			Rested.bars[idx].text:SetText("")
+			Rested.bars[idx].bar:Hide()
+		end
 	end
 end
 Rested.InitCallback( Rested.UIBuildBars )
@@ -38,12 +46,20 @@ function Rested.UIOnDragStop()
 	RestedUIFrame:StopMovingOrSizing()
 end
 function Rested.UIResize( start )
+	print("UIResize: "..(start and "true" or "false") )
 	if start then
-		RestedUIFrame:StartSizing( "BOTTOM", true )  -- always start from mouse = true
+		RestedUIFrame:StartSizing( "BOTTOM" ) --, true )  -- always start from mouse = true
 	else
 		RestedUIFrame:StopMovingOrSizing()
 		local frameWidth, frameHeight = RestedUIFrame:GetSize()
 		print(frameWidth..", "..frameHeight )
+		Rested.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
+		local barCountSize = Rested.showNumBars * 12
+		RestedUIFrame:SetHeight( barCountSize + 53 )
+		RestedScrollFrame:SetHeight( barCountSize + 10 )
+		RestedScrollFrame_VSlider:SetHeight( barCountSize + 10 )
+		Rested.UIBuildBars()
+		--Rested.UIResetFrame()
 	end
 end
 function Rested.UIResetFrame()
