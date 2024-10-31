@@ -104,6 +104,16 @@
 					<OnLoad>Rested.UIDropDownOnLoad(self)</OnLoad>
 				</Scripts>
 			</Frame>
+			<Button name="$parent_Dragbar">
+				<Size x="316" y="5"/>
+				<Anchors>
+					<Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="$parent"/>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>Rested.UIResize( self, true )</OnMouseDown>
+					<OnMouseUp>Rested.UIResize( self )</OnMouseUp>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>self:Hide()</OnLoad>

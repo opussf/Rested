@@ -37,6 +37,13 @@ end
 function Rested.UIOnDragStop()
 	RestedUIFrame:StopMovingOrSizing()
 end
+function Rested.UIResize( start )
+	if start then
+		RestedUIFrame:StartSizing( "BOTTOM", true )  -- always start from mouse = true
+	else
+		RestedUIFrame:StopMovingOrSizing()
+	end
+end
 function Rested.UIResetFrame()
 	for i = 1, Rested.showNumBars do
 		Rested.bars[i].bar:SetValue(0)
