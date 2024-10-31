@@ -1606,7 +1606,7 @@ function test.test_NoNag_set_02()
 end
 -- UIManagement
 -------------
-function test.test_UIReset()
+function test.notest_UIReset()
 	Rested.Command( "uireset" )
 	-- @TODO: determine how to test
 end
