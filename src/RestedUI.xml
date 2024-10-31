@@ -120,7 +120,7 @@
 			</Button>
 		</Frames>
 		<Scripts>
-			<OnLoad>self:Hide()</OnLoad>
+			<OnLoad>Rested.isSizing=true;Rested.UIOnUpdate();Rested.isSizing=nil;self:Hide()</OnLoad>
 			<OnUpdate>Rested.UIOnUpdate( elaspsed )</OnUpdate>
 			<OnMouseDown>Rested.UIOnDragStart()</OnMouseDown>
 			<OnMouseUp>Rested.UIOnDragStop()</OnMouseUp>
