@@ -53,9 +53,9 @@ function Rested.UIResize( start )
 	else
 		Rested.isSizing = nil
 		RestedUIFrame:StopMovingOrSizing()
-		local frameWidth, frameHeight = RestedUIFrame:GetSize()
-		print(frameWidth..", "..frameHeight )
-		Rested.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
+		--local frameWidth, frameHeight = RestedUIFrame:GetSize()
+		--print(frameWidth..", "..frameHeight )
+		--Rested.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
 		local barCountSize = Rested.showNumBars * 12
 		RestedUIFrame:SetHeight( barCountSize + 53 )
 		RestedScrollFrame:SetHeight( barCountSize + 10 )
@@ -108,7 +108,7 @@ end
 function Rested.UIOnUpdate( arg1 )
 	if Rested.isSizing then
 		local frameWidth, frameHeight = RestedUIFrame:GetSize()
-		print( "Resize: "..frameWidth..", "..frameHeight )
+		--print( "Resize: "..frameWidth..", "..frameHeight )
 		Rested.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
 		local barCountSize = Rested.showNumBars * 12
 		RestedScrollFrame:SetHeight( barCountSize + 10 )
