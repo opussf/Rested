@@ -49,7 +49,9 @@ function Rested.UIResize( start )
 	print("UIResize: "..(start and "true" or "false") )
 	if start then
 		RestedUIFrame:StartSizing( "BOTTOM" ) --, true )  -- always start from mouse = true
+		Rested.isSizing = true
 	else
+		Rested.isSizing = nil
 		RestedUIFrame:StopMovingOrSizing()
 		local frameWidth, frameHeight = RestedUIFrame:GetSize()
 		print(frameWidth..", "..frameHeight )
@@ -104,6 +106,15 @@ function Rested.UIMouseWheel( delta )
 	)
 end
 function Rested.UIOnUpdate( arg1 )
+	if Rested.isSizing then
+		local frameWidth, frameHeight = RestedUIFrame:GetSize()
+		print( "Resize: "..frameWidth..", "..frameHeight )
+		Rested.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
+		local barCountSize = Rested.showNumBars * 12
+		RestedScrollFrame:SetHeight( barCountSize + 10 )
+		RestedScrollFrame_VSlider:SetHeight( barCountSize + 10 )
+		Rested.UIBuildBars()
+	end
 	-- only gets called when the report frame is shown
 	if( Rested.UIlastUpdate == nil ) or ( Rested.UIlastUpdate <= time() ) then
 		Rested.UIlastUpdate = time() + 1 -- only update once a second
@@ -130,6 +141,9 @@ end
 function Rested.ResetUIPosition()
 	RestedUIFrame:ClearAllPoints()
 	RestedUIFrame:SetPoint("LEFT", "$parent", "LEFT")
+	Rested.showNumBars = 6
+	RestedUIFrame:SetHeight( 125 )
+	Rested.UIResize()
 end
 Rested.commandList["uireset"] = { ["help"] = {"","Reset the location of the UI frame"}, ["func"] = Rested.ResetUIPosition }
 
