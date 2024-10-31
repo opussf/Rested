@@ -114,6 +114,7 @@ function Rested.UIOnUpdate( arg1 )
 		RestedScrollFrame:SetHeight( barCountSize + 10 )
 		RestedScrollFrame_VSlider:SetHeight( barCountSize + 10 )
 		Rested.UIBuildBars()
+		Rested.UIlastUpdate = 0
 	end
 	-- only gets called when the report frame is shown
 	if( Rested.UIlastUpdate == nil ) or ( Rested.UIlastUpdate <= time() ) then
