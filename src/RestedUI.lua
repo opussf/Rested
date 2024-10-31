@@ -42,6 +42,8 @@ function Rested.UIResize( start )
 		RestedUIFrame:StartSizing( "BOTTOM", true )  -- always start from mouse = true
 	else
 		RestedUIFrame:StopMovingOrSizing()
+		local frameWidth, frameHeight = RestedUIFrame:GetSize()
+		print(frameWidth..", "..frameHeight )
 	end
 end
 function Rested.UIResetFrame()

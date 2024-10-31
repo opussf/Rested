@@ -11,7 +11,7 @@
 		<Color r="1" g="1" b="1" />
 	</FontString>
 
-	<Frame name="RestedUIFrame" toplevel="false" parent="UIParent" enableMouse="true" movable="true">
+	<Frame name="RestedUIFrame" toplevel="false" parent="UIParent" enableMouse="true" movable="true" resizable="true">
 		<Size x="316" y="125" />
 		<Anchors>
 			<Anchor point="LEFT"/>
@@ -110,8 +110,8 @@
 					<Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="$parent"/>
 				</Anchors>
 				<Scripts>
-					<OnMouseDown>Rested.UIResize( self, true )</OnMouseDown>
-					<OnMouseUp>Rested.UIResize( self )</OnMouseUp>
+					<OnMouseDown>Rested.UIResize( true )</OnMouseDown>
+					<OnMouseUp>Rested.UIResize( )</OnMouseUp>
 				</Scripts>
 			</Button>
 		</Frames>
