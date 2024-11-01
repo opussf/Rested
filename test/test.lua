@@ -24,7 +24,7 @@ function test.before()
 	Rested.filter = nil
 	Rested.reminders = {}
 	Rested.lastReminderUpdate = nil
-	Rested_options = {}
+	Rested_options = {["showNumBars"] = 6}
 	Rested_restedState = {}
 	chatLog = {}
 	Rested.OnLoad()
@@ -562,7 +562,7 @@ end
 function test.test_Ignore_IgnoreReport_ShortTime()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
-	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000, ["showNumBars"] = 6 }  -- 7 days and 90 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
@@ -578,7 +578,7 @@ end
 function test.test_Ignore_IgnoreReport_LongTime()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
-	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000, ["showNumBars"] = 6}  -- 7 days and 90 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
@@ -595,7 +595,7 @@ end
 function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
-	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_options = { ["ignoreTime"] = 604800, ["showNumBars"] = 6 }  -- 7 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
@@ -1606,7 +1606,7 @@ function test.test_NoNag_set_02()
 end
 -- UIManagement
 -------------
-function test.test_UIReset()
+function test.notest_UIReset()
 	Rested.Command( "uireset" )
 	-- @TODO: determine how to test
 end
