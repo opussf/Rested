@@ -108,16 +108,20 @@
 					<OnLoad>Rested.UIDropDownOnLoad(self)</OnLoad>
 				</Scripts>
 			</Frame>
-			<Button name="$parent_Dragbar">
+			<StatusBar name="$parent_Dragbar">
 				<Size x="316" y="5"/>
 				<Anchors>
 					<Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="$parent"/>
 				</Anchors>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
 				<Scripts>
+					<OnLoad>self:SetMinMaxValues(0,1);self:SetValue(1);self:SetStatusBarColor(0,0,0)</OnLoad>
 					<OnMouseDown>Rested.UIResize( true )</OnMouseDown>
-					<OnMouseUp>Rested.UIResize( )</OnMouseUp>
+					<OnMouseUp>Rested.UIResize()</OnMouseUp>
+					<OnEnter>self:SetStatusBarColor(1,1,1)</OnEnter>
+					<OnLeave>self:SetStatusBarColor(0,0,0)</OnLeave>
 				</Scripts>
-			</Button>
+			</StatusBar>
 		</Frames>
 		<Scripts>
 			<OnShow>Rested.UIResize()</OnShow>
