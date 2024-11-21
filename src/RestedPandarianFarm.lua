@@ -7,6 +7,7 @@ function Rested.FarmSoftFriendChanged( ... )
 		local unitGUID = UnitGUID("playertarget")
 
 		if unitGUID and unitName and unitName == "Tilled Soil" then
+			Rested.Command( "farm" )
 
 			Rested.me.farm = Rested.me.farm or {}
 			Rested.me.farm[unitGUID] = unitName
@@ -15,8 +16,8 @@ function Rested.FarmSoftFriendChanged( ... )
 			for k,v in pairs(Rested.me.farm) do
 				plotCount = plotCount + 1
 			end
+			print( (unitName or "nil").." ("..(unitGUID or "nil")..") - "..(plotCount or "nil") )
 		end
-		print( "PLAYER_SOFT_FRIEND_CHANGED: "..(unitName or "nil").." ("..(unitGUID or "nil")..") - "..(plotCount or "nil") )
 	else
 		print( "PLAYER_SOFT_FRIEND_CHANGED: NOT ON THE RANCH" )
 	end
@@ -36,7 +37,7 @@ function Rested.FarmReport( realm, name, charStruct )
 		for k,v in pairs(charStruct.farm) do
 			plotCount = plotCount + 1
 		end
-		table.insert( Rested.charList, { plotCount * 150 / 8, string.format( "%i :: %s", plotCount, rn ) } )
+		table.insert( Rested.charList, { plotCount * 150 / 16, string.format( "%i :: %s", plotCount, rn ) } )
 		return 1
 	end
 end
