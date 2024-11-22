@@ -4,12 +4,9 @@ RESTED_SLUG, Rested  = ...
 Rested.FarmThings = {["Tilled Soil"] = true, ["Untilled Soil"] = true,
 		["Occupied Soil"] = true, ["Encroaching Weed"] = true,
 		["Swooping Plainshawk"] = true, ["Squatting Virmen"] = true, ["Voracious Virmen"] = true,
-
-		["Stubborn Weed"] = true,
-		["Unstable Portal Shard"] = true, ["Rift Stalker"] = true,
-
+		["Stubborn Weed"] = true, ["Unstable Portal Shard"] = true, ["Rift Stalker"] = true,
 }
-Rested.FarmPrefixes = { "Alluring", "Infested", "Parched", "Runty", "Tangled", "Wiggling", "Wild" }
+Rested.FarmPrefixes = { "Alluring", "Infested", "Parched", "Runty", "Smothered", "Tangled", "Wiggling", "Wild" }
 
 function Rested.FarmIsCrop( name )
 	if Rested.FarmThings[name] then
