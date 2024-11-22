@@ -9,7 +9,7 @@ Rested.FarmThings = {["Tilled Soil"] = true, ["Untilled Soil"] = true,
 		["Unstable Portal Shard"] = true, ["Rift Stalker"] = true,
 
 }
-Rested.FarmPrefixes = { "Alluring", "Infested", "Runty", "Tangled", "Wiggling", "Wild" }
+Rested.FarmPrefixes = { "Alluring", "Infested", "Parched", "Runty", "Tangled", "Wiggling", "Wild" }
 
 function Rested.FarmIsCrop( name )
 	if Rested.FarmThings[name] then
@@ -39,7 +39,7 @@ function Rested.FarmSoftFriendChanged( ... )
 			local plotCount = 0
 			for k,v in pairs(Rested.me.farm) do
 				local val = tonumber(v)
-				if not val or val+3600 < time() then
+				if not val or val+86400 < time() then
 					Rested.me.farm[k] = nil
 				end
 				plotCount = plotCount + 1
@@ -49,26 +49,25 @@ function Rested.FarmSoftFriendChanged( ... )
 	end
 end
 
--- function Rested.FarmSpellCastSent( ... )
--- 	print( "FarmSpellCastSent: ", ... )
--- end
-
 Rested.EventCallback( "PLAYER_SOFT_FRIEND_CHANGED", Rested.FarmSoftFriendChanged )
--- Rested.EventCallback( "UNIT_SPELLCAST_SENT", Rested.FarmSpellCastSent )
 
 function Rested.FarmReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
 	if charStruct.farm then
-		local plotCount = 0
+		local plotCount, maxTS = 0, 0
 		for k,v in pairs(charStruct.farm) do
 			local val = tonumber(v)
+			maxTS = math.max(maxTS, (val or 0))
 			if val and val + Rested_options.staleStart < time() then
 				charStruct.farm[k] = nil
 			end
 			plotCount = plotCount + 1
 		end
+		if plotCount == 0 then
+			charStruct.farm = nil
+		end
 		plotCount = math.min( plotCount, 16 )
-		table.insert( Rested.charList, { plotCount * 150 / 16, string.format( "%i :: %s", plotCount, rn ) } )
+		table.insert( Rested.charList, { (plotCount * 150 / 16) + (1/(time()-maxTS)), string.format( "%i :: %s", plotCount, rn ) } )
 		return 1
 	end
 end
