@@ -53,15 +53,15 @@
 			<CheckButton name="$parent_Lock" inherits="InterfaceOptionsCheckButtonTemplate" parent="RestedUIFrame">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset x="0" y="0"/>
+						<Offset x="-2" y="2"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnEnter>GameTooltip:SetOwner(self, "ANCHOR_LEFT");GameTooltip:SetText(self.tooltip)</OnEnter>
 					<OnLeave>GameTooltip:Hide()</OnLeave>
-					<OnLoad>print("onload");self.tooltip = "Lock this window's position."</OnLoad>
-					<OnShow>print("onshow");self:SetChecked( Rested_options.UIIsLocked );</OnShow>
-					<PostClick>print("postclick");Rested_options.UIIsLocked = self:GetChecked()</PostClick>
+					<OnLoad>self.tooltip = "Lock this window's position."</OnLoad>
+					<OnShow>self:SetChecked( Rested_options.UIIsLocked );</OnShow>
+					<PostClick>Rested_options.UIIsLocked = self:GetChecked()</PostClick>
 				</Scripts>
 			</CheckButton>
 			<ScrollFrame name="RestedScrollFrame">
