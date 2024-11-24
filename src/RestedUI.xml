@@ -60,7 +60,7 @@
 					<OnEnter>GameTooltip:SetOwner(self, "ANCHOR_LEFT");GameTooltip:SetText(self.tooltip)</OnEnter>
 					<OnLeave>GameTooltip:Hide()</OnLeave>
 					<OnLoad>print("onload");self.tooltip = "Lock this window's position."</OnLoad>
-
+					<OnShow>print("onshow");self:SetChecked( true );</OnShow>
 				</Scripts>
 			</CheckButton>
 			<ScrollFrame name="RestedScrollFrame">
