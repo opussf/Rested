@@ -70,7 +70,7 @@ function Rested.QuestRemoved( questID, flag )
 end
 
 Rested.dropDownMenuTable["Quests"] = "quests"
-Rested.commandList["quests"] = { ["help"] = {"","Quests [questnum,...]"}, ["func"] = Rested.QuestCommand }
+Rested.commandList["quests"] = { ["help"] = {"","Quests [clear|questnum,...]"}, ["func"] = Rested.QuestCommand }
 Rested.reportReverseSort["Quests"] = true
 Rested.EventCallback( "QUEST_LOG_UPDATE", Rested.QuestUpdate )
 Rested.EventCallback( "QUEST_ACCEPTED", Rested.QuestCommand )
