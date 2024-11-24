@@ -50,6 +50,16 @@
 					</Anchor>
 				</Anchors>
 			</Button>
+			<CheckButton name="$parent_Lock" parent="RestedUIFrame">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parent_Close" relativePoint="TOPLEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>print("onload");self.tooltip = "Lock this window's position."</OnLoad>
+				</Scripts>
+			</CheckButton>
 			<ScrollFrame name="RestedScrollFrame">
 				<Size>
 					<AbsDimension x="316" y="82"/>
