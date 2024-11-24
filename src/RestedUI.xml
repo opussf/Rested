@@ -57,7 +57,10 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnEnter>GameTooltip:SetOwner(self, "ANCHOR_LEFT");GameTooltip:SetText(self.tooltip)</OnEnter>
+					<OnLeave>GameTooltip:Hide()</OnLeave>
 					<OnLoad>print("onload");self.tooltip = "Lock this window's position."</OnLoad>
+
 				</Scripts>
 			</CheckButton>
 			<ScrollFrame name="RestedScrollFrame">
