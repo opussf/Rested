@@ -5,6 +5,7 @@ Rested.FarmThings = {["Tilled Soil"] = true, ["Untilled Soil"] = true,
 		["Occupied Soil"] = true, ["Encroaching Weed"] = true,
 		["Swooping Plainshawk"] = true, ["Squatting Virmen"] = true, ["Voracious Virmen"] = true,
 		["Stubborn Weed"] = true, ["Unstable Portal Shard"] = true, ["Rift Stalker"] = true,
+		["Gina Mudclaw"] = true,
 }
 Rested.FarmPrefixes = { "Alluring", "Infested", "Parched", "Runty", "Smothered", "Tangled", "Wiggling", "Wild" }
 
@@ -32,11 +33,13 @@ function Rested.FarmSoftFriendChanged( ... )
 
 			Rested.me.farm = Rested.me.farm or {}
 			Rested.me.farm[unitGUID] = time()
+			Rested.me.plots = Rested.me.plots or {}
+			Rested.me.plots[unitGUID] = unitName
 
 			local plotCount = 0
 			for k,v in pairs(Rested.me.farm) do
 				local val = tonumber(v)
-				if not val or val+86400 < time() then
+				if not val or val+64800 < time() then
 					Rested.me.farm[k] = nil
 				end
 				plotCount = plotCount + 1
@@ -64,7 +67,7 @@ function Rested.FarmReport( realm, name, charStruct )
 			charStruct.farm = nil
 		end
 		plotCount = math.min( plotCount, 16 )
-		table.insert( Rested.charList, { (plotCount * 150 / 16) + (1/(time()-maxTS)), string.format( "%i :: %s", plotCount, rn ) } )
+		table.insert( Rested.charList, { (plotCount * 150 / 16) + (1/(time()+1-maxTS)), string.format( "%0.10f :: %i :: %s", (1/(time()-maxTS)), plotCount, rn ) } )
 		return 1
 	end
 end
