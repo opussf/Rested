@@ -40,7 +40,9 @@ end
 Rested.InitCallback( Rested.UIBuildBars )
 
 function Rested.UIOnDragStart()
-	RestedUIFrame:StartMoving()
+	if not Rested_options.UIIsLocked then
+		RestedUIFrame:StartMoving()
+	end
 end
 function Rested.UIOnDragStop()
 	RestedUIFrame:StopMovingOrSizing()
