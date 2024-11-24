@@ -72,6 +72,7 @@ function Rested.FarmReport( realm, name, charStruct )
 	end
 end
 
+Rested.reportReverseSort["Farm"] = true
 Rested.dropDownMenuTable["Farm"] = "farm"
 Rested.commandList["farm"] = {["help"] = {"","Show Farm report"}, ["func"] = function()
 		Rested.reportName = "Farm"
