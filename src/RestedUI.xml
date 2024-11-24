@@ -50,9 +50,9 @@
 					</Anchor>
 				</Anchors>
 			</Button>
-			<CheckButton name="$parent_Lock" parent="RestedUIFrame">
+			<CheckButton name="$parent_Lock" inherits="InterfaceOptionsCheckButtonTemplate" parent="RestedUIFrame">
 				<Anchors>
-					<Anchor point="TOPRIGHT" relativeTo="$parent_Close" relativePoint="TOPLEFT">
+					<Anchor point="TOPLEFT">
 						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
