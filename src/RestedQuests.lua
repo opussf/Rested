@@ -28,24 +28,31 @@ function Rested.QuestCommand( strIn, retryCount )
 				end
 			end
 		end
+		Rested.reportName = "Quests"
+		Rested.UIShowReport( Rested.QuestReport )
 	end
-	Rested.reportName = "Quests"
-	Rested.UIShowReport( Rested.QuestReport )
 end
 function Rested.QuestReport( realm, name, charStruct )
-	count = 0
-	if Rested.realm == realm and Rested.name == name and charStruct.quests then
-		for qnum, qinfo in pairs( charStruct.quests ) do
-			if qinfo.completed and qinfo.completedTS < time() - 160 then
-				charStruct.quests[qnum] = nil
-			else
-				table.insert( Rested.charList, { time() - (qinfo.completed and qinfo.completedTS or qinfo.addedTS),
-						string.format( "%6i: %s :: %s",
-							qnum, (qinfo.completed and "COMPLETE" or "progress"), qinfo.title ) } )
+	local count = 0
+	if #Rested.charList == 0 then
+		if Rested.questReport then
+			for qnum, qstruct in pairs( Rested.questReport ) do
+				table.insert( Rested.charList, { tonumber(qnum), string.format( "%s%06i: %i%s :: %s",
+						(Rested.me.quests[qnum] and COLOR_GREEN or ""),
+						qnum, qstruct.num,
+						(Rested.me.quests[qnum] and COLOR_END or ""),
+						qstruct.title ) } )
 				count = count + 1
 			end
 		end
+		Rested.questReport = {}
 	end
+	for qnum, qstruct in pairs( charStruct.quests ) do
+		Rested.questReport[qnum] = Rested.questReport[qnum] or {}
+		Rested.questReport[qnum].num = Rested.questReport[qnum].num and Rested.questReport[qnum].num + 1 or 1
+		Rested.questReport[qnum].title = qstruct.title
+	end
+
 	return count
 end
 function Rested.QuestUpdate()
