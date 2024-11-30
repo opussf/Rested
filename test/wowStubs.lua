@@ -1938,9 +1938,20 @@ end
 -- C_QuestLog
 ----------
 C_QuestLog = {}
-function C_QuestLog.IsQuestFlaggedCompleted()
+function C_QuestLog.IsQuestFlaggedCompleted( qnum )
 	return false
 end
+function C_QuestLog.GetTitleForQuestID( qnum )
+	return "Test Quest"
+end
+
+----------
+-- C_TaskQuest
+----------
+C_TaskQuest = {}
+function C_TaskQuest.GetQuestInfoByQuestID( qnum )
+end
+
 
 -- A SAX parser takes a content handler, which provides these methods:
 --     startDocument()                 -- called at the start of the Document
