@@ -1,7 +1,7 @@
 -- RestedQuests.lua
 
 function Rested.QuestCommand( strIn, retryCount )
-	print(strIn)
+	print( "QuestCommand:", strIn )
 	if strIn and strIn ~= '' then
 		if strIn == "clear" then
 			Rested.me.quests = {}
@@ -28,9 +28,9 @@ function Rested.QuestCommand( strIn, retryCount )
 				end
 			end
 		end
-		Rested.reportName = "Quests"
-		Rested.UIShowReport( Rested.QuestReport )
 	end
+	Rested.reportName = "Quests"
+	Rested.UIShowReport( Rested.QuestReport )
 end
 function Rested.QuestReport( realm, name, charStruct )
 	local count = 0
