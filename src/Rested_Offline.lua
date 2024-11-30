@@ -217,7 +217,7 @@ if( tocFile and FileExists( tocFile ) and
 		assert( loadfile( srcFilePath..pathSeparator..f..".lua" ) )( "Rested", sharedTable )
 	end
 	-- Call init Functions
-	Rested.showNumBars = 50
+	Rested_options = {["showNumBars"] = 60}
 	Rested.UIBuildBars()
 	DoFile( dataFile )
 
