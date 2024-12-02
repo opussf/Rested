@@ -72,6 +72,7 @@ function Rested.FarmSoftFriendChanged( ... )
 end
 
 Rested.EventCallback( "PLAYER_SOFT_FRIEND_CHANGED", Rested.FarmSoftFriendChanged )
+Rested.EventCallback( "QUEST_LOG_UPDATE", Rested.FarmGetPlotSize )
 Rested.InitCallback( Rested.FarmGetPlotSize )
 Rested.InitCallback( Rested.FarmGetDailyReset )
 
