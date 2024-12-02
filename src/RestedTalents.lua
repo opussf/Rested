@@ -9,7 +9,6 @@ function Rested.TalentsGetStr()
 	local importString = C_Traits.GenerateImportString(activeConfigID)
 
 	Rested.me.talentHash = importString
-	print( Rested.me.talentHash )
 end
 
 Rested.InitCallback( Rested.TalentsGetStr )
