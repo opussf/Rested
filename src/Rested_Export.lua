@@ -163,14 +163,38 @@ function ExportJSON()
 	return strOut
 end
 function ExportCSV()
-	strOut = "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\n"
+	CSVFields = {
+		{"Faction", "faction"},
+		{"Race", "race"},
+		{"Class", "class"},
+		{"Gender", "gender"},
+		{"Level", "lvlNow"},
+		{"iLvl", "iLvl"},
+		{"Copper","gold"},
+		{"Prof1","prof1"},
+		{"Prof2","prof2"},
+		{"Prof3","prof3"},
+		{"Prof4","prof4"},
+		{"Prof5","prof5"},
+		{"TalentString","talentHash"},
+	}
+	local report = {}
+	local row = {"Realm","Name"}
+	for _, fieldStruct in ipairs( CSVFields ) do
+		table.insert( row, fieldStruct[1] )
+	end
+	table.insert( report, table.concat( row, "," ) )
+
 	for realm, chars in sorted_pairs( Rested_restedState ) do
 		for name, charStruct in sorted_pairs( chars ) do
-			strOut = strOut .. string.format( "%s,%s,%s,%s,%s,%s,%i,%i\n",
-				realm, name, charStruct.faction, charStruct.race, charStruct.class,
-				charStruct.gender, charStruct.lvlNow, charStruct.iLvl )
+			row = {realm, name}
+			for _, fieldStruct in ipairs( CSVFields ) do
+				table.insert( row, (charStruct[fieldStruct[2]] or "") )
+			end
+			table.insert( report, table.concat( row, "," ) )
 		end
 	end
+	strOut = table.concat( report, "\n" ).."\n"
 	return strOut
 end
 
