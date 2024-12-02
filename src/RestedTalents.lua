@@ -3,16 +3,13 @@ RESTED_SLUG, Rested = ...
 
 function Rested.TalentsGetStr()
 	local activeConfigID = C_ClassTalents.GetActiveConfigID()
-
-	local configInfo = C_Traits.GetConfigInfo(activeConfigID)
-
 	local importString = C_Traits.GenerateImportString(activeConfigID)
 
 	Rested.me.talentHash = importString
 end
 
-Rested.InitCallback( Rested.TalentsGetStr )
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.TalentsGetStr )
+--Rested.InitCallback( Rested.TalentsGetStr )
+Rested.EventCallback( "SPELLS_CHANGED", Rested.TalentsGetStr )
 Rested.EventCallback( "TRAIT_CONFIG_UPDATED", Rested.TalentsGetStr )
 
 table.insert( Rested.CSVFields, {"TalentString", "talentHash"} )
