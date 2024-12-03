@@ -40,5 +40,6 @@ function Rested.MakeCSV()
 	Rested.Print("CSV report created. Ctrl-C to copy CSV content to the clipboard.")
 end
 
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv.text=nil; end )
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv=nil; end )
+Rested.EventCallback( "PLAYER_LOGOUT", function() Rested_csv={["text"] = Rested_csv, ["fields"] = Rested.CSVFields}; end )
 Rested.commandList["csv"] = {["help"] = {"","Make CSV export"}, ["func"] = Rested.MakeCSV }
