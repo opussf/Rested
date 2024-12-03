@@ -604,6 +604,7 @@ function CreateSlider( name, ... )
 	end
 	Slider.name=name
 	Slider[name.."Text"] = CreateFontString(name.."Text")
+	Slider.GetValue = function() return 2  end
 	return Slider
 end
 CheckButton = {

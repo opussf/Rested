@@ -1,7 +1,6 @@
 -- RestedQuests.lua
 
 function Rested.QuestCommand( strIn, retryCount )
-	print( "QuestCommand:", strIn )
 	if strIn and strIn ~= '' then
 		if strIn == "clear" then
 			Rested.me.quests = {}
@@ -75,7 +74,7 @@ function Rested.QuestRemoved( questID, flag )
 end
 
 Rested.dropDownMenuTable["Quests"] = "quests"
-Rested.commandList["quests"] = { ["help"] = {"","Quests [clear|questnum,...]"}, ["func"] = Rested.QuestCommand }
+Rested.commandList["quests"] = { ["help"] = {"[clear|questnum,...]","Track quests by quest numbers"}, ["func"] = Rested.QuestCommand }
 Rested.reportReverseSort["Quests"] = true
 Rested.EventCallback( "QUEST_LOG_UPDATE", Rested.QuestUpdate )
 -- Rested.EventCallback( "QUEST_ACCEPTED", Rested.QuestCommand )
