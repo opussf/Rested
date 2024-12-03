@@ -1,7 +1,6 @@
 -- RestedCSV.lua
 
-Rested_csv = {}
-Rested_csv.fields = {
+Rested.CSVFields = {
 	{"Faction", "faction"},
 	{"Race", "race"},
 	{"Class", "class"},
@@ -18,7 +17,7 @@ Rested_csv.fields = {
 function Rested.MakeCSV()
 	local report = {}
 	local row = {"Realm","Name"}
-	for _, fieldStruct in ipairs( Rested_csv.fields ) do
+	for _, fieldStruct in ipairs( Rested.CSVFields ) do
 		table.insert( row, fieldStruct[1] )
 	end
 	table.insert( report, table.concat( row, "," ) )
@@ -26,7 +25,7 @@ function Rested.MakeCSV()
 	for realm, chars in Rested.SortedPairs( Rested_restedState ) do
 		for name, charStruct in Rested.SortedPairs( chars ) do
 			row = {realm, name}
-			for _, fieldStruct in ipairs( Rested_csv.fields ) do
+			for _, fieldStruct in ipairs( Rested.CSVFields ) do
 				table.insert( row, (charStruct[fieldStruct[2]] or "") )
 			end
 			table.insert( report, table.concat( row, "," ) )
@@ -40,6 +39,6 @@ function Rested.MakeCSV()
 	Rested.Print("CSV report created. Ctrl-C to copy CSV content to the clipboard.")
 end
 
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv=nil; end )
-Rested.EventCallback( "PLAYER_LOGOUT", function() Rested_csv={["text"] = Rested_csv, ["fields"] = Rested.CSVFields}; end )
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv={}; end )
+Rested.EventCallback( "PLAYER_LOGOUT", function() Rested_csv.fields = Rested.CSVFields; end )
 Rested.commandList["csv"] = {["help"] = {"","Make CSV export"}, ["func"] = Rested.MakeCSV }
