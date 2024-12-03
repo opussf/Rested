@@ -3,10 +3,12 @@ RESTED_SLUG, Rested = ...
 
 function Rested.TalentsGetStr()
 	local activeConfigID = C_ClassTalents.GetActiveConfigID()
-	local importString = C_Traits.GenerateImportString(activeConfigID)
+	if activeConfigID then
+		local importString = C_Traits.GenerateImportString(activeConfigID)
 
-	Rested.me.talentName = C_Traits.GetConfigInfo(activeConfigID).name
-	Rested.me.talentHash = importString
+		Rested.me.talentName = C_Traits.GetConfigInfo(activeConfigID).name
+		Rested.me.talentHash = importString
+	end
 end
 
 Rested.EventCallback( "SPELLS_CHANGED", Rested.TalentsGetStr )
