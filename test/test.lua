@@ -1656,12 +1656,10 @@ function test.test_quests_clear()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "quests 32654,12345" )
 	Rested.Command( "quests clear")
-	test.dump(Rested.me)
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
 end
-
-
-
+-- farm
+-------------
 
 -- CSV
 -------------
