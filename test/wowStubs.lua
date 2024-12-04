@@ -604,6 +604,7 @@ function CreateSlider( name, ... )
 	end
 	Slider.name=name
 	Slider[name.."Text"] = CreateFontString(name.."Text")
+	Slider.GetValue = function() return 2  end
 	return Slider
 end
 CheckButton = {
@@ -1938,9 +1939,20 @@ end
 -- C_QuestLog
 ----------
 C_QuestLog = {}
-function C_QuestLog.IsQuestFlaggedCompleted()
+function C_QuestLog.IsQuestFlaggedCompleted( qnum )
 	return false
 end
+function C_QuestLog.GetTitleForQuestID( qnum )
+	return "Test Quest"
+end
+
+----------
+-- C_TaskQuest
+----------
+C_TaskQuest = {}
+function C_TaskQuest.GetQuestInfoByQuestID( qnum )
+end
+
 
 ----------
 -- C_ClassTalents

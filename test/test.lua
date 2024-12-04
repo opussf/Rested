@@ -14,7 +14,7 @@ RestedCSV_EditBox = CreateEditBox()
 --RestedFrame = CreateFrame()
 --RestedUIFrame = CreateFrame()
 --RestedUIFrame_TitleText = CreateFontString()
---RestedScrollFrame_VSlider = CreateFrame()
+RestedScrollFrame_VSlider = CreateSlider( "RestedScrollFrame_VSlider" )
 --RestedUIFrame_TitleText = CreateFontString()
 --UIDropDownMenu_SetText = function() end)
 
@@ -1634,6 +1634,35 @@ end
 function test.test_TextToSeconds_08()
 	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
 end
+-- quests
+-------------
+function test.test_quests_addQuest()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654" )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["32654"] )
+end
+function test.test_quests_addQuests()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654,12345" )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["32654"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["12345"] )
+end
+function test.test_quests_clear()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654,12345" )
+	Rested.Command( "quests clear")
+	test.dump(Rested.me)
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+end
+
+
+
+
 -- CSV
 -------------
 function test.notest_CSV_InitalColumns()

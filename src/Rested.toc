@@ -24,5 +24,6 @@ RestedAuctions.lua
 RestedVault.lua
 RestedCSV.lua
 RestedCaches.lua
+RestedQuests.lua
 
 RestedTalents.lua
