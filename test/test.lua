@@ -1643,6 +1643,25 @@ function test.test_quests_addQuest()
 	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
 	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["32654"] )
 end
+function test.test_quests_addQuests()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654,12345" )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["32654"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["12345"] )
+end
+function test.test_quests_clear()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654,12345" )
+	Rested.Command( "quests clear")
+	test.dump(Rested.me)
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+end
+
+
+
 
 -- CSV
 -------------

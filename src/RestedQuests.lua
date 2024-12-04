@@ -3,7 +3,7 @@
 function Rested.QuestCommand( strIn, retryCount )
 	if strIn and strIn ~= '' then
 		if strIn == "clear" then
-			Rested.me.quests = {}
+			Rested.me.quests = nil
 		else
 			qcount = 0
 			for qnum in string.gmatch( strIn, "([0-9]+)[,]*" ) do
