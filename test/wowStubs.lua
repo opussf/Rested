@@ -1953,7 +1953,6 @@ C_TaskQuest = {}
 function C_TaskQuest.GetQuestInfoByQuestID( qnum )
 end
 
-
 ----------
 -- C_ClassTalents
 ----------
