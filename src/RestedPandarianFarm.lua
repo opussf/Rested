@@ -61,12 +61,8 @@ function Rested.FarmSoftFriendChanged( ... )
 
 		-- print( "--"..(unitName or "nil") )
 		if unitGUID and unitName and Rested.FarmIsCrop(unitName) and not string.match(unitGUID, "^Pet") then
-			Rested.Command( "farm" )
-
 			Rested.me.farm = Rested.me.farm or {}
 			Rested.me.farm.lastHarvest = time()
-
-			-- print( (unitName or "nil").." ("..(unitGUID or "nil")..") - "..(plotCount or "nil") )
 		end
 	end
 end
