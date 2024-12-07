@@ -3,7 +3,7 @@ RESTED_SLUG, Rested  = ...
 
 -- Event CHALLENGE_MODE_MAPS_UPDATE
 
-function Rested.MythicStuff()
+function Rested.StoreMythicInfo()
 	Rested.me.mythic_currentSeasonScore = C_PlayerInfo.GetPlayerMythicPlusRatingSummary("player").currentSeasonScore
 	local found = false
 	for b = 0, 4 do
@@ -26,8 +26,8 @@ function Rested.MythicStuff()
 	end
 end
 
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.MythicStuff )
-Rested.EventCallback( "CHALLENGE_MODE_MAPS_UPDATE", Rested.MythicStuff )
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.StoreMythicInfo )
+Rested.EventCallback( "CHALLENGE_MODE_MAPS_UPDATE", Rested.StoreMythicInfo )
 
 function Rested.MythicReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
