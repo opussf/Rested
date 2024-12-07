@@ -40,8 +40,7 @@ function Rested.MythicReport( realm, name, charStruct )
 	end
 end
 
-table.insert(Rested.filterKeys, mythic_keyMapName)
-table.insert(Rested.filterKeys, mythic_keyMapLevel)
+table.insert( Rested.filterKeys, "mythic_keyMapName" )
 
 Rested.dropDownMenuTable["Mythic"] = "mythic"
 Rested.commandList["mythic"] = {["help"] = {"", "Show Mythic key report"}, ["func"] = function()

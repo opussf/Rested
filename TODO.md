@@ -1,6 +1,33 @@
 # ToDos
 
-[ ] Lock box button. Keep the window from moving.
+[ ] Track M+ Keys
+
+	C_ChallengeMode.GetActiveKeystoneInfo()
+
+	Details.challengeModeMapId =
+
+	keystoneInfo.level = C_MythicPlus.GetOwnedKeystoneLevel() or 0
+ 	keystoneInfo.mapID = C_MythicPlus.GetOwnedKeystoneMapID() or 0
+
+
+
+ 	C_Map.GetMapInfo(C_MythicPlus.GetOwnedKeystoneMapID())
+
+
+ 	local ratingSummary = C_PlayerInfo.GetPlayerMythicPlusRatingSummary("player")
+ 			{ ["runs"] = {}, ["currentSeasonScore"] = 0 }
+
+
+	local _, _, mapID = C_ChallengeMode.GetMapUIInfo(C_MythicPlus.GetOwnedKeystoneMapID())  -- nope
+
+
+	local SilMapDetails = C_Map.GetMapInfo(81)
+	local SilMapName = SilMapDetails.name
+
+
+[ ] Clean up the Guild rep info
+
+
 
 [ ] Fade window
 [ ] Progress bar to show Rested.autoCloseAfter if set.
