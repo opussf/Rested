@@ -1981,6 +1981,14 @@ function PlayerUtil.GetCurrentSpecID()
 	return {65, "Holy", "Desc", 135920, "HEALER", 4}
 end
 
+----------
+-- C_PlayerInfo
+----------
+C_PlayerInfo = {}
+function C_PlayerInfo.GetPlayerMythicPlusRatingSummary( unitStr )
+	return {["runs"] = {}, ["currentSeasonScore"] = 0 }
+end
+
 
 -- A SAX parser takes a content handler, which provides these methods:
 --     startDocument()                 -- called at the start of the Document
