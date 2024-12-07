@@ -1,4 +1,4 @@
--- RestedMythic.lua @VERSION@
+-- RestedMythic.lua
 RESTED_SLUG, Rested  = ...
 
 -- Event CHALLENGE_MODE_MAPS_UPDATE
