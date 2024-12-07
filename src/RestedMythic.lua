@@ -5,20 +5,24 @@ RESTED_SLUG, Rested  = ...
 
 function Rested.MythicStuff()
 	Rested.me.mythic_currentSeasonScore = C_PlayerInfo.GetPlayerMythicPlusRatingSummary("player").currentSeasonScore
+	local found = false
 	for b = 0, 4 do
 		for s = 1, C_Container.GetContainerNumSlots(b) do
 			local itemId = C_Container.GetContainerItemID(b, s)
 			if (itemId == 180653) then
+				found = true
 				local _, _, mythicPlusMapID = strsplit( ":", C_Container.GetContainerItemLink(b, s) )
 				Rested.me.mythic_keyMapName = C_ChallengeMode.GetMapUIInfo( mythicPlusMapID )
 				Rested.me.mythic_keyMapLevel = C_MythicPlus.GetOwnedKeystoneLevel()
 			end
 		end
 	end
-	if Rested.me.mythic_currentSeasonScore == 0 and not Rested.me.mythic_keyMapName then
-		Rested.Print( "I have a zero score.")
-		Rested.me.mythic_currentSeasonScore = nil
+	if not found then
+		Rested.me.mythic_keyMapName = nil
 		Rested.me.mythic_keyMapLevel = nil
+	end
+	if Rested.me.mythic_currentSeasonScore == 0 and not Rested.me.mythic_keyMapName then
+		Rested.me.mythic_currentSeasonScore = nil
 	end
 end
 
