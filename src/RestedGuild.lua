@@ -3,14 +3,14 @@
 --=================
 table.insert( Rested.filterKeys, "guildName" )
 function Rested.SaveGuildInfo( ... )
-	Rested.Print("PLAYER_GUILD_UPDATE")
+	-- Rested.Print("PLAYER_GUILD_UPDATE")
 	local gName, gRankName, gRankIndex = GetGuildInfo("player")
 	Rested.me.guildName = gName or nil
 	Rested.me.guildRank = gName and gRankName or nil
 	Rested.me.guildRankIndex = gName and gRankIndex or nil  -- gRankIndex is the index of the rank
 
 	local rep, bottom, top, reaction = Rested.GetGuildRep()
-	Rested.Print( (reaction or"nil")..":"..( reaction and _G["FACTION_STANDING_LABEL"..reaction] or "????") )
+	-- Rested.Print( (reaction or"nil")..":"..( reaction and _G["FACTION_STANDING_LABEL"..reaction] or "????") )
 	bottom = 0
 	--rep = rep - bottom; top = top - bottom; bottom = 0
 	Rested.me.guildRep = gName and rep or nil
@@ -42,8 +42,13 @@ function Rested.GuildStandingReport( realm, name, charStruct )
 	local lineCount = 0
 	if charStruct.guildName then
 		lineCount = 1
-		Rested.strOut = string.format( "%s :%s: %s",
+		Rested.strOut = string.format( "%s :%s%s|r: %s",
 				charStruct.guildName,
+				(charStruct.guildReaction and string.format("|cff%02x%02x%02x",
+						FACTION_BAR_COLORS[charStruct.guildReaction].r * 255,
+						FACTION_BAR_COLORS[charStruct.guildReaction].g * 255,
+						FACTION_BAR_COLORS[charStruct.guildReaction].b * 255
+				) or "|cffffffff" ),
 				(charStruct.guildReaction and _G["FACTION_STANDING_LABEL"..charStruct.guildReaction] or ""),
 				rn )
 		table.insert( Rested.charList,
