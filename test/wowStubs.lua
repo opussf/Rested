@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  September 30 2024
--- Revision:  9.5-10-g3db6671
+-- Date    :  December 07 2024
+-- Revision:  9.5-14-gb4ad3de
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -724,8 +724,14 @@ function CombatLogGetCurrentEventInfo()
 	-- set CombatLogCurrentEventInfo = {} to return specific data.
 	-- timestamp,event,hideCaster,srcGUID,srcName,srcFlags,srcFlags2,
 	--		targetGUID,targetName,targetFlags,targetFlags2,spellId = CombatLogGetCurrentEventInfo()
-
 	return unpack( CombatLogCurrentEventInfo )
+end
+function IterateCombatLog( file, text, realtime )
+	-- Support function
+	-- file: file to parse for data,
+	-- text: text instead
+	-- realtime: simulate delays between events based on recorded timestamp
+
 
 end
 function CombatTextSetActiveUnit( who )
@@ -874,6 +880,9 @@ function GetStatistic( statID )
 
 	return Achievements[statID].value
 end
+function GetCombatRating( ratingEnum )
+	return 2734
+end
 function GetComparisonStatistic( achievementID )
 	-- https://wowwiki.fandom.com/wiki/API_GetComparisonStatistic
 	-- achievementID: integer - ID of the achievement
@@ -914,6 +923,8 @@ end
 
 C_Container = {}
 C_Container.SortBagsRightToLeft = false -- this is normal
+function C_Container.GetContainerItemID( bagId, slotId )
+end
 function C_Container.GetContainerItemInfo( bagId, slotId )
 end
 function C_Container.GetContainerItemLink( bagId, slotId )
@@ -1328,6 +1339,9 @@ function IsFlying()
 end
 function IsMounted()
 end
+function GetCritChance()
+	return 25.42345
+end
 function GetCursorInfo()
 end
 function GetInstanceInfo()
@@ -1612,6 +1626,10 @@ end
 function UnitSex( who )
 	-- 1 = unknown, 2 = Male, 3 = Female
 	return Units[who].sex
+end
+function UnitStat( unitID, statID )
+	stats = { 15, 20, 25, 30 } -- str, agil, stam, int
+	return stats[statID], stats[statID], 0, 0
 end
 function UnitXP( who )
 	return 100
@@ -1940,7 +1958,7 @@ end
 ----------
 C_QuestLog = {}
 function C_QuestLog.IsQuestFlaggedCompleted( qnum )
-	return false
+	return ( qnum % 2 == 0 and true or false )
 end
 function C_QuestLog.GetTitleForQuestID( qnum )
 	return "Test Quest"
@@ -1979,6 +1997,13 @@ function PlayerUtil.GetCurrentSpecID()
 	return {65, "Holy", "Desc", 135920, "HEALER", 4}
 end
 
+----------
+-- C_PlayerInfo
+----------
+C_PlayerInfo = {}
+function C_PlayerInfo.GetPlayerMythicPlusRatingSummary( unitStr )
+	return {["runs"] = {}, ["currentSeasonScore"] = 0 }
+end
 
 -- A SAX parser takes a content handler, which provides these methods:
 --     startDocument()                 -- called at the start of the Document
