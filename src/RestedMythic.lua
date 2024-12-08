@@ -48,7 +48,8 @@ table.insert( Rested.filterKeys, "mythic_keyMapName" )
 
 Rested.dropDownMenuTable["Mythic"] = "mythic"
 Rested.commandList["mythic"] = {["help"] = {"", "Show Mythic key report"}, ["func"] = function()
-		Rested.reportName = "Mythic",
+		Rested.StoreMythicInfo()
+		Rested.reportName = "Mythic"
 		Rested.UIShowReport( Rested.MythicReport )
 	end
 }
