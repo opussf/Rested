@@ -1,6 +1,6 @@
 # ToDos
 
-[x] Lock box button. Keep the window from moving.
+[ ] Clean up the Guild rep info
 
 [ ] Fade window
 [ ] Progress bar to show Rested.autoCloseAfter if set.

@@ -27,3 +27,5 @@ RestedCaches.lua
 RestedQuests.lua
 RestedPandarianFarm.lua
 RestedTalents.lua
+
+RestedMythic.lua
