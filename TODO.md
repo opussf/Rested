@@ -1,5 +1,6 @@
 # ToDos
 
+[x] Lock box button. Keep the window from moving.
 [ ] Track M+ Keys
 
 	C_ChallengeMode.GetActiveKeystoneInfo()
@@ -26,8 +27,6 @@
 
 
 [ ] Clean up the Guild rep info
-
-
 
 [ ] Fade window
 [ ] Progress bar to show Rested.autoCloseAfter if set.
