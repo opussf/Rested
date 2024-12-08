@@ -10,7 +10,6 @@ function Rested.SaveGuildInfo( ... )
 	Rested.me.guildRankIndex = gName and gRankIndex or nil  -- gRankIndex is the index of the rank
 
 	local rep, bottom, top, reaction = Rested.GetGuildRep()
-	-- Rested.Print( (reaction or"nil")..":"..( reaction and _G["FACTION_STANDING_LABEL"..reaction] or "????") )
 	bottom = 0
 	--rep = rep - bottom; top = top - bottom; bottom = 0
 	Rested.me.guildRep = gName and rep or nil
