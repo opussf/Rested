@@ -27,7 +27,7 @@ function Rested.StoreMythicInfo()
 end
 
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.StoreMythicInfo )
-Rested.EventCallback( "CHALLENGE_MODE_MAPS_UPDATE", Rested.StoreMythicInfo )
+Rested.EventCallback( "CHALLENGE_MODE_COMPLETED", Rested.StoreMythicInfo )
 
 function Rested.MythicReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
