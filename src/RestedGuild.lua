@@ -41,13 +41,8 @@ function Rested.GuildStandingReport( realm, name, charStruct )
 	local lineCount = 0
 	if charStruct.guildName then
 		lineCount = 1
-		Rested.strOut = string.format( "%s :%s%s|r: %s",
+		Rested.strOut = string.format( "%s :%s: %s",
 				charStruct.guildName,
-				(charStruct.guildReaction and string.format("|cff%02x%02x%02x",
-						FACTION_BAR_COLORS[charStruct.guildReaction].r * 255,
-						FACTION_BAR_COLORS[charStruct.guildReaction].g * 255,
-						FACTION_BAR_COLORS[charStruct.guildReaction].b * 255
-				) or "|cffffffff" ),
 				(charStruct.guildReaction and _G["FACTION_STANDING_LABEL"..charStruct.guildReaction] or ""),
 				rn )
 		table.insert( Rested.charList,
