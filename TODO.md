@@ -1,6 +1,6 @@
 # ToDos
 
-[ ] Lock box button. Keep the window from moving.
+[x] Lock box button. Keep the window from moving.
 
 [ ] Fade window
 [ ] Progress bar to show Rested.autoCloseAfter if set.
