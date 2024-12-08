@@ -1,7 +1,7 @@
 # ToDos
 
 [x] Lock box button. Keep the window from moving.
-[ ] Track M+ Keys
+[x] Track M+ Keys
 
 	C_ChallengeMode.GetActiveKeystoneInfo()
 
