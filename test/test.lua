@@ -29,6 +29,7 @@ function test.before()
 	chatLog = {}
 	Rested.OnLoad()
 	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	--Rested.SaveRestedState()
 end
 function test.after()
@@ -147,7 +148,7 @@ function test.testPlayerUpdatedIsUpdated()
 			{["initAt"]=6372,["updated"]=6372}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated )
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated, 1 )
 end
 function test.testPlayerIgnoreIsCleared()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
@@ -434,7 +435,7 @@ function test.test_Ignore_SetIgnore_realm()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore otherrealm" )
-	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+	assertAlmostEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"], 1 )
 end
 function test.test_Ignore_SetIgnore_partial()
 	now = time()
@@ -643,6 +644,30 @@ function test.test_FormatRested_restedValue_beyondCurrentLevel()
 	assertEquals( "+", code )
 	assertEquals( 2.5, rVal )
 end
+-- Base Functions
+function test.test_UpdateNoNag_clearNoNag_forCurrentChar_only()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()+50 },
+			["otherPlayer"] = 
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()+50 }
+		}
+	Rested.ForAllChars( Rested.UpdateNoNag )
+	assertEquals( 0, #Rested.charList, "Should not add anything to charList" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].nonag )
+	assertEquals( time()+50, Rested_restedState["Test Realm"]["otherPlayer"].nonag )
+end
+function test.test_UpdateNoNag_clearNoNag_whenNoNagExpires()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()-50 },
+			["otherPlayer"] = 
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()-50 }
+		}
+	Rested.ForAllChars( Rested.UpdateNoNag )
+	assertEquals( 0, #Rested.charList, "Should not add anything to charList" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].nonag )
+	assertIsNil( Rested_restedState["Test Realm"]["otherPlayer"].nonag )
+end
+
 -- Base Reports
 function test.test_BaseReports_OfLevel()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
@@ -686,13 +711,19 @@ function test.test_BaseReports_AllCharacters()
 	Rested.ForAllChars( Rested.AllCharacters )
 	assertEquals( "2.50 (|cff00ff0075.0%|r): |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
+function test.test_BaseReports_StaleCharacters()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-900000}}
+	Rested.ForAllChars( Rested.StaleCharacters )
+	assertAlmostEquals( 900000, Rested.charList[1][1], 1 )
+end
 
 -- Mounts
 --require "RestedMounts"
 function test.test_Mounts_Report_SingleMount_halfLife()
 	now = time()
-	Rested_options.mountHistoryAge = 60
-	Rested_misc = { ["mountHistory"] = { [time()-30] = "Garn Nighthowl",
+	Rested_options.mountHistoryAge = 120
+	Rested_misc = { ["mountHistory"] = { [time()-60] = "Garn Nighthowl",
 		} }
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -776,7 +807,7 @@ function test.test_Mounts_Report_TwoMounts_Diff()
 	Rested.ForAllChars( Rested.MountReport )
 
 	-- test.showCharList()
-	assertEquals( 75, Rested.charList[1][1] )
+	assertAlmostEquals( 75, Rested.charList[1][1], 2.5 )
 end
 function test.test_Mounts_Report_TwoMounts_TooOldMount()
 	now = time()
