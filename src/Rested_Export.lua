@@ -57,6 +57,16 @@ function GetKeyValues( key, value, keyPre, t )
 	end
 	return t
 end
+function EscapeStr( strIn )
+	-- This escapes a str
+	strIn = string.gsub( strIn, "\\", "\\\\" )
+	strIn = string.gsub( strIn, "\"", "\\\"" )
+	return strIn
+end
+function EscapeStrXML( strIn )
+	strIn = string.gsub( strIn, "\"", "&quot;" )
+	return strIn
+end
 function MakeCharTable( realm, name, c )
 	charStruct = {}
 	charStruct.rn = realm
@@ -97,7 +107,7 @@ function ExportXML()
 				charStruct = MakeCharTable( realm, name, c )
 				charOut = {}
 				for k,v in sorted_pairs(charStruct) do
-					table.insert(charOut, string.format('%s="%s"', k, v))
+					table.insert(charOut, string.format('%s="%s"', k, EscapeStrXML(v)))
 				end
 				strOut = strOut .. '\t<c '..table.concat( charOut, " " )..'/>\n'
 			end
@@ -126,9 +136,9 @@ function ExportJSON()
 				charOut = {}
 				for k,v in sorted_pairs(charStruct) do
 					if type(v) == "number" then
-						table.insert(charOut, string.format('"%s":%s', k, v))
+						table.insert(charOut, string.format('"%s":%s', EscapeStr(k), v))
 					else
-						table.insert(charOut, string.format('"%s":"%s"', k, v))
+						table.insert(charOut, string.format('"%s":"%s"', EscapeStr(k), EscapeStr(v)))
 					end
 				end
 				charLine = '\t\t{'..table.concat( charOut, ", " )..'}'
@@ -142,7 +152,7 @@ function ExportJSON()
 
 	outTable = {}
 	for _, st in sorted_pairs( guildList ) do
-		guildLine = string.format('\t\t{"gn":"%s", "rn":"%s"}', st.guildName, st.realm )
+		guildLine = string.format('\t\t{"gn":"%s", "rn":"%s"}', EscapeStr(st.guildName), EscapeStr(st.realm) )
 		table.insert( outTable, guildLine )
 	end
 	strOut = strOut .. table.concat( outTable, ",\n" )
@@ -153,14 +163,25 @@ function ExportJSON()
 	return strOut
 end
 function ExportCSV()
-	strOut = "Realm,Name,Faction,Race,Class,Gender,Level,iLvl\n"
+	local report = {}
+	local row = {"Realm","Name"}
+	for _, fieldStruct in ipairs( Rested_csv.fields ) do
+		table.insert( row, fieldStruct[1] )
+	end
+	table.insert( report, table.concat( row, "," ) )
+
 	for realm, chars in sorted_pairs( Rested_restedState ) do
 		for name, charStruct in sorted_pairs( chars ) do
-			strOut = strOut .. string.format( "%s,%s,%s,%s,%s,%s,%i,%i\n",
-				realm, name, charStruct.faction, charStruct.race, charStruct.class,
-				charStruct.gender, charStruct.lvlNow, charStruct.iLvl )
+			if not charStruct.ignore or charStruct.ignore < os.time() then
+				row = {realm, name}
+				for _, fieldStruct in ipairs( Rested_csv.fields ) do
+					table.insert( row, (charStruct[fieldStruct[2]] or "") )
+				end
+				table.insert( report, table.concat( row, "," ) )
+			end
 		end
 	end
+	strOut = table.concat( report, "\n" ).."\n"
 	return strOut
 end
 

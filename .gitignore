@@ -1,7 +1,4 @@
 .DS_Store
-.svn
-.idea
-*.iml
-*.sublime-*
+coverage.xml
 target/
 Rested-cf/

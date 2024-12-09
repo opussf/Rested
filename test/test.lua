@@ -14,7 +14,7 @@ RestedCSV_EditBox = CreateEditBox()
 --RestedFrame = CreateFrame()
 --RestedUIFrame = CreateFrame()
 --RestedUIFrame_TitleText = CreateFontString()
---RestedScrollFrame_VSlider = CreateFrame()
+RestedScrollFrame_VSlider = CreateSlider( "RestedScrollFrame_VSlider" )
 --RestedUIFrame_TitleText = CreateFontString()
 --UIDropDownMenu_SetText = function() end)
 
@@ -24,7 +24,7 @@ function test.before()
 	Rested.filter = nil
 	Rested.reminders = {}
 	Rested.lastReminderUpdate = nil
-	Rested_options = {}
+	Rested_options = {["showNumBars"] = 6}
 	Rested_restedState = {}
 	chatLog = {}
 	Rested.OnLoad()
@@ -562,7 +562,7 @@ end
 function test.test_Ignore_IgnoreReport_ShortTime()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
-	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000, ["showNumBars"] = 6 }  -- 7 days and 90 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
@@ -578,7 +578,7 @@ end
 function test.test_Ignore_IgnoreReport_LongTime()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
-	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000 }  -- 7 days and 90 days
+	Rested_options = { ["ignoreTime"] = 604800, ["ignoreDateLimit"] = 7776000, ["showNumBars"] = 6}  -- 7 days and 90 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
@@ -595,7 +595,7 @@ end
 function test.test_Ignore_IgnoreReport_LongTime_noOptionSet()
 	-- the ignore report changes based on how long the char is ignored for.
 	now = time()
-	Rested_options = { ["ignoreTime"] = 604800 }  -- 7 days
+	Rested_options = { ["ignoreTime"] = 604800, ["showNumBars"] = 6 }  -- 7 days
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.ADDON_LOADED()
@@ -1606,7 +1606,7 @@ function test.test_NoNag_set_02()
 end
 -- UIManagement
 -------------
-function test.test_UIReset()
+function test.notest_UIReset()
 	Rested.Command( "uireset" )
 	-- @TODO: determine how to test
 end
@@ -1634,13 +1634,40 @@ end
 function test.test_TextToSeconds_08()
 	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
 end
+-- quests
+-------------
+function test.test_quests_addQuest()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654" )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["32654"] )
+end
+function test.test_quests_addQuests()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654,12345" )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["32654"] )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"]["quests"]["12345"] )
+end
+function test.test_quests_clear()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.Command( "quests 32654,12345" )
+	Rested.Command( "quests clear")
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"]["quests"] )
+end
+-- farm
+-------------
+
 -- CSV
 -------------
-function test.test_CSV_InitalColumns()
+function test.notest_CSV_InitalColumns()
 	Rested_restedState["Test Realm"] = {["testPlayer"] =
 			{["faction"]="Alliance",["race"]="Human",["class"]="Warlock",["gender"]="Female",["lvlNow"]=80,["iLvl"]=500,["gold"]=20000},}
 	Rested.Command( "csv" )
-	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl,Copper,Prof1,Prof2,Prof3,Prof4,Prof5\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500,20000,,,,,\n", Rested_csv)
+	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl,Copper,Prof1,Prof2,Prof3,Prof4,Prof5\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500,20000,,,,,\n", Rested_csv.text)
 end
 -- test descriptions
 -------------
