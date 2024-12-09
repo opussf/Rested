@@ -28,6 +28,7 @@ function test.before()
 	Rested_restedState = {}
 	chatLog = {}
 	Rested.OnLoad()
+	Rested.ADDON_LOADED()
 	--Rested.SaveRestedState()
 end
 function test.after()
@@ -485,7 +486,7 @@ function test.test_Ignore_SetIgnore_name_withTime_60seconds()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 60" )
-	assertEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], 1 )
 end
 function test.test_Ignore_SetIgnore_name_withTime_minute()
 	now = time()
@@ -641,6 +642,49 @@ function test.test_FormatRested_restedValue_beyondCurrentLevel()
 	assertEquals( "|cff00ff002.5%|r", outStr )
 	assertEquals( "+", code )
 	assertEquals( 2.5, rVal )
+end
+-- Base Reports
+function test.test_BaseReports_OfLevel()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000}}
+	Rested.ForAllChars( Rested.OfLevel )
+	assertEquals( 30, Rested.charList[1][1] )
+end
+function test.test_BaseReports_FullyRested_Human_show()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 150, Rested.charList[1][1] )
+end
+function test.test_BaseReports_FullyRested_Human_noshow()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 50, ["race"] = "Human", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 0, #Rested.charList, "Should be empty.  No one is fully rested." )
+end
+function test.test_BaseReports_FullyRested_Pandaren_show()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 300, ["race"] = "Pandaren", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 150, Rested.charList[1][1] )
+end
+function test.test_BaseReports_FullyRested_Pandaren_noshow()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 50, ["race"] = "Pandaren", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 0, #Rested.charList, "Should be empty.  No one is fully rested." )
+end
+function test.test_BaseReports_RestingChars_halfRested()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 75, ["race"] = "Human", ["updated"] = time(), ["isResting"] = true}}
+	Rested.ForAllChars( Rested.RestingCharacters )
+	assertEquals( 75, Rested.charList[1][1] )
+end
+function test.test_BaseReports_AllCharacters()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 500, ["xpMax"] = 1000, ["restedPC"] = 75, ["race"] = "Human", ["updated"] = time(), ["isResting"] = true}}
+	Rested.ForAllChars( Rested.AllCharacters )
+	assertEquals( "2.50 (|cff00ff0075.0%|r): |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
 
 -- Mounts
@@ -1599,7 +1643,7 @@ function test.test_NoNag_set_01()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "noNag . 1h")
-	assertEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"] )
+	assertAlmostEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"], 1 )
 end
 function test.test_NoNag_set_02()
 	Rested.Command( "noNag testPlayer 2h" )
