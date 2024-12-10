@@ -12,7 +12,7 @@ function Rested.GetILvl()
 	end
 end
 
-Rested.EventCallback( "PLAYER_EQUIPMENT_CHANGED", Rested.GetILvl )
+Rested.EventCallback( "PLAYER_AVG_ITEM_LEVEL_UPDATE", Rested.GetILvl )
 Rested.EventCallback( "ZONE_CHANGED_NEW_AREA", Rested.GetILvl )
 
 Rested.dropDownMenuTable["iLvl"] = "ilvl"

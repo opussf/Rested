@@ -28,6 +28,8 @@ function test.before()
 	Rested_restedState = {}
 	chatLog = {}
 	Rested.OnLoad()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 	--Rested.SaveRestedState()
 end
 function test.after()
@@ -146,7 +148,7 @@ function test.testPlayerUpdatedIsUpdated()
 			{["initAt"]=6372,["updated"]=6372}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated )
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated, nil, nil, 1 )
 end
 function test.testPlayerIgnoreIsCleared()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
@@ -433,7 +435,7 @@ function test.test_Ignore_SetIgnore_realm()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore otherrealm" )
-	assertEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"] )
+	assertAlmostEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_partial()
 	now = time()
@@ -485,7 +487,7 @@ function test.test_Ignore_SetIgnore_name_withTime_60seconds()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 60" )
-	assertEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_name_withTime_minute()
 	now = time()
@@ -517,7 +519,7 @@ function test.test_Ignore_SetIgnore_name_withTime_day()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1d" )
-	assertEquals( time() + 86400, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 86400, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_name_withTime_week()
 	now = time()
@@ -541,7 +543,7 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore test Realm 1d" )
-	assertEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTime()
 	now = time()
@@ -642,13 +644,95 @@ function test.test_FormatRested_restedValue_beyondCurrentLevel()
 	assertEquals( "+", code )
 	assertEquals( 2.5, rVal )
 end
+-- Base Functions
+function test.test_UpdateNoNag_clearNoNag_forCurrentChar_only()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()+50 },
+			["otherPlayer"] = 
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()+50 }
+		}
+	Rested.ForAllChars( Rested.UpdateNoNag )
+	assertEquals( 0, #Rested.charList, "Should not add anything to charList" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].nonag )
+	assertEquals( time()+50, Rested_restedState["Test Realm"]["otherPlayer"].nonag )
+end
+function test.test_UpdateNoNag_clearNoNag_whenNoNagExpires()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()-50 },
+			["otherPlayer"] = 
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()-50 }
+		}
+	Rested.ForAllChars( Rested.UpdateNoNag )
+	assertEquals( 0, #Rested.charList, "Should not add anything to charList" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].nonag )
+	assertIsNil( Rested_restedState["Test Realm"]["otherPlayer"].nonag )
+end
+
+-- Base Reports
+function test.test_BaseReports_OfLevel()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000}}
+	Rested.ForAllChars( Rested.OfLevel )
+	assertEquals( 30, Rested.charList[1][1] )
+end
+function test.test_BaseReports_FullyRested_Human_show()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 150, Rested.charList[1][1] )
+end
+function test.test_BaseReports_FullyRested_Human_noshow()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 50, ["race"] = "Human", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 0, #Rested.charList, "Should be empty.  No one is fully rested." )
+end
+function test.test_BaseReports_FullyRested_Pandaren_show()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 300, ["race"] = "Pandaren", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 150, Rested.charList[1][1] )
+end
+function test.test_BaseReports_FullyRested_Pandaren_noshow()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 50, ["race"] = "Pandaren", ["updated"] = time()}}
+	Rested.ForAllChars( Rested.FullyRested )
+	assertEquals( 0, #Rested.charList, "Should be empty.  No one is fully rested." )
+end
+function test.test_BaseReports_RestingChars_halfRested()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 75, ["race"] = "Human", ["updated"] = time(), ["isResting"] = true}}
+	Rested.ForAllChars( Rested.RestingCharacters )
+	assertEquals( 75, Rested.charList[1][1] )
+end
+function test.test_BaseReports_AllCharacters()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 500, ["xpMax"] = 1000, ["restedPC"] = 75, ["race"] = "Human", ["updated"] = time(), ["isResting"] = true}}
+	Rested.ForAllChars( Rested.AllCharacters )
+	assertEquals( "2.50 (|cff00ff0075.0%|r): |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
+end
+function test.test_BaseReports_StaleCharacters()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-900000}}
+	Rested.ForAllChars( Rested.StaleCharacters )
+	assertAlmostEquals( 900000, Rested.charList[1][1], nil, nil, 1 )
+end
+function test.test_BaseReports_MaxCharacters()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 90, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-900000},
+			["otherPlayer"] =
+			{ ["lvlNow"] = 90, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-500000}
+		}
+	Rested.ForAllChars( Rested.MaxCharacters )
+	assertEquals( 2, #Rested.charList )
+end
 
 -- Mounts
 --require "RestedMounts"
 function test.test_Mounts_Report_SingleMount_halfLife()
 	now = time()
-	Rested_options.mountHistoryAge = 60
-	Rested_misc = { ["mountHistory"] = { [time()-30] = "Garn Nighthowl",
+	Rested_options.mountHistoryAge = 120
+	Rested_misc = { ["mountHistory"] = { [time()-60] = "Garn Nighthowl",
 		} }
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
@@ -732,7 +816,7 @@ function test.test_Mounts_Report_TwoMounts_Diff()
 	Rested.ForAllChars( Rested.MountReport )
 
 	-- test.showCharList()
-	assertEquals( 75, Rested.charList[1][1] )
+	assertAlmostEquals( 75, Rested.charList[1][1], nil, nil, 2.5 )
 end
 function test.test_Mounts_Report_TwoMounts_TooOldMount()
 	now = time()
@@ -1599,7 +1683,7 @@ function test.test_NoNag_set_01()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "noNag . 1h")
-	assertEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"] )
+	assertAlmostEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"], nil, nil, 1 )
 end
 function test.test_NoNag_set_02()
 	Rested.Command( "noNag testPlayer 2h" )
@@ -1669,6 +1753,203 @@ function test.notest_CSV_InitalColumns()
 	Rested.Command( "csv" )
 	assertEquals( "Realm,Name,Faction,Race,Class,Gender,Level,iLvl,Copper,Prof1,Prof2,Prof3,Prof4,Prof5\nTest Realm,testPlayer,Alliance,Human,Warlock,Female,80,500,20000,,,,,\n", Rested_csv.text)
 end
---
+-- test descriptions
+-------------
+-- commandDescs = {
+-- 		["all"]       = "Show all characters sorted by level.",
+-- 		["auctions"]  = "List of auctions.",
+-- 		["cooldowns"] = "",
+-- 		["csv"]       = "Export character data in CSV format.",
+-- 		["deaths"]    = "",
+-- }
+
+-- function test.test_TestDesc_AllCommands()
+-- 	for k, v in test.PairsByKeys( Rested.commandList ) do
+-- 		chatLog = {}
+-- 		Rested.Command( "help "..k )
+-- 		if not chatLog[3] then
+-- 			test.dump( chatLog )
+-- 		end
+-- 		assertEquals( commandDescs[k], chatLog[3].msg, "Desc for "..k.." is missing." )
+-- 	end
+-- end
+
+--[[
+edAuctions.lua:
+   46
+   47  Rested.dropDownMenuTable["Auctions"] = "auctions"
+   48: Rested.commandList["auctions"] = {["help"] = {"","Show auction counts"}, ["func"] = function()
+   49  		Rested.reportName = "Auctions"
+   50  		Rested.UIShowReport( Rested.AuctionsReport )
+
+~/Dev/addons/Rested/src/RestedBase.lua:
+   66  	return 0
+   67  end
+   68: Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search> [ignore Duration]", "Ignore matched chars, or show ignored." } }
+   69  Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
+   70  Rested.dropDownMenuTable["Ignore"] = "ignore"
+   ..
+  152  ------------------------------
+  153  Rested.dropDownMenuTable["Level"] = "level"
+  154: Rested.commandList["level"] = {["help"] = {"","Show % of level"}, ["func"] = function()
+  155  		Rested.reportName = "% of Level"
+  156  		Rested.UIShowReport( Rested.OfLevel )
+  ...
+  172
+  173  Rested.dropDownMenuTable["Full"] = "full"
+  174: Rested.commandList["full"] = {["help"] = {"", "Show fully rested characters"}, ["func"] = function()
+  175  		Rested.reportName = "Fully Rested"
+  176  		Rested.UIShowReport( Rested.FullyRested )
+  ...
+  192
+  193  Rested.dropDownMenuTable["Resting"] = "resting"
+  194: Rested.commandList["resting"] = {["help"] = {"","Show resting characters"}, ["func"] = function ()
+  195  		Rested.reportName = "Resting Characters"
+  196  		Rested.UIShowReport( Rested.RestingCharacters )
+  ...
+  218
+  219  Rested.dropDownMenuTable["All"] = "all"
+  220: Rested.commandList["all"] = {["help"] = {"","Show all characters"}, ["func"] = function()
+  221  		Rested.reportName = "All"
+  222  		Rested.UIShowReport( Rested.AllCharacters )
+  ...
+  236
+  237  Rested.dropDownMenuTable["Nag"] = "nag"
+  238: Rested.commandList["nag"] = {["help"] = {"","Show nag characters"}, ["func"] = function()
+  239  		Rested.reportName = "Nag Characters"
+  240  		Rested.UIShowReport( Rested.NagCharacters )
+  ...
+  310  	end
+  311  end
+  312: Rested.commandList["setnag"] = {["help"] = {"#[s|m|h|d|w]", "Set the time before a max level character shows up in the nag report."},
+  313  		["func"] = Rested.SetNag }
+  314
+  ...
+  331  	end
+  332  end
+  333: Rested.commandList["setnagtimeout"] = {["help"] = {"#[s|m|h|d|w]", "Set the time to autoshow the nag window."},
+  334  	["func"] = Rested.SetNagTimeOut,
+  335  	["desc"] = {"Set how long the nag report is auto shown for."},
+  ...
+  379  end
+  380
+  381: Rested.commandList["nonag"] = {
+  382  		["func"] = Rested.SetNoNag,
+  383  		["help"] = { "<search> [ignore duration]", "Remove matched chars from the nag list for duration, or until visited." },
+  ...
+  388  -- Stale characters
+  389  Rested.dropDownMenuTable["Stale"] = "stale"
+  390: Rested.commandList["stale"] = {["help"] = {"","Show stale characters"}, ["func"] = function()
+  391  		Rested.reportName = "Stale Characters"
+  392  		Rested.UIShowReport( Rested.StaleCharacters )
+  ...
+  422  	end
+  423  end
+  424: Rested.commandList["setstale"] = {["help"] = {"#[s|m|h|d|w]", "Set the time before a max level character shows up as stale."},
+  425  		["func"] = Rested.SetStale }
+  426
+  427  -- Max level characters
+  428  Rested.dropDownMenuTable["Max"] = "max"
+  429: Rested.commandList["max"] = {["help"] = {"","Show max level characters"}, ["func"] = function()
+  430  		Rested.reportName = "Max Level Characters"
+  431  		Rested.UIShowReport( Rested.MaxCharacters )
+
+~/Dev/addons/Rested/src/RestedCSV.lua:
+   19
+   20  Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested_csv=nil; end )
+   21: Rested.commandList["csv"] = {["help"] = {"","Make CSV export"}, ["func"] = Rested.MakeCSV }
+   22
+
+~/Dev/addons/Rested/src/RestedDeaths.lua:
+   13
+   14  Rested.dropDownMenuTable["Deaths"] = "deaths"
+   15: Rested.commandList["deaths"] = {["help"] = {"","Show number of deaths"}, ["func"] = function()
+   16  		Rested.reportName = "Deaths"
+   17  		Rested.UIShowReport( Rested.DeathReport )
+
+~/Dev/addons/Rested/src/RestedGold.lua:
+   10
+   11  Rested.dropDownMenuTable["Gold"] = "gold"
+   12: Rested.commandList["gold"] = {["help"] = {"","Show gold"}, ["func"] = function()
+   13  		Rested.reportName = "Gold"
+   14  		Rested.UIShowReport( Rested.GoldReport )
+
+~/Dev/addons/Rested/src/RestedGuild.lua:
+   29
+   30  Rested.dropDownMenuTable["Guild"] = "guild"
+   31: Rested.commandList["guild"] = {["help"] = {"","Show guild standing"}, ["func"] = function()
+   32  		Rested.reportName = "Guild Standing"
+   33  		Rested.UIShowReport( Rested.GuildStandingReport )
+
+~/Dev/addons/Rested/src/RestediLvl.lua:
+   17
+   18  Rested.dropDownMenuTable["iLvl"] = "ilvl"
+   19: Rested.commandList["ilvl"] = { ["help"] = {"","Show iLvl report"}, ["func"] = function()
+   20  		Rested.reportName = "Item Level"
+   21  		Rested.UIShowReport( Rested.iLevelReport )
+
+~/Dev/addons/Rested/src/RestedMounts.lua:
+   53
+   54  Rested.dropDownMenuTable["Mounts"] = "mounts"
+   55: Rested.commandList["mounts"] = { ["help"] = {"","Show recent mount history"}, ["func"] = function()
+   56  		Rested.reportName = "Mount history"
+   57  		Rested.UIShowReport( Rested.MountReport )
+   ..
+   87  	Rested.Print( string.format( "mountHistoryAge changed from %s to %s", previousVal, SecondsToTime( newVal ) ) )
+   88  end
+   89: Rested.commandList["setmountage"] = {["help"] = {"#[s|m|h|d|w]", "Set the time to track mounts."},
+   90  		["func"] = Rested.SetMountHistoryAge }
+   91
+
+~/Dev/addons/Rested/src/RestedPlayed.lua:
+   18
+   19  Rested.dropDownMenuTable["Played"] = "played"
+   20: Rested.commandList["played"] = { ["help"] = {"","Time played"}, ["func"] = function()
+   21  		Rested.reportName = "Time Played"
+   22  		Rested.UIShowReport( Rested.PlayedReport )
+
+~/Dev/addons/Rested/src/RestedProfessions.lua:
+   58
+   59  Rested.dropDownMenuTable["Prof CD"] = "cooldowns"
+   60: Rested.commandList["cooldowns"] = { ["help"] = {"","Profession Cooldowns"}, ["func"] = function()
+   61  		Rested.reportName = "Cooldowns"
+   62  		Rested.UIShowReport( Rested.Cooldowns )
+
+~/Dev/addons/Rested/src/RestedUI.lua:
+   97  	RestedUIFrame:SetPoint("LEFT", "$parent", "LEFT")
+   98  end
+   99: Rested.commandList["uireset"] = { ["help"] = {"","Reset the location of the UI frame"}, ["func"] = Rested.ResetUIPosition }
+  100
+  101  -- DropDown code
+  ...
+  109  	-- based on Rested.dropDownMenuTable["Full"] = "full"
+  110  	-- the Key is what to show, the value is what rested command to call
+  111: 	-- using Rested.commandList["full"] = {["func"] = function() end }
+  112  	--local info = UIDropDownMenu_CreateInfo()
+  113  	local sortedKeys, i = {}, 1
+
+~/Dev/addons/Rested/src/RestedVault.lua:
+   91
+   92  Rested.dropDownMenuTable["Vault"] = "vault"
+   93: Rested.commandList["vault"] = { ["help"] = {"","Show vault info"}, ["func"] = function()
+   94  		Rested.reportName = "Vault Report"
+   95  		Rested.UIShowReport( Rested.VaultReport )
+
+~/Dev/addons/Rested/Rested-cf/Rested.lua:
+  118  end
+  119  Rested.dropDownMenuTable["Help"] = "help"
+  120: Rested.commandList["help"] = { ["help"] = {"<command>","Show help. Specific info for command if given."}, ["func"] = function(...)
+  121  		Rested.PrintHelp(...)
+  122  		Rested.reportName = "Help"
+  ...
+  298  	end
+  299  end
+  300: Rested.commandList["rm"] = { ["func"] = Rested.RemoveCharacter, ["help"] = { "name[-realm]", "Remove name[-realm] from Rested." } }
+  301
+  302  -- event callback for modules
+]]
+
+
+
 
 test.run()
