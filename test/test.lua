@@ -148,7 +148,7 @@ function test.testPlayerUpdatedIsUpdated()
 			{["initAt"]=6372,["updated"]=6372}}
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated, 1 )
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated, nil, nil, 1 )
 end
 function test.testPlayerIgnoreIsCleared()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["ignore"] = time() + 3600 } }
@@ -435,7 +435,7 @@ function test.test_Ignore_SetIgnore_realm()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore otherrealm" )
-	assertAlmostEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"], 1 )
+	assertAlmostEquals( time()+ 604800, Rested_restedState["otherRealm"]["otherPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_partial()
 	now = time()
@@ -487,7 +487,7 @@ function test.test_Ignore_SetIgnore_name_withTime_60seconds()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 60" )
-	assertAlmostEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], 1 )
+	assertAlmostEquals( time() + 60, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_name_withTime_minute()
 	now = time()
@@ -519,7 +519,7 @@ function test.test_Ignore_SetIgnore_name_withTime_day()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore Player 1d" )
-	assertEquals( time() + 86400, Rested_restedState["Test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 86400, Rested_restedState["Test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_name_withTime_week()
 	now = time()
@@ -543,7 +543,7 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withTime()
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore test Realm 1d" )
-	assertEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 86400, Rested_restedState["test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTime()
 	now = time()
@@ -715,7 +715,16 @@ function test.test_BaseReports_StaleCharacters()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-900000}}
 	Rested.ForAllChars( Rested.StaleCharacters )
-	assertAlmostEquals( 900000, Rested.charList[1][1], 1 )
+	assertAlmostEquals( 900000, Rested.charList[1][1], nil, nil, 1 )
+end
+function test.test_BaseReports_MaxCharacters()
+	Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			{ ["lvlNow"] = 90, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-900000},
+			["otherPlayer"] =
+			{ ["lvlNow"] = 90, ["xpNow"] = 1000, ["xpMax"] = 1000, ["restedPC"] = 150, ["race"] = "Human", ["updated"] = time()-500000}
+		}
+	Rested.ForAllChars( Rested.MaxCharacters )
+	assertEquals( 2, #Rested.charList )
 end
 
 -- Mounts
@@ -807,7 +816,7 @@ function test.test_Mounts_Report_TwoMounts_Diff()
 	Rested.ForAllChars( Rested.MountReport )
 
 	-- test.showCharList()
-	assertAlmostEquals( 75, Rested.charList[1][1], 2.5 )
+	assertAlmostEquals( 75, Rested.charList[1][1], nil, nil, 2.5 )
 end
 function test.test_Mounts_Report_TwoMounts_TooOldMount()
 	now = time()
@@ -1674,7 +1683,7 @@ function test.test_NoNag_set_01()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.Command( "noNag . 1h")
-	assertAlmostEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"], 1 )
+	assertAlmostEquals( time() + 3600, Rested_restedState["Test Realm"]["testPlayer"]["nonag"], nil, nil, 1 )
 end
 function test.test_NoNag_set_02()
 	Rested.Command( "noNag testPlayer 2h" )
