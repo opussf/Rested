@@ -6,13 +6,13 @@ function Rested.GetILvl()
 	if( Rested.lastiLvlScan+1 <= time() ) then
 		Rested.lastiLvlScan = time()
 		local currentiLvl = select( 2, GetAverageItemLevel() )
-		Rested_restedState[Rested.realm][Rested.name].iLvl = math.floor( currentiLvl or 0 )
+		Rested.me.iLvl = math.floor( currentiLvl or 0 )
 		Rested_misc["maxiLvl"] = math.max( Rested_misc["maxiLvl"] or 0, math.floor( currentiLvl or 0 ) )
-		--print( "iLvl is now: "..currentiLvl )
+		-- print( "iLvl is now: "..currentiLvl )
 	end
 end
 
-Rested.EventCallback( "PLAYER_EQUIPMENT_CHANGED", Rested.GetILvl )
+Rested.EventCallback( "PLAYER_EQUIPMENT_CHANGED", function() C_Timer.After( 1, Rested.GetILvl ) end )
 Rested.EventCallback( "ZONE_CHANGED_NEW_AREA", Rested.GetILvl )
 
 Rested.dropDownMenuTable["iLvl"] = "ilvl"
