@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  December 07 2024
--- Revision:  9.5-14-gb4ad3de
+-- Date    :  December 23 2024
+-- Revision:  9.5-17-g1916682
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -225,10 +225,11 @@ FACTION_STANDING_LABEL5 = "Friendly"
 FACTION_STANDING_LABEL6 = "Honored"
 FACTION_STANDING_LABEL7 = "Revered"
 FACTION_STANDING_LABEL8 = "Exalted"
-FACTION_STANDING_INCREASED = "Reputation with %s increased by %d"
-FACTION_STANDING_DECREASED = "Reputation with %s decreased by %d"
-FACTION_STANDING_INCREASED_ACCOUNT_WIDE = "Your Warband's reputation with %s increased by %d"
-FACTION_STANDING_DECREASED_ACCOUNT_WIDE = "Your Warband's reputation with %s decreased by %d"
+FACTION_STANDING_INCREASED = "Reputation with %s increased by %d."
+FACTION_STANDING_DECREASED = "Reputation with %s decreased by %d."
+FACTION_STANDING_INCREASED_GUARDIAN = "%s has gained %d guardian experience points."
+FACTION_STANDING_INCREASED_ACCOUNT_WIDE = "Your Warband's reputation with %s increased by %d."
+FACTION_STANDING_DECREASED_ACCOUNT_WIDE = "Your Warband's reputation with %s decreased by %d."
 
 COMBATLOG_OBJECT_AFFILIATION_OUTSIDER = 8
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s dies, you gain %d experience."
@@ -1594,6 +1595,9 @@ function UnitFactionGroup( who )
 	-- http://www.wowwiki.com/API_UnitFactionGroup
 	return unpack( Units[who].faction )
 end
+function UnitIsBattlePet( who )
+	return Units[who].isBattlePet
+end
 function UnitIsDeadOrGhost( who )
 end
 function UnitIsPVP( who )
@@ -1897,6 +1901,19 @@ end
 function C_ToyBox.IsToyUsable( id )
 	return toyList[id] and toyList[id][1]
 end
+function C_ToyBox.PickupToyBoxItem( itemIn )
+	-- http://www.wowwiki.com/API_PickupItem
+	-- itemString is:
+	--   ItemID (Numeric value)
+	--   ItemString (item:#######)
+	--   ItemName ("Hearthstone")
+	--   ItemLink (Full link text as if Shift-Clicking Item)
+	-- Should only pick up an item that you know about. (in bags for now (myInventory) )
+	-- -- Note: Does not pick up an item from equipped inventory
+	-- Not sure what this should do if there is already something on the cursor
+	onCursor={}
+	onCursor['item'] = itemID
+end
 
 ----------
 -- Settings
@@ -1951,6 +1968,8 @@ end
 ----------
 C_Timer = {}
 function C_Timer.After( seconds, callback )
+	-- just call the callback
+	callback()
 end
 
 ----------

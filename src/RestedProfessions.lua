@@ -61,7 +61,8 @@ Rested.dropDownMenuTable["Prof CD"] = "cooldowns"
 Rested.commandList["cooldowns"] = { ["help"] = {"","Profession Cooldowns"}, ["func"] = function()
 		Rested.reportName = "Cooldowns"
 		Rested.UIShowReport( Rested.Cooldowns )
-	end
+	end,
+	["desc"] = {""},
 }
 
 function Rested.Cooldowns( realm, name, charStruct )
