@@ -83,6 +83,9 @@ function Rested.UIResetFrame()
 end
 function Rested.UIUpdateFrame()
 	if( RestedUIFrame:IsVisible() and Rested.reportFunction ) then  -- a non-set reportFunction will break this.
+		if not Rested_options.showNumBars then
+			Rested_options.showNumBars = Rested.UISetShowNumBars()
+		end
 		count = Rested.ForAllChars( Rested.reportFunction, ( Rested.reportName == "Ignored" ) )
 		RestedUIFrame_TitleText:SetText( "Rested - "..Rested.reportName.." - "..count )
 		RestedScrollFrame_VSlider:SetMinMaxValues( 0, max( 0, count-Rested_options.showNumBars ) )
