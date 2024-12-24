@@ -107,7 +107,7 @@ function Rested.UIMouseWheel( delta )
 	)
 end
 function Rested.UIOnUpdate( arg1 )
-	if Rested.isSizing then
+	if Rested.isSizing or not Rested_options.showNumBars then
 		local frameWidth, frameHeight = RestedUIFrame:GetSize()
 		--print( "Resize: "..frameWidth..", "..frameHeight )
 		Rested_options.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
