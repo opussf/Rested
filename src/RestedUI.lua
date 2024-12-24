@@ -7,9 +7,18 @@ Rested.reportReverseSort = {} -- ["reportName"] = nil|true (for reverse)
 
 --  UI Handling code
 ---------------------------------
+function Rested.UISetShowNumBars()
+	local frameWidth, frameHeight = RestedUIFrame:GetSize()
+	--print( "Resize: "..frameWidth..", "..frameHeight )
+	Rested_options.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
+	return Rested_options.showNumBars
+end
 function Rested.UIBuildBars()
 	if( not Rested.bars ) then
 		Rested.bars = {}
+	end
+	if not Rested_options.showNumBars then
+		Rested.UISetShowNumBars()
 	end
 	local count = #Rested.bars
 	if ( Rested_options.showNumBars > count ) then
@@ -107,10 +116,8 @@ function Rested.UIMouseWheel( delta )
 	)
 end
 function Rested.UIOnUpdate( arg1 )
-	if Rested.isSizing or not Rested_options.showNumBars then
-		local frameWidth, frameHeight = RestedUIFrame:GetSize()
-		--print( "Resize: "..frameWidth..", "..frameHeight )
-		Rested_options.showNumBars = math.floor( ( ( frameHeight - 53 ) / 12 ) + 0.5 )  -- 53 is a 'constant'
+	if Rested.isSizing then
+		Rested.UISetShowNumBars()
 		local barCountSize = Rested_options.showNumBars * 12
 		RestedScrollFrame:SetHeight( barCountSize + 10 )
 		RestedScrollFrame_VSlider:SetHeight( barCountSize + 10 )
