@@ -1,5 +1,13 @@
 # Feature document for Rested
 
+## Conc2
+
+Show Full concentration for 2 days (choose a setting).
+
+When logging into a toon with full concentration, update concentration, set the value to max, and the ts to now.
+
+In the report, show the bar as it fills, remove if it exceeds the time limit.
+
 ## Resize
 
 ```
