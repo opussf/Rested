@@ -29,3 +29,4 @@ RestedPandarianFarm.lua
 RestedTalents.lua
 
 RestedMythic.lua
+RestedGarrisonCache.lua
