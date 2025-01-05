@@ -2,15 +2,22 @@
 RESTED_SLUG, Rested  = ...
 
 function Rested.DMFQuestComplete( ... )
-	Rested.Print( "DMFQuestComplete: "..GetZoneText()..":"..GetSubZoneText() )
-	print( ... )
-	Rested.me.DMF = Rested.me.DMF or {}
+	-- Rested.Print( "DMFQuestComplete: "..GetZoneText()..":"..GetSubZoneText() )
+	-- print( ... )
+	Rested.me.DMF = Rested.me.DMF or {["lastVisit"] = time()}
 	local questID = ...
 	Rested.me.DMF[questID] = time()
 end
 function Rested.DMFIsOnDMFIsland()
 	if GetZoneText() == "Darkmoon Island" then
-		Rested.me.DMF = Rested.me.DMF or {}
+		-- Rested.me.DMF = Rested.me.DMF or {}
+		if Rested.me.DMF then
+			if Rested.me.DMF.lastVisit < Rested.DMFStart then -- Visited before this month's DMF
+				Rested.me.DMF = {["lastVisit"] = Rested.me.DMF.lastVisit}
+			end
+		else
+			Rested.me.DMF = {}
+		end
 		Rested.me.DMF.lastVisit = time()
 		Rested.Command( "dmf" )
 	end
@@ -33,7 +40,7 @@ function Rested.DMFThisMonth()
 end
 
 Rested.EventCallback( "QUEST_TURNED_IN", Rested.DMFQuestComplete )
-Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.DMFIsOnDMFIsland )
+Rested.EventCallback( "ZONE_CHANGED_NEW_AREA", Rested.DMFIsOnDMFIsland )
 Rested.InitCallback( Rested.DMFThisMonth )
 --[[
 
