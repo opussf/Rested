@@ -23,10 +23,7 @@ function Rested.GcacheWhenAt( targetAmount, gCacheTS )
 	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
 end
 function Rested.GcacheReport( realm, name, charStruct )
-	local rn = realm..":"..name
-	if (realm == Rested.realm and name == Rested.name) then
-		rn = COLOR_GREEN..rn..COLOR_END;
-	end
+	local rn = Rested.FormatName( realm, name )
 	local lineCount = 0
 	if charStruct.garrisonCache then
 		lineCount = 1
