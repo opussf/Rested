@@ -1302,6 +1302,12 @@ function GetXPExhaustion()
 	-- TODO:
 	return 3618
 end
+function GetZoneText()
+	return "Darkmoon Island"
+end
+function GetSubZoneText()
+	return "The Darkmoon Faire"
+end
 function InterfaceOptionsFrame_OpenToCategory()
 end
 function IsInGroup( groupType )

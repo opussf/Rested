@@ -2,16 +2,26 @@
 RESTED_SLUG, Rested  = ...
 
 function Rested.DMFQuestComplete( ... )
-	Rested.Print( "DMFQuestComplete" )
+	Rested.Print( "DMFQuestComplete: "..GetZoneText()..":"..GetSubZoneText() )
 	print( ... )
+	Rested.me.DMF = Rested.me.DMF or {}
+	local questID = ...
+	Rested.me.DMF[questID] = time()
+end
+function Rested.DMFIsOnDMFIsland()
+	if GetZoneText() == "Darkmoon Island" then
+		Rested.me.DMF = Rested.me.DMF or {}
+		Rested.me.DMF.lastVisit = time()
+		Rested.Command( "dmf" )
+	end
 end
 
 Rested.EventCallback( "QUEST_TURNED_IN", Rested.DMFQuestComplete )
-
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.DMFIsOnDMFIsland )
 --[[
 
 Rested.me.DMF {
-	lastQuest
+	lastVisit
 	questID = true
 }
 
@@ -22,20 +32,20 @@ function Rested.DMFReport( realm, name, charStruct )
 	if charStruct.DMF then
 		local questCount = 0
 		for k,v in pairs( charStruct.DMF ) do
-			if k ~= "lastQuest" then
+			if k ~= "lastVisit" then
 				questCount = questCount + 1
 			end
 		end
 
 		table.insert( Rested.charList, { 1,
-				string.format( "%i :: %s :: %s", questCount, "Steve", rn ) } )
+				string.format( "%i :: %s :: %s", questCount, SecondsToTime( time() - charStruct.DMF.lastVisit ), rn ) } )
 		return 1
 	end
 end
 
-Rested.dropDownMenuTable["DMF"] = "dmf"
-Rested.commandList["DMF"] = {["help"] = {"","Show DMF report"}, ["func"] = function()
-		Rested.reportName = "DMF"
+Rested.dropDownMenuTable["Darkmoon Faire"] = "dmf"
+Rested.commandList["dmf"] = {["help"] = {"","Show DMF report"}, ["func"] = function()
+		Rested.reportName = "Darkmoon Faire"
 		Rested.UIShowReport( Rested.DMFReport )
 	end
 }
