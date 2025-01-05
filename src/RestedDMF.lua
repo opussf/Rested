@@ -15,9 +15,26 @@ function Rested.DMFIsOnDMFIsland()
 		Rested.Command( "dmf" )
 	end
 end
+function Rested.DMFThisMonth()
+	-- return start and end
+	local now = date( "*t" )
+	-- print( now.wday, now.day )  -- wday 1 = Sun, 7 = Sat
+	local monthFirstWDay = ( now.wday - now.day + 1 ) % 7  -- remainder is always +
+	if monthFirstWDay == 0 then monthFirstWDay = 7 end
+	-- print( "monthFirstWDay: ", monthFirstWDay )
+	local firstSundy = ( monthFirstWDay == 1 ) and 1 or ((7 - ( monthFirstWDay -1 )) % 7 ) + 1
+	local secondSaturday = firstSundy + 6
+	-- print( "firstSunday: ", firstSundy, "2ndSaturday: ", secondSaturday )
+
+	now.day = firstSundy; now.hour = 0; now.minute = 1
+	Rested.DMFStart = time( now )
+	now.day = secondSaturday; now.hour = 23; now.minute = 59
+	Rested.DMFEnd = time( now )
+end
 
 Rested.EventCallback( "QUEST_TURNED_IN", Rested.DMFQuestComplete )
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.DMFIsOnDMFIsland )
+Rested.InitCallback( Rested.DMFThisMonth )
 --[[
 
 Rested.me.DMF {
@@ -37,7 +54,7 @@ function Rested.DMFReport( realm, name, charStruct )
 			end
 		end
 
-		table.insert( Rested.charList, { 1,
+		table.insert( Rested.charList, { 150 - ((charStruct.DMF.lastVisit - Rested.DMFStart) * (150/(Rested.DMFEnd - Rested.DMFStart))),
 				string.format( "%i :: %s :: %s", questCount, SecondsToTime( time() - charStruct.DMF.lastVisit ), rn ) } )
 		return 1
 	end
