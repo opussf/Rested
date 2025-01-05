@@ -1,13 +1,16 @@
 -- RestedGarrisonCache.lua
 
 function Rested.GatherGarrisonResources( ... )
-	Rested.Print( "GatherGarrisonResources: "..(...) )
-	Rested.me.garrisonCache = time()
+	local type, link, amount = ...
+	-- Rested.Print( "GatherGarrisonResources: "..type..":"..link..":"..amount )
+	if type == "currency" and strfind( link, "Garrison Resources" ) then
+		Rested.me.garrisonCache = time()
+	end
 end
 
 Rested.EventCallback( "SHOW_LOOT_TOAST", Rested.GatherGarrisonResources )
 
-Rested.dropDownMenuTable["G-Cache"] = "gcache"
+Rested.dropDownMenuTable["Garrison Cache"] = "gcache"
 Rested.commandList["gcache"] = { ["help"] = {"","Show garrison cache report."}, ["func"] = function()
 		Rested.reportName="Garrison Cache"
 		Rested.UIShowReport( Rested.GcacheReport )
