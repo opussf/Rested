@@ -8,6 +8,17 @@ When logging into a toon with full concentration, update concentration, set the 
 
 In the report, show the bar as it fills, remove if it exceeds the time limit.
 
+---   New idea
+
+When showing profession (can only get data at this point):
+* Capture current conc, timestamp, max
+* If conc != recorded value and entry exists, do not update.
+* In report, only show where value
+* How would it expire?
+
+Need to look into how to update if profession is changed.
+
+
 ## Resize
 
 ```
