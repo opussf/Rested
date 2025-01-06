@@ -3,11 +3,11 @@ RESTED_SLUG, Rested  = ...
 
 -- Rested.me.DMF { lastVisit = time(), questID = true }
 function Rested.DMFQuestComplete( ... )
-	-- Rested.Print( "DMFQuestComplete: "..GetZoneText()..":"..GetSubZoneText() )
-	-- print( ... )
-	Rested.me.DMF = Rested.me.DMF or {["lastVisit"] = time()}
-	local questID = ...
-	Rested.me.DMF[questID] = time()
+	if GetZoneText() == "Darkmoon Island" then
+		Rested.me.DMF = Rested.me.DMF or {["lastVisit"] = time()}
+		local questID = ...
+		Rested.me.DMF[questID] = time()
+	end
 end
 function Rested.DMFIsOnDMFIsland()
 	if GetZoneText() == "Darkmoon Island" then
