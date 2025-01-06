@@ -1041,7 +1041,6 @@ function test.notest_Profession_Concentration()
 end
 
 -- gold
---require "RestedGold"
 function test.before_gold()
 	oldMyCopper = myCopper
 end
@@ -1074,6 +1073,39 @@ function test.test_Gold_Report_01()
 	Rested.ForAllChars( Rested.GoldReport )
 	assertEquals( "87g 26s 48c :: goldPlayer:goldRealm", Rested.charList[2][2] )
 	test.after_gold()
+end
+
+-- DMF
+function test.test_DMF_Quest_Normal()
+	Rested.me.DMF = nil
+	myZone.Zone = "Map"
+	Rested.DMFQuestComplete( 362453 )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].DMF )
+end
+function test.test_DMF_Quest_OnIsland()
+	Rested.me.DMF = nil
+	myZone.Zone = "Darkmoon Island"
+	Rested.DMFQuestComplete( 362453 )  -- quest id, no exp, no currency
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"].DMF.lastVisit )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"].DMF[362453] )
+end
+function test.test_DMF_ZoneChanged_NotOnIsland_no_previous_DMF()
+	Rested.me.DMF = nil
+	myZone.Zone = "Map"
+	Rested.DMFIsOnDMFIsland()
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].DMF )
+end
+function test.test_DMF_ZoneChanged_OnIsland_no_previous_DMF()
+	Rested.me.DMF = nil
+	myZone.Zone = "Darkmoon Island"
+	Rested.DMFIsOnDMFIsland()
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"].DMF.lastVisit )
+end
+function test.test_DMF_ZoneChange_OnIsland_previous_DMF()
+	Rested.me.DMF = {["lastVisit"] = 23764, [3625453] = 23764 }
+	myZone.Zone = "Darkmoon Island"
+	Rested.DMFIsOnDMFIsland()
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].DMF.lastVisit, nil, nil, 1 )
 end
 
 -- Rested Export tests

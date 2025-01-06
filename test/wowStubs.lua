@@ -66,6 +66,7 @@ myStatistics = {
 	[60] = 42  -- 60 = deaths
 }
 myLocale = "enUS"
+myZone = {["Zone"] = "Thing", ["Sub"] = "Sub"}
 
 registeredPrefixes = {}
 
@@ -1303,10 +1304,10 @@ function GetXPExhaustion()
 	return 3618
 end
 function GetZoneText()
-	return "Darkmoon Island"
+	return myZone.Zone
 end
 function GetSubZoneText()
-	return "The Darkmoon Faire"
+	return myZone.Sub
 end
 function InterfaceOptionsFrame_OpenToCategory()
 end
