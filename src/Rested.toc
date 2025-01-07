@@ -30,3 +30,4 @@ RestedTalents.lua
 
 RestedMythic.lua
 RestedDMF.lua
+RestedGarrisonCache.lua
