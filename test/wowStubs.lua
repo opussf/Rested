@@ -129,6 +129,7 @@ Currencies = {
 	[396] = { ["name"] = "Valor",    ["texturePath"] = "", ["weeklyMax"] = 0, ["totalMax"] = 0, isDiscovered = true, ["link"] = ""},
 	[402] = { ["name"] = "Ironpaw Token", ["texturePath"] = "", ["weeklyMax"] = 0, ["totalMax"] = 0, isDiscovered = true, ["link"] = "|cff9d9d9d|Hcurrency:402:0:0:0:0:0:0:0:80:0:0|h[Ironpaw Token]|h|r"},
 	[703] = { ["name"] = "Fictional Currency", ["texturePath"] = "", ["weeklyMax"] = 1000, ["totalMax"] = 4000, isDiscovered = true, ["link"] = "|cffffffff|Hcurrency:703|h[Fictional Currency]|h|r"},
+	[3044]= { ["name"] = "Engineering Concentration", ["totalMax"] = 1000}
 }
 ArchaeologyCurrencies = {"999",}
 MerchantInventory = {
@@ -1141,12 +1142,18 @@ Returns:
 ]]
 	return "Dwarf", "", 384, 0, 100, 200
 end
+
+-- 7, Mining
+-- 8, Engineering
+-- 10, arch
+-- 9, Fishing
+-- 6, Cooking
 function GetProfessions()
 	-- prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions();
 	return 5, 6, 7, 8, 9
 end
 ProfessionInfo = {
-	[5] = { "prof1", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism prof1" },
+	[5] = { "Engineering", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Khaz Algar Engineering" },
 	[6] = { "prof2", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism prof2" },
 	[7] = { "Archaeology", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism Arch" },
 	[8] = { "Fishing", "icon", 75, 300, 3, 3, 3, 3, 3, 3, "Catacylism Fishing" },
@@ -1669,8 +1676,24 @@ end
 C_TradeSkillUI = {}
 function C_TradeSkillUI.GetAllRecipeIDs()
 	-- returns an array of RecipeIDs
+	return {}
 end
 function C_TradeSkillUI.GetAllRecipeLink(recipeID)
+end
+function C_TradeSkillUI.GetChildProfessionInfos()
+	-- https://warcraft.wiki.gg/wiki/API_C_TradeSkillUI.GetChildProfessionInfo
+	return {
+		{	["profession"] = 8,
+			["professionID"] = 2875,
+			["professionName"] = "Khaz Algar Engineering",
+		},
+	}
+end
+function C_TradeSkillUI.GetConcentrationCurrencyID( professionID )
+	local stuff = {
+		[2875] = 3044
+	}
+	return stuff[professionID]
 end
 function C_TradeSkillUI.GetRecipeInfo(recipeID)
 	--disabled : boolean

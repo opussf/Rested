@@ -1031,13 +1031,79 @@ function test.test_Profession_SaveInfo()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.SaveProfessionInfo()
-	assertEquals( "prof1", Rested_restedState["Test Realm"]["testPlayer"]["prof1"] )
+	assertEquals( "Engineering", Rested_restedState["Test Realm"]["testPlayer"]["prof1"] )
 end
-function test.notest_Profession_Concentration()
+function test.test_Profession_ScanTradesSkill()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.ScanTradeSkill()
+	-- @TODO: Flush this out.
+end
+function test.test_Profession_PruneTradeSkill()
+
+end
+function test.test_Profession_Concentration_halfFull()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	myCurrencies[3044] = 500
 	Rested.GetConcentration()
-	test.dump( Rested_restedState )
+	assertTrue( Rested.me.concentration )
+	assertTrue( Rested.me.concentration["Khaz Engineering"] )
+	assertEquals( 500, Rested.me.concentration["Khaz Engineering"].value )
+	assertEquals( 1000, Rested.me.concentration["Khaz Engineering"].max )
+	assertAlmostEquals( time(), Rested.me.concentration["Khaz Engineering"].ts, nil, nil, 1 )
+end
+function test.test_Profession_Concentration_Full_no_Previous()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	myCurrencies[3044] = 1000
+	Rested.GetConcentration()
+	assertTrue( Rested.me.concentration )
+	assertTrue( Rested.me.concentration["Khaz Engineering"] )
+	assertEquals( 1000, Rested.me.concentration["Khaz Engineering"].value )
+	assertEquals( 1000, Rested.me.concentration["Khaz Engineering"].max )
+	assertAlmostEquals( time(), Rested.me.concentration["Khaz Engineering"].ts, nil, nil, 1 )
+end
+function test.test_Profession_Concentration_Full_with_Previous()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	myCurrencies[3044] = 1000
+	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 1000, ["max"] = 1000, ["ts"] = 5}}
+	Rested.GetConcentration()
+	assertEquals( 5, Rested.me.concentration["Khaz Engineering"].ts )
+end
+function test.test_Profession_Concentration_Change_Prof()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	myCurrencies[3044] = 1000
+	Rested.me.concentration = {["Misc Prof"] = {["value"] = 1000, ["max"] = 1000, ["ts"] = 5}}
+	Rested.GetConcentration()
+	assertIsNil( Rested.me.concentration["Misc Prof"] )
+end
+function test.test_Profession_Concentration_Partial_to_Full()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	myCurrencies[3044] = 1000
+	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 1, ["max"] = 1000, ["ts"] = time() - (86400 * 7)}}
+	Rested.GetConcentration()
+	assertAlmostEquals( time(), Rested.me.concentration["Khaz Engineering"].ts, nil, nil, 1 )
+end
+function test.test_Profession_Concentration_Report_Half()
+	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 500, ["max"] = 1000, ["ts"] = time()}}
+	Rested.ForAllChars( Rested.ProfConcentrationReport )
+	assertEquals( " 500: 2 Day 2 Hr Khaz Engineering :: |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
+end
+function test.test_Profession_Concentration_Report_Full_Old()
+	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 1000, ["max"] = 1000, ["ts"] = 5}}
+	Rested.ForAllChars( Rested.ProfConcentrationReport )
+	assertEquals( 0, #Rested.charList )
+	assertEquals( 5, Rested.me.concentration["Khaz Engineering"].ts )
+end
+function test.test_Profession_Concentration_Report_Full_Recent()
+	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 1000, ["max"] = 1000, ["ts"] = time()-86400}}
+	Rested.ForAllChars( Rested.ProfConcentrationReport )
+	assertEquals( 75, Rested.charList[1][1] )
+	assertEquals( "1000: Khaz Engineering :: |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
 end
 
 -- gold
