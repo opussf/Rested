@@ -66,6 +66,7 @@ myStatistics = {
 	[60] = 42  -- 60 = deaths
 }
 myLocale = "enUS"
+myZone = {["Zone"] = "Thing", ["Sub"] = "Sub"}
 
 registeredPrefixes = {}
 
@@ -1301,6 +1302,12 @@ end
 function GetXPExhaustion()
 	-- TODO:
 	return 3618
+end
+function GetZoneText()
+	return myZone.Zone
+end
+function GetSubZoneText()
+	return myZone.Sub
 end
 function InterfaceOptionsFrame_OpenToCategory()
 end

@@ -1,5 +1,24 @@
 # Feature document for Rested
 
+## DMF
+
+Track the DMF.  Track this like the Pandarian Farm.
+
+Last time visited.
+
+How many DMF quests have been done.
+
+Num quests done : Last visited : Name
+
+Reminders:
+
+DMF is happening, you have not visited yet.
+
+DMF ends in 2 days.  You still have toons that have yet to visit.
+DMF ends in 1 day.  You still have toons that have yet to visit.
+
+
+
 ## Resize
 
 ```
