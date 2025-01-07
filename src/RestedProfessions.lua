@@ -131,14 +131,14 @@ function Rested.GetConcentration()
 			-- Rested.Print( profName..": "..currencyInfo.quantity.." of "..currencyInfo.maxQuantity )
 			Rested.me.concentration = Rested.me.concentration or {}
 			Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
-			Rested.me.concentration[profName].value = currencyInfo.quantity
 			Rested.me.concentration[profName].max = currencyInfo.maxQuantity
 
-			if currencyInfo.quantity < currencyInfo.maxQuantity then
+			if Rested.me.concentration[profName].value ~= currencyInfo.quantity then
 				Rested.me.concentration[profName].ts = time()
-			else  -- quantity >= max
+			else
 				Rested.me.concentration[profName].ts = Rested.me.concentration[profName].ts or time()
 			end
+			Rested.me.concentration[profName].value = currencyInfo.quantity
 		end
 	end
 	local knownProfs = {}

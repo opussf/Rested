@@ -1080,6 +1080,14 @@ function test.test_Profession_Concentration_Change_Prof()
 	Rested.GetConcentration()
 	assertIsNil( Rested.me.concentration["Misc Prof"] )
 end
+function test.test_Profession_Concentration_Partial_to_Full()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	myCurrencies[3044] = 1000
+	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 1, ["max"] = 1000, ["ts"] = time() - (86400 * 7)}}
+	Rested.GetConcentration()
+	assertAlmostEquals( time(), Rested.me.concentration["Khaz Engineering"].ts, nil, nil, 1 )
+end
 function test.test_Profession_Concentration_Report_Half()
 	Rested.me.concentration = {["Khaz Engineering"] = {["value"] = 500, ["max"] = 1000, ["ts"] = time()}}
 	Rested.ForAllChars( Rested.ProfConcentrationReport )
