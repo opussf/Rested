@@ -1,5 +1,40 @@
 # Feature document for Rested
 
+## DMF
+
+Track the DMF.  Track this like the Pandarian Farm.
+
+Last time visited.
+
+How many DMF quests have been done.
+
+Num quests done : Last visited : Name
+
+Reminders:
+
+DMF is happening, you have not visited yet.
+
+DMF ends in 2 days.  You still have toons that have yet to visit.
+DMF ends in 1 day.  You still have toons that have yet to visit.
+
+## Conc2
+
+Show Full concentration for 2 days (choose a setting).
+
+When logging into a toon with full concentration, update concentration, set the value to max, and the ts to now.
+
+In the report, show the bar as it fills, remove if it exceeds the time limit.
+
+---   New idea
+
+When showing profession (can only get data at this point):
+* Capture current conc, timestamp, max
+* If conc != recorded value and entry exists, do not update.
+* In report, only show where value
+* How would it expire?
+
+Need to look into how to update if profession is changed.
+
 ## Resize
 
 ```
