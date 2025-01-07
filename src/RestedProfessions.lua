@@ -129,12 +129,15 @@ function Rested.GetConcentration()
 				profName = string.gsub( profName, long, short )
 			end
 			-- Rested.Print( profName..": "..currencyInfo.quantity.." of "..currencyInfo.maxQuantity )
-			if currencyInfo.quantity <= currencyInfo.maxQuantity then
-				Rested.me["concentration"] = Rested.me["concentration"] or {}
-				Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
-				Rested.me.concentration[profName].value = currencyInfo.quantity
-				Rested.me.concentration[profName].max = currencyInfo.maxQuantity
+			Rested.me.concentration = Rested.me.concentration or {}
+			Rested.me.concentration[profName] = Rested.me.concentration[profName] or {}
+			Rested.me.concentration[profName].value = currencyInfo.quantity
+			Rested.me.concentration[profName].max = currencyInfo.maxQuantity
+
+			if currencyInfo.quantity < currencyInfo.maxQuantity then
 				Rested.me.concentration[profName].ts = time()
+			else  -- quantity >= max
+				Rested.me.concentration[profName].ts = Rested.me.concentration[profName].ts or time()
 			end
 		end
 	end
@@ -165,7 +168,6 @@ Rested.ConcentrationRateGain = 1/360  -- 1 per 6 min
 function Rested.ProfConcentrationReport( realm, name, charStruct )
 	local count = 0
 	if( charStruct.concentration ) then
-		local profCount = 0
 		for profName, struct in pairs( charStruct.concentration ) do
 			if struct.value < struct.max then
 				local needToMax = struct.max - struct.value
@@ -178,7 +180,6 @@ function Rested.ProfConcentrationReport( realm, name, charStruct )
 							(struct.max > current and SecondsToTime( (struct.max - current) / Rested.ConcentrationRateGain ).." " or ""),
 							profName, Rested.FormatName( realm, name ) ) } )
 				count = count + 1
-				profCount = profCount + 1
 			else
 				local timeSince = time() - struct.ts
 				local timeOut = 86400 * 2
@@ -187,14 +188,8 @@ function Rested.ProfConcentrationReport( realm, name, charStruct )
 							string.format( "%4i: %s :: %s",
 								struct.max, profName, Rested.FormatName( realm, name ) ) } )
 					count = count + 1
-					profCount = profCount + 1
-				else
-					charStruct.concentration[profName] = nil
 				end
 			end
-		end
-		if profCount == 0 then
-			charStruct.concentration = nil
 		end
 	end
 	return count
