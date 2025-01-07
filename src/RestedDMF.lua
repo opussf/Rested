@@ -29,11 +29,11 @@ function Rested.DMFThisMonth()
 	local monthFirstWDay = ( now.wday - now.day + 1 ) % 7  -- remainder is always +
 	if monthFirstWDay == 0 then monthFirstWDay = 7 end
 	local firstSundy = ( monthFirstWDay == 1 ) and 1 or ((7 - ( monthFirstWDay -1 )) % 7 ) + 1
-	local secondSaturday = firstSundy + 6
+	local endSaturday = firstSundy + 6
 
 	now.day = firstSundy; now.hour = 0; now.minute = 1
 	Rested.DMFStart = time( now )
-	now.day = secondSaturday; now.hour = 23; now.minute = 59
+	now.day = endSaturday; now.hour = 23; now.minute = 59
 	Rested.DMFEnd = time( now )
 end
 
