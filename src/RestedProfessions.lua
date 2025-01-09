@@ -207,17 +207,20 @@ Rested.commandList["conc"] = { ["help"] = {"","Profession concentration"}, ["fun
 
 function Rested.ProfConcentrationReminders( realm, name, charStruct )
 	returnStruct = {}
+	if not Rested_options.fullConcTimeOut then Rested_options.fullConcTimeOut = 86400 * 2 end
 	if charStruct.concentration then
 		for profName, profStruct in pairs( charStruct.concentration ) do
 			currentQuantity = math.min( profStruct.value + ((time() - profStruct.ts) * Rested.ConcentrationRateGain), profStruct.max )
 			fullPercent = currentQuantity / profStruct.max
 			returnStruct[time()+15] = returnStruct[time()+15] or {}
-			if currentQuantity >= profStruct.max and profStruct.ts + Rested_options.fullConcTimeOut > time() then
-				table.insert( returnStruct[time()+15], Rested.FormatName( realm, name ).." has full "..profName.." concentration." )
-			elseif fullPercent > 0.75 then
-				table.insert( returnStruct[time()+15], Rested.FormatName( realm, name ).." has more than 75% "..profName.." concentration." )
-			elseif fullPercent > 0.5 then
-				table.insert( returnStruct[time()+15], Rested.FormatName( realm, name ).." has more than half "..profName.." concentration." )
+			if profStruct.ts + Rested_options.fullConcTimeOut > time() then
+				if currentQuantity >= profStruct.max then
+					table.insert( returnStruct[time()+15], Rested.FormatName( realm, name ).." has full "..profName.." concentration." )
+				elseif fullPercent > 0.75 then
+					table.insert( returnStruct[time()+15], Rested.FormatName( realm, name ).." has more than 75% "..profName.." concentration." )
+				elseif fullPercent > 0.5 then
+					table.insert( returnStruct[time()+15], Rested.FormatName( realm, name ).." has more than half "..profName.." concentration." )
+				end
 			end
 			for targetQuantity = profStruct.value, profStruct.max do
 				if targetQuantity % 100 == 0 then
