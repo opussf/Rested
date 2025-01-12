@@ -23,24 +23,30 @@ function Rested.GcacheWhenAt( targetAmount, gCacheTS )
 	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
 end
 function Rested.GcacheReport( realm, name, charStruct )
-	local rn = Rested.FormatName( realm, name )
-	local lineCount = 0
 	if charStruct.garrisonCache then
-		lineCount = 1
+		local rn = Rested.FormatName( realm, name )
 		local timeSince = time() - charStruct.garrisonCache
-		local timeSinceStr = SecondsToTime(timeSince)
 
 		local resourcesInCache = math.min( ( timeSince / 3600 ) * Rested.cacheRate, Rested.cacheMax )
 
-		Rested.strOut = string.format("%i - %s :: %s",
-				(resourcesInCache >= Rested.cacheMin and resourcesInCache or 0),
-				timeSinceStr,
-				rn)
-		table.insert( Rested.charList,
-				{ (resourcesInCache / Rested.cacheMax) * 150 ,
-					Rested.strOut
-				}
-		)
+		local fullAt = ( (Rested.cacheMax / Rested.cacheRate) * 3600 ) + charStruct.garrisonCache
+
+		if fullAt > time() then
+			table.insert( Rested.charList,
+					{ (resourcesInCache / Rested.cacheMax) * 150,
+						string.format( "%i : %s :: %s",
+							(resourcesInCache >= Rested.cacheMin and resourcesInCache or 0),
+							SecondsToTime( fullAt - time() ),
+							rn) } )
+		else
+			table.insert( Rested.charList,
+					{ timeSince,
+						string.format( "%i : %s :: %s",
+							Rested.cacheMax,
+							SecondsToTime( time() - fullAt ),
+							rn) } )
+		end
+
+		return 1
 	end
-	return lineCount
 end
