@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## Options
+
+Include what report to show at startup, nag or other.
+
 ## DMF
 
 Track the DMF.  Track this like the Pandarian Farm.
