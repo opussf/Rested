@@ -30,8 +30,7 @@ function Rested.GcacheWhenAt( targetAmount, gCacheTS )
 	return ( gCacheTS + ( ( targetAmount / Rested.cacheRate ) * 3600 ) )
 end
 function Rested.GcacheReport( realm, name, charStruct )
-	if ( charStruct.garrisonCache and not charStruct.garrisonQuantity )  -- old char, no garrisonQuantity
-			or ( charStruct.garrisonCache and charStruct.garrisonQuantity < 10000 ) then  -- new char, quantity is less than max.
+	if( charStruct.garrisonCache ) then
 		local rn = Rested.FormatName( realm, name )
 		local timeSince = time() - charStruct.garrisonCache
 
@@ -39,25 +38,38 @@ function Rested.GcacheReport( realm, name, charStruct )
 
 		local fullAt = ( (Rested.cacheMax / Rested.cacheRate) * 3600 ) + charStruct.garrisonCache
 
-		if fullAt > time() then
+		if( charStruct.garrisonQuantity and charStruct.garrisonQuantity >= 10000 ) then
+			local nameCode, lcv = 0, 0
+			for lcv = 1, min(string.len(nameCode), 3) do
+				nameCode = nameCode * 100 + string.byte( name, lcv)
+			end
 			table.insert( Rested.charList,
-					{ (resourcesInCache / Rested.cacheMax) * 150,
-						string.format( "%s%i : %s :: %s",
-							(charStruct.garrisonQuantity and charStruct.garrisonQuantity.." : " or ""),
-							(resourcesInCache >= Rested.cacheMin and resourcesInCache or 0),
-							SecondsToTime( fullAt - time() ),
-							rn) } )
+						{ 	nameCode,
+							string.format( "%s : %s :: %s",
+								charStruct.garrisonQuantity,
+								SecondsToTime( time() - charStruct.garrisonCache ),
+								rn ) } )
+			return 1
 		else
-			table.insert( Rested.charList,
-					{ timeSince,
-						string.format( "%s%i : %s :: %s",
-							(charStruct.garrisonQuantity and charStruct.garrisonQuantity.." : " or ""),
-							Rested.cacheMax,
-							SecondsToTime( time() - fullAt ),
-							rn) } )
+			if fullAt > time() then
+				table.insert( Rested.charList,
+						{ (resourcesInCache / Rested.cacheMax) * 150,
+							string.format( "%i%s : %s :: %s",
+								(resourcesInCache >= Rested.cacheMin and resourcesInCache or 0),
+								(charStruct.garrisonQuantity and " : "..charStruct.garrisonQuantity or ""),
+								SecondsToTime( fullAt - time() ),
+								rn) } )
+			else
+				table.insert( Rested.charList,
+						{ timeSince,
+							string.format( "%i%s : %s :: %s",
+								Rested.cacheMax,
+								(charStruct.garrisonQuantity and " : "..charStruct.garrisonQuantity or ""),
+								SecondsToTime( time() - fullAt ),
+								rn) } )
+			end
+			return 1
 		end
-
-		return 1
 	end
 end
 
