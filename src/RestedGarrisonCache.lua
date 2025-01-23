@@ -38,19 +38,9 @@ function Rested.GcacheReport( realm, name, charStruct )
 
 		local fullAt = ( (Rested.cacheMax / Rested.cacheRate) * 3600 ) + charStruct.garrisonCache
 
-		if( charStruct.garrisonQuantity and charStruct.garrisonQuantity >= 10000 ) then
-			local nameCode, lcv = 0, 0
-			for lcv = 1, min(string.len(nameCode), 3) do
-				nameCode = nameCode * 100 + string.byte( name, lcv)
-			end
-			table.insert( Rested.charList,
-						{ 	nameCode,
-							string.format( "%s : %s :: %s",
-								charStruct.garrisonQuantity,
-								SecondsToTime( time() - charStruct.garrisonCache ),
-								rn ) } )
-			return 1
-		else
+		if( ( timeSince < Rested_options.staleStart )
+				or ( charStruct.garrisonQuantity and charStruct.garrisonQuantity < 10000 )
+				or ( name == Rested.name and realm == Rested.realm ) ) then
 			if fullAt > time() then
 				table.insert( Rested.charList,
 						{ (resourcesInCache / Rested.cacheMax) * 150,
