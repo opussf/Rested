@@ -38,7 +38,7 @@ function Rested.GcacheReport( realm, name, charStruct )
 
 		local fullAt = ( (Rested.cacheMax / Rested.cacheRate) * 3600 ) + charStruct.garrisonCache
 
-		if( ( timeSince < Rested_options.staleStart )
+		if( ( fullAt + Rested_options.staleStart < time() ) -- has the cache been full for less than the stale time
 				or ( charStruct.garrisonQuantity and charStruct.garrisonQuantity < 10000 )
 				or ( name == Rested.name and realm == Rested.realm ) ) then
 			if fullAt > time() then
