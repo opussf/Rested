@@ -9,6 +9,11 @@ Allow the user to set a default report.
 /rested default
 will show the current default
 
+defaultReport = "last"
+lastReport = "ignore"
+
+defaultReport = "resting"
+
 ## DMF
 
 Track the DMF.  Track this like the Pandarian Farm.
