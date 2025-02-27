@@ -1,5 +1,14 @@
 # Feature document for Rested
 
+## Default
+
+Allow the user to set a default report.
+
+/rested default <reportName> | last
+
+/rested default
+will show the current default
+
 ## DMF
 
 Track the DMF.  Track this like the Pandarian Farm.
