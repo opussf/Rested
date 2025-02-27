@@ -149,9 +149,11 @@ function Rested.Command( msg )
 end
 
 Rested.commandList["default"] = { ["help"] = {"<reportCommand>","Set the default report to show."}, ["func"] = function( param )
-		Rested_options.defaultReport = param
+		if Rested.commandList[ param ] then
+			Rested_options.defaultReport = param
+		end
 	end,
-	["desc"] = {"desc"}
+	["desc"] = {"Sets the default report."}
 }
 
 

@@ -1946,6 +1946,7 @@ end
 function test.test_default_setDefault()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
 	Rested.Command( "default ignore" )
 	Rested.Command( "" )
 	assertEquals( "Ignored", Rested.reportName )
@@ -1953,10 +1954,26 @@ end
 function test.test_default_set()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
 	Rested.Command( "default level" )
 	Rested.Command( "stale")
 	Rested.Command( "" )
 	assertEquals( "% of Level", Rested.reportName )
+end
+function test.test_default_set_invalid()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
+	Rested.Command( "default silly" )
+	Rested.Command( "" )
+	assertIsNil( Rested_options.defaultReport )
+end
+function test.test_default_help_noSaved()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
+	Rested.Command( "help default" )
+	assertEquals( "Sets the default report.", chatLog[5].msg)
 end
 
 
