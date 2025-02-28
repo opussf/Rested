@@ -1321,20 +1321,22 @@ function test.test_BaseData_restedPC_PLAYER_ENTERING_WORLD()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertEquals( 361.8, Rested_restedState["Test Realm"]["testPlayer"]["restedPC"] )
 end
-function test.test_BaseData_RestedReminder()
+]]
+function test.notest_BaseData_RestedReminder()
 	now = time()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
-			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
+			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now } }
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
-			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now-3600 } }
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = now } }
 	Rested.reminderFunctions = {}
 	Rested.ReminderCallback( Rested.RestedReminderValues )
 	Rested.MakeReminderSchedule()
+	test.dump(Rested.reminders)
 	assertEquals( "|cff00ff00RESTED:|r 5 days until Test Realm:testPlayer is fully rested.", Rested.reminders[now+428400][1] )
 end
 -- RestedDeaths
 function test.test_RestedDeaths_deaths_PLAYER_ENTERING_WORLD()
-	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["deaths"] = 918273987 } }
+	Rested_restedState["Test Realm"] = { ["testPlayer"] = { ["deaths"] = 918273987, ["updated"] = time() } }
 	Rested.ADDON_LOADED()
 	Rested.PLAYER_ENTERING_WORLD()
 	assertEquals( 42, Rested_restedState["Test Realm"]["testPlayer"]["deaths"] )
@@ -1353,7 +1355,6 @@ function test.test_PruneByAge_pruneOne()
 	Rested.PruneByAge( tableWithSubTable["subTable"], 120 )
 	assertIsNil( tableWithSubTable["subTable"][now-180] )
 end
-]]
 
 -- Nag MountReport
 function test.test_NagReport_MaxLevel_InNagRange()
@@ -1939,6 +1940,41 @@ function test.test_gcache_otherPlayer_Full_fullCache_over_Stale()  -- should not
 	Rested.Command( "gcache" )
 	assertIsNil( Rested.charList[1] )
 end
+
+-- Default Report
+-------------
+function test.test_default_setDefault()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
+	Rested.Command( "default ignore" )
+	Rested.Command( "" )
+	assertEquals( "Ignored", Rested.reportName )
+end
+function test.test_default_set()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
+	Rested.Command( "default level" )
+	Rested.Command( "stale")
+	Rested.Command( "" )
+	assertEquals( "% of Level", Rested.reportName )
+end
+function test.test_default_set_invalid()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
+	Rested.Command( "default silly" )
+	assertIsNil( Rested_options.defaultReport )
+end
+function test.test_default_help_noSaved()
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_options.defaultReport = nil
+	Rested.Command( "help default" )
+	assertEquals( "Sets the default report.", chatLog[5].msg)
+end
+
 
 -- test descriptions
 -------------
