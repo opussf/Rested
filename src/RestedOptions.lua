@@ -24,3 +24,14 @@ end
 function Rested.OptionsPanel_Refresh()
 	-- Called when options panel is opened.
 end
+
+
+
+
+function Rested.OptionsPanel_CheckButton_OnLoad( self, option, text )
+	getglobal(self:GetName().."Text"):SetText(text);
+	self:SetChecked(Rested_options[option]);
+end
+function Rested.OptionsPanel_CheckButton_OnClick( self, option )
+	Rested_options[option] = self:GetChecked()
+end

@@ -3,6 +3,16 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+	<CheckButton name="RESTEDOptionsCheckButtonTemplate" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+				GameTooltip:SetText(self.tooltip);
+			</OnEnter>
+			<OnLeave>GameTooltip:Hide();</OnLeave>
+		</Scripts>
+	</CheckButton>
+
 	<Frame name="RestedOptionsFrame">
 		<Layers>
 			<Layer level="ARTWORK">
@@ -13,9 +23,29 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+				<FontString name="$parent_NagHeader" inherits="GameFontNormal" text="Nag Report:">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT">
+							<Offset><AbsDimension x="16" y="-10"/></Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 			</Layer>
 		</Layers>
 		<Frames>
+			<CheckButton name="$parent_ShowProgress" inherits="RESTEDOptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_NagHeader" relativePoint="BOTTOMLEFT">
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>self.tooltip = "Enable auto display of Nag Report";</OnLoad>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnLoad(self,"nagEnabled","Enable Nag Report");</OnShow>
+					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagEnabled")</OnClick>
+				</Scripts>
+			</CheckButton>
+
 		</Frames>
 		<Scripts>
 			<OnLoad>
@@ -31,9 +61,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+-->
 
 <!-- https://github.com/tomrus88/BlizzardInterfaceCode/blob/master/Interface/SharedXML/SharedUIPanelTemplates.xml -->
-	<CheckButton name="INEEDOptionsCheckButtonTemplate" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
+<!-- 	<CheckButton name="INEEDOptionsCheckButtonTemplate" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
 		<Scripts>
 			<OnEnter>
 				GameTooltip:SetOwner(self, "ANCHOR_LEFT");
@@ -41,9 +72,9 @@
 			</OnEnter>
 			<OnLeave>GameTooltip:Hide();</OnLeave>
 		</Scripts>
-	</CheckButton>
+	</CheckButton> -->
 
-	<Frame name="INEEDOptionsFrame">
+<!-- 	<Frame name="INEEDOptionsFrame">
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parent_Title" inherits="GameFontNormalLarge">
@@ -301,9 +332,11 @@
 				<Scripts>
 					<OnShow>INEED.OptionsPanel_Duration_OnShow( self, "displayUIListDisplaySeconds" )</OnShow>
 					<OnTextChanged>INEED.OptionsPanel_Duration_TextChanged( self, "displayUIListDisplaySeconds" )</OnTextChanged>
+				-->
 					<!--
 					<OnEditFocusLost>INEED.OptionsPanel_Duration_OnShow( self, "displayUIListDisplaySeconds" )</OnEditFocusLost>
 					-->
+				<!--
 				</Scripts>
 				<Layers>
 					<Layer level="ARTWORK">
@@ -578,6 +611,7 @@
 					</Layer>
 				</Layers>
 			</Frame>
+		-->
 <!--
 
 
@@ -600,7 +634,7 @@
 				</Scripts>
 			</Slider>
 -->
-
+<!--
 		</Frames>
 		<Scripts>
 			<OnLoad>
@@ -608,4 +642,4 @@
 			</OnLoad>
 		</Scripts>
 	</Frame>
-</Ui>
+</Ui> -->
