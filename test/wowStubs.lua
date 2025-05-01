@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  December 23 2024
--- Revision:  9.5-17-g1916682
+-- Date    :  April 24 2025
+-- Revision:  9.5.1
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -458,8 +458,8 @@ Frame = {
 		["GetHeight"] = function(self) return( self.height ); end,
 		["SetMovable"] = function(self, value) self.movable = value end,
 		["CreateFontString"] = function(self, ...) return(CreateFontString(...)) end,
-		["SetSize"] = function(self, x, y) end,
-		["GetSize"] = function(self) return 400,125 end,
+		["SetSize"] = function(self, x, y) self.width=x; self.height=y; end,
+		["GetSize"] = function(self) return self.width,self.height end,
 		["ClearAllPoints"] = function(self) self.points={}; end,
 		["GetPoint"] = function(self) end,
 		["GetNumPoints"] = function(self) end,
@@ -467,6 +467,7 @@ Frame = {
 
 		["SetMinMaxValues"] = function(self, min, max) self.min=min; self.max=max; end,
 		["SetValue"] = function(self, value) self.value=value end,
+		["GetValue"] = function(self) return self.value end,
 		["SetStatusBarColor"] = function() end,
 		["SetScript"] = function(self, event, func) end,
 		["SetAttribute"] = function() end,
@@ -2055,6 +2056,29 @@ function C_PlayerInfo.GetPlayerMythicPlusRatingSummary( unitStr )
 	return {["runs"] = {}, ["currentSeasonScore"] = 0 }
 end
 
+----------
+-- C_DateAndTime
+----------
+C_DateAndTime = {}
+-- These functions return a non-lua-normal struct.
+-- year 	number 	The current year (e.g. 2019)
+-- month 	number 	The current month [1-12]
+-- monthDay 	number 	The current day of the month [1-31]
+-- weekday 	number 	The current day of the week (1=Sunday, 2=Monday, ..., 7=Saturday)
+-- hour 	number 	The current time in hours [0-23]
+-- minute 	number 	The current time in minutes [0-59]
+C_DateAndTimeTS = time()  -- set this to control what is returned
+function C_DateAndTime.GetCurrentCalendarTime()
+	-- This is the realm's current time
+	local out = date( "*t", C_DateAndTimeTS )
+	out.monthDay = out.day; out.day = nil
+	out.weekday = out.wday; out.wday = nil
+	out.yday = nil
+	out.isdst = nil
+	out.sec = nil
+	return out
+end
+
 -- A SAX parser takes a content handler, which provides these methods:
 --     startDocument()                 -- called at the start of the Document
 --     endDocument()                   -- called at the end of the Document
@@ -2241,22 +2265,19 @@ function ParseTOC( tocFile, useRequire )
 	local f = io.open( tocFile, "r" )
 	if f then
 		local tocContents = f:read( "*all" )
-		while true do
-			local linestart, lineend, line = string.find( tocContents, "(.-)\n" )
-			if linestart then
-				local lua, luaEnd, luaFile = string.find( line, "([_%a]*)%.lua" )
-				local xml, xmlEnd, xmlFile = string.find( line, "([_%a]*)%.xml" )
-				local hash, hashEnd, hashKey, hashValue = string.find( line, "## ([_%a]*): (.*)" )
-				if( hash ) then
-					addonData[ hashKey ] = hashValue
-				elseif( lua ) then
-					table.insert( tocFileTable, { "lua", luaFile } )
-				elseif( xml ) then
-					table.insert( tocFileTable, { "xml", xmlFile } )
+		for line in tocContents:gmatch("([^\n]*)\n?") do
+			if line ~= "" then
+				local luaFile = line:match("([_%a][_%w]*)%.lua")
+				local xmlFile = line:match("([_%a][_%w]*)%.xml")
+				local hashKey, hashValue = line:match("## ([_%a]*): (.*)")
+
+				if hashKey then
+					addonData[hashKey] = hashValue
+				elseif luaFile then
+					table.insert(tocFileTable, { "lua", luaFile })
+				elseif xmlFile then
+					table.insert(tocFileTable, { "xml", xmlFile })
 				end
-				tocContents = string.sub( tocContents, lineend+1 )
-			else
-				break
 			end
 		end
 		pathSeparator = string.sub(package.config, 1, 1)
