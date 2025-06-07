@@ -1,27 +1,54 @@
 -- RestedRaid.lua
+-- "@first /script for i=1,GetNumSavedInstances() do local n,_,_,_,l,_,_,R,_,d,e,p=GetSavedInstanceInfo(i);if R and l then for j=1,e do local bN,_,isK=GetSavedInstanceEncounterInfo(i,j);print(n..\":\"..d..\":\"..(isK and\"Killed\"or\"Alive\")..\":\"..bN);end;end;end",
 
--- function Rested.StoreTimePlayed( total, currentLvl )
--- 	--print( "Rested.StoreTimePlayed: "..total.." - "..currentLvl )
--- 	Rested_restedState[Rested.realm][Rested.name].totalPlayed = total
--- end
+function Rested.StoreRaidBosses()
+	Rested.me.raidBosses = Rested.me.raidBosses or {}
+	for i = 1, GetNumSavedInstances() do
+		local name, _, _, _, isLocked, _, _, isRaid, _, diff, numEncounters, p = GetSavedInstanceInfo(i)
+		if isRaid and isLocked then
+			for j = 1, numEncounters do
+				local bossName, _, isKilled = GetSavedInstanceEncounterInfo(i,j)
+				Rested.me.raidBosses[diff..":"..name..":"..bossName] = Rested.me.raidBosses[diff..":"..name..":"..bossName] or (isKilled and time() or nil)
+			end
+		end
+	end
+end
 
--- function Rested.TimePlayedRequest()
--- 	if not Rested.lastTimePlayedRequest or Rested.lastTimePlayedRequest+600 < time() then
--- 		Rested.lastTimePlayedRequest = time()
--- 		RequestTimePlayed()
--- 	end
--- end
+Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.StoreRaidBosses )
+Rested.EventCallback( "UPDATE_INSTANCE_INFO", Rested.StoreRaidBosses )
 
--- Rested.EventCallback( "PLAYER_LEAVING_WORLD", function() Rested.lastTimePlayedRequest=nil; Rested.TimePlayedRequest() end )
--- Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.TimePlayedRequest )
--- Rested.EventCallback( "TIME_PLAYED_MSG", Rested.StoreTimePlayed )
+Rested.dropDownMenuTable["Bosses"] = "bosses"
+Rested.commandList["bosses"] = { ["help"] = {"","Raid Bosses"}, ["func"] = function()
+		Rested.reportName = "Raid Bosses"
+		Rested.UIShowReport( Rested.RaidBossesReport )
+	end
+}
+function Rested.RaidBossesReport( realm, name, charStruct )
+	local rn = Rested.FormatName( realm, name )
+	local lineCount = 0
+	Rested.strOut = ""
+	Rested.previousWeekReset = Rested.previousWeekReset or Rested.GetWeeklyQuestResetTime()
+	if( charStruct.raidBosses ) then
+		local maxTS = 0
+		for key, ts in pairs( charStruct.raidBosses ) do
+			if ts < Rested.previousWeekReset then
+				charStruct.raidBosses[key] = nil
+			elseif ts > maxTS then
+				maxTS = ts
+				Rested.strOut = string.format( "%s : %s",
+						rn, key )
+			end
+		end
+		if Rested.strOut ~= "" then
+			table.insert( Rested.charList,
+					{ ts, Rested.strOut } )
+			lineCount = lineCount + 1
+		end
+	end
+	return lineCount
+end
 
--- Rested.dropDownMenuTable["Played"] = "played"
--- Rested.commandList["played"] = { ["help"] = {"","Time played"}, ["func"] = function()
--- 		Rested.reportName = "Time Played"
--- 		Rested.UIShowReport( Rested.PlayedReport )
--- 	end
--- }
+
 -- function Rested.PlayedReport( realm, name, charStruct )
 -- 	local rn = Rested.FormatName( realm, name )
 -- 	if( charStruct.totalPlayed ) then
