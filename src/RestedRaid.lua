@@ -41,14 +41,12 @@ function Rested.RaidBossesReport( realm, name, charStruct )
 					charStruct.raidBosses[raid][boss] = nil
 				elseif ts > maxTS then
 					maxTS = ts
-					Rested.strOut = string.format( "%s:%s : %s",
-							raid, boss, rn )
+					Rested.strOut = string.format( "%s:%s : %s", raid, boss, rn )
 				end
 			end
 			Rested.strOut = raidBossCount..":"..Rested.strOut
 			if Rested.strOut ~= "" then
-				table.insert( Rested.charList,
-						{ maxTS, Rested.strOut } )
+				table.insert( Rested.charList, { maxTS, Rested.strOut } )
 				lineCount = lineCount + 1
 			end
 		end
@@ -58,17 +56,3 @@ function Rested.RaidBossesReport( realm, name, charStruct )
 	end
 	return lineCount
 end
-
-
--- function Rested.PlayedReport( realm, name, charStruct )
--- 	local rn = Rested.FormatName( realm, name )
--- 	if( charStruct.totalPlayed ) then
--- 		Rested.maxPlayed = math.max( Rested.maxPlayed or 0, charStruct.totalPlayed or 0 )
--- 		Rested.strOut = string.format( "%s : %s",
--- 				SecondsToTime( charStruct.totalPlayed ),
--- 				rn )
--- 		table.insert( Rested.charList,
--- 				{ ( charStruct.totalPlayed / Rested.maxPlayed ) * 150, Rested.strOut } )
--- 		return 1
--- 	end
--- end
