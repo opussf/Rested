@@ -9,7 +9,7 @@ function Rested.StoreRaidBosses()
 			for j = 1, numEncounters do
 				local bossName, _, isKilled = GetSavedInstanceEncounterInfo(i,j)
 				Rested.me.raidBosses[diff..":"..name] = Rested.me.raidBosses[diff..":"..name] or {}
-				Rested.me.raidBosses[diff..":"..name][bossName] = Rested.me.raidBosses[diff..":"..name][bossName] or (isKilled and time() or nil)
+				Rested.me.raidBosses[diff..":"..name][bossName] = Rested.me.raidBosses[diff..":"..name][bossName] or (isKilled and time()+j or nil)
 			end
 		end
 	end
@@ -27,20 +27,22 @@ Rested.commandList["bosses"] = { ["help"] = {"","Raid Bosses"}, ["func"] = funct
 function Rested.RaidBossesReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
 	local lineCount = 0
-	Rested.strOut = ""
 	Rested.previousWeekReset = Rested.previousWeekReset or Rested.GetWeeklyQuestResetTime()
 	if( charStruct.raidBosses ) then
-		local maxTS = 0
+		local raidCount = 0
 		for raid, struct in pairs( charStruct.raidBosses ) do
 			local raidBossCount = 0
+			Rested.strOut = ""
+			local maxTS = 0
+			raidCount = raidCount + 1
 			for boss, ts in pairs( struct ) do
 				raidBossCount = raidBossCount + 1
 				if ts < Rested.previousWeekReset then
 					charStruct.raidBosses[raid][boss] = nil
 				elseif ts > maxTS then
 					maxTS = ts
-					Rested.strOut = string.format( "%s : %s:%s",
-							rn, raid, boss )
+					Rested.strOut = string.format( "%s:%s : %s",
+							raid, boss, rn )
 				end
 			end
 			Rested.strOut = raidBossCount..":"..Rested.strOut
@@ -49,6 +51,9 @@ function Rested.RaidBossesReport( realm, name, charStruct )
 						{ maxTS, Rested.strOut } )
 				lineCount = lineCount + 1
 			end
+		end
+		if raidCount == 0 then
+			charStruct.raidBosses = nil
 		end
 	end
 	return lineCount
