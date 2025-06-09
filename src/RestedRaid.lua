@@ -43,6 +43,10 @@ function Rested.RaidBossesReport( realm, name, charStruct )
 					maxTS = ts
 					Rested.strOut = string.format( "%s:%s : %s", raid, boss, rn )
 				end
+				if time() - ts < 3600 then
+					table.insert( Rested.charList, { ts-1, string.format( "%s:%s : %s", raid, boss, SecondsToTime( time() - ts ) ) } )
+					lineCount = lineCount + 1
+				end
 			end
 			Rested.strOut = raidBossCount..":"..Rested.strOut
 			if Rested.strOut ~= "" then
