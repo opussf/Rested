@@ -1,5 +1,9 @@
 -- RestedRaid.lua
--- "@first /script for i=1,GetNumSavedInstances() do local n,_,_,_,l,_,_,R,_,d,e,p=GetSavedInstanceInfo(i);if R and l then for j=1,e do local bN,_,isK=GetSavedInstanceEncounterInfo(i,j);print(n..\":\"..d..\":\"..(isK and\"Killed\"or\"Alive\")..\":\"..bN);end;end;end",
+Rested.raidBossMap = {}
+setmetatable( Rested.raidBossMap, {__index=function(L,key) return key; end } )
+Rested.raidBossMap["Looking For Raid"] = "LFR"
+Rested.raidBossMap["25 Player (Heroic)"] = "Heroic-25"
+Rested.raidBossMap["Liberation of Undermine"] = "Undermine"
 
 function Rested.StoreRaidBosses()
 	Rested.me.raidBosses = Rested.me.raidBosses or {}
@@ -8,6 +12,8 @@ function Rested.StoreRaidBosses()
 		if isRaid and isLocked then
 			for j = 1, numEncounters do
 				local bossName, _, isKilled = GetSavedInstanceEncounterInfo(i,j)
+				diff = Rested.raidBossMap[diff]
+				name = Rested.raidBossMap[name]
 				Rested.me.raidBosses[diff..":"..name] = Rested.me.raidBosses[diff..":"..name] or {}
 				Rested.me.raidBosses[diff..":"..name][bossName] = Rested.me.raidBosses[diff..":"..name][bossName] or (isKilled and time()+j or nil)
 			end
