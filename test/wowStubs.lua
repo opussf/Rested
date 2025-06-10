@@ -1205,6 +1205,8 @@ function GetNumSavedInstances()
 	-- @TODO: Research this
 	return 0
 end
+function GetSavedInstanceInfo( index )
+end
 -- GetNumTradeSkills is deprecated
 --function GetNumTradeSkills( )
 --	-- returns number of lines in the tradeskill window to show

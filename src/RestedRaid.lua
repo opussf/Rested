@@ -2,7 +2,7 @@
 Rested.raidBossMap = {}
 setmetatable( Rested.raidBossMap, {__index=function(L,key) return key; end } )
 Rested.raidBossMap["Looking For Raid"] = "LFR"
-Rested.raidBossMap["25 Player (Heroic)"] = "Heroic-25"
+Rested.raidBossMap["25 Player (Heroic)"] = "Heroic25"
 Rested.raidBossMap["Liberation of Undermine"] = "Undermine"
 
 function Rested.StoreRaidBosses()
@@ -53,6 +53,9 @@ function Rested.RaidBossesReport( realm, name, charStruct )
 					table.insert( Rested.charList, { ts-1, string.format( "%s:%s : %s", raid, boss, SecondsToTime( time() - ts ) ) } )
 					lineCount = lineCount + 1
 				end
+			end
+			if raidBossCount == 0 then
+				charStruct.raidBosses[raid] = nil
 			end
 			Rested.strOut = raidBossCount..":"..Rested.strOut
 			if Rested.strOut ~= "" then
