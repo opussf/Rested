@@ -24,8 +24,8 @@ end
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", Rested.StoreRaidBosses )
 Rested.EventCallback( "UPDATE_INSTANCE_INFO", Rested.StoreRaidBosses )
 
-Rested.dropDownMenuTable["Bosses"] = "bosses"
-Rested.commandList["bosses"] = { ["help"] = {"","Raid Bosses"}, ["func"] = function()
+Rested.dropDownMenuTable["Raid Bosses"] = "rbosses"
+Rested.commandList["rbosses"] = { ["help"] = {"","Raid Bosses"}, ["func"] = function()
 		Rested.reportName = "Raid Bosses"
 		Rested.UIShowReport( Rested.RaidBossesReport )
 	end
