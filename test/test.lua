@@ -1975,6 +1975,52 @@ function test.test_default_help_noSaved()
 	assertEquals( "Sets the default report.", chatLog[5].msg)
 end
 
+-- Raid Bosses
+---------------
+function test.test_raidbosses_noLockedRaids()
+	mySavedInstances = {}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.Command( "rbosses" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].raidBosses )
+end
+function test.test_raidbosses_LFR_new_singleBoss()
+	mySavedInstances = { { "raid", 0, 86400, 0, true, false, 0, true, 25, "Looking For Raid", 1, 1, {{"Boss", "", true, false}} } }
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	-- test.dump(Rested_restedState)
+	Rested.Command( "rbosses" )
+	-- test.dump(Rested.charList )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"].raidBosses )
+	assertTrue( Rested_restedState["Test Realm"]["testPlayer"].raidBosses["LFR:raid"] )
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].raidBosses["LFR:raid"]["Boss"], nil, 0, 2 )
+	assertEquals( 2, #Rested.charList, "Report should have 2 lines" )
+end
+function test.test_raidbosses_LFR_old_singleBoss()
+	mySavedInstances = { { "raid", 0, 86400, 0, true, false, 0, true, 25, "Looking For Raid", 1, 1, {{"Boss", "", true, false}} } }
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_restedState["Test Realm"]["testPlayer"].raidBosses = { ["LFR:raid"] = { ["Boss"] = time()-7200 } }
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.Command( "rbosses" )
+	assertEquals( 1, #Rested.charList, "Resport should have 1 line" )
+	assertEquals( "1:LFR:raid:Boss : |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
+end
+function test.test_raidbosses_LFR_expired_singleBoss()
+	mySavedInstances = {}
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested_restedState["Test Realm"]["testPlayer"].raidBosses = { ["LFR:raid"] = { ["Boss"] = time()-(86400*10) } }
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.Command( "rbosses" )
+	Rested.Command( "rbosses" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].raidBosses["LFR:raid"] )
+	Rested.Command( "rbosses" )
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].raidBosses )
+end
+
 
 -- test descriptions
 -------------

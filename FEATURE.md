@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## RaidBoss
+
+
+
 ## Default
 
 Allow the user to set a default report.
