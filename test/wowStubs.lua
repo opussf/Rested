@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  June 18 2025
--- Revision:  9.5.1-4-g0e1c5a5
+-- Date    :  June 23 2025
+-- Revision:  9.5.1-7-g826b11b
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -659,7 +659,13 @@ function CreateButton( name, ... )
 	me.name = name
 	return me
 end
-
+function UIDropDownMenu_Initialize( self )
+end
+function UIDropDownMenu_JustifyText( self, justify )
+end
+function UIDropDownMenu_GetText( self )
+	return ""
+end
 function ChatFrame_AddMessageEventFilter()
 end
 
@@ -2107,6 +2113,14 @@ function C_DateAndTime.GetCurrentCalendarTime()
 	out.isdst = nil
 	out.sec = nil
 	return out
+end
+
+-------
+-- EventRegistry
+-------
+EventRegistry = {}
+
+function EventRegistry.RegisterCallback( self )
 end
 
 -- A SAX parser takes a content handler, which provides these methods:
