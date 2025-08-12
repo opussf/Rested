@@ -76,3 +76,79 @@ Rested.reportReverseSort["Quests"] = true
 Rested.EventCallback( "QUEST_LOG_UPDATE", Rested.QuestUpdate )
 -- Rested.EventCallback( "QUEST_ACCEPTED", Rested.QuestCommand )
 Rested.EventCallback( "QUEST_REMOVED", Rested.QuestRemoved )
+
+-- storylines
+function Rested.QuestStoryline( strIn )
+	if strIn and strIn ~= '' then
+		for slnum in string.gmatch( strIn, "([0-9]+)[,]*" ) do
+			local questNums = C_QuestLine.GetQuestLineQuests( slnum )
+			Rested.QuestCommand( table.concat( questNums, "," ) )
+		end
+	end
+end
+
+Rested.commandList["storylines"] = { ["help"] = {"[storyline,...]","Track quests in a storyline"}, ["func"] = Rested.QuestStoryline }
+
+
+--[[
+
+/rested quests 84967,86835,84965,84964,84963,84961,84960,84959,84958,85039,85003,84957,84956
+/rested quests 84826,84827,84831,85730,86327,84834,84869,84838,84848,84867,86332,84876,84879,84883,84910
+/rested quests 90517,86946,84866,84865,84864,84863,84862,84861,84860,84859,84858,84857,84856,86495,84855,85961,85032
+/rested quests 85037,84906,84905,84904,84903,84902,84900,84899,84898,84897,
+/rested quests 86820
+
+/rested storylines 5690,5717,5696,5734,5733
+
+
+local questLines = C_QuestLine.GetAvailableQuestLines(uiMapID)
+for _, ql in ipairs(questLines) do
+    print(ql.questLineName, ql.questLineID)
+end
+
+each ql:
+{
+    questLineName = string,
+    questLineID = number,
+    questID = number,       -- first quest in the line
+    isCampaign = boolean,
+    isHidden = boolean
+}
+
+local uiMapID = 84 -- Stormwind City
+local questLines = C_QuestLine.GetAvailableQuestLines(uiMapID)
+
+for _, ql in ipairs(questLines) do
+    print("Storyline:", ql.questLineName)
+    local quests = C_QuestLine.GetQuestLineQuests(ql.questLineID, uiMapID)
+    for _, quest in ipairs(quests) do
+        print(" -", quest.questName, "(ID:", quest.questID .. ")")
+    end
+end
+
+----------------------------
+
+C_CampaignInfo.GetCampaignChapterInfo(campaignChapterID)
+C_CampaignInfo.GetCampaignID(questID)
+
+
+C_QuestLine.GetQuestLineQuests(questLineID)
+C_QuestLine.IsComplete(questLineID)
+
+C_QuestLine.GetQuestLineQuests(5690)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]
