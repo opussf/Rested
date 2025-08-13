@@ -10,10 +10,12 @@ function Rested.QuestCommand( strIn, retryCount )
 				-- Rested.Print( "Checking quest: "..qnum )
 				title = C_QuestLog.GetTitleForQuestID( qnum )
 				completed = C_QuestLog.IsQuestFlaggedCompleted( qnum )
+				onquest = C_QuestLog.IsOnQuest( qnum )
 				Rested.me.quests = Rested.me.quests or {}
 				Rested.me.quests[qnum] = {
 						["title"] = title or "Unknown Name",
 						["completed"] = completed,
+						["onquest"] = onquest,
 						["addedTS"] = time() + qcount,
 						["completedTS"] = ( completed and time() or nil ),
 					}
@@ -37,7 +39,7 @@ function Rested.QuestReport( realm, name, charStruct )
 			else
 				table.insert( Rested.charList, { time() - (qinfo.completed and qinfo.completedTS or qinfo.addedTS),
 						string.format( "%6i: %s :: %s",
-							qnum, (qinfo.completed and "COMPLETE" or "progress"), qinfo.title ) } )
+							qnum, (qinfo.completed and "COMPLETE" or (qinfo.onquest and "in progress" or "future")), qinfo.title ) } )
 				count = count + 1
 			end
 		end
@@ -51,6 +53,9 @@ function Rested.QuestUpdate()
 			questCount = questCount + 1
 			if not qinfo.completed and C_QuestLog.IsQuestFlaggedCompleted( qnum ) then
 				Rested.me.quests[qnum].completed = true
+				Rested.me.quests[qnum].completedTS = time()
+			elseif not qinfo.onquest and C_QuestLog.IsOnQuest( qnum ) then
+				Rested.me.quests[qnum].onquest = true
 				Rested.me.quests[qnum].completedTS = time()
 			elseif qinfo.completed and qinfo.completedTS < time() - 160 then  -- completd more than 5 minutes ago.
 				Rested.me.quests[qnum] = nil
@@ -86,7 +91,6 @@ function Rested.QuestStoryline( strIn )
 		end
 	end
 end
-
 Rested.commandList["storylines"] = { ["help"] = {"[storyline,...]","Track quests in a storyline"}, ["func"] = Rested.QuestStoryline }
 
 
@@ -99,6 +103,11 @@ Rested.commandList["storylines"] = { ["help"] = {"[storyline,...]","Track quests
 /rested quests 86820
 
 /rested storylines 5690,5717,5696,5734,5733
+
+
+C_QuestLog.IsOnQuest(questID)
+C_QuestLog.IsComplete(questID)
+
 
 
 local questLines = C_QuestLine.GetAvailableQuestLines(uiMapID)

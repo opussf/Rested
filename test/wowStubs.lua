@@ -2050,6 +2050,9 @@ end
 function C_QuestLog.GetTitleForQuestID( qnum )
 	return "Test Quest"
 end
+function C_QuestLog.IsOnQuest( qnum )
+	return true
+end
 
 ----------
 -- C_TaskQuest
