@@ -56,7 +56,7 @@ function Rested.QuestUpdate()
 				Rested.me.quests[qnum].completedTS = time()
 			elseif not qinfo.onquest and C_QuestLog.IsOnQuest( qnum ) then
 				Rested.me.quests[qnum].onquest = true
-				Rested.me.quests[qnum].completedTS = time()
+				Rested.me.quests[qnum].addedTS = time()
 			elseif qinfo.completed and qinfo.completedTS < time() - 160 then  -- completd more than 5 minutes ago.
 				Rested.me.quests[qnum] = nil
 			end
@@ -102,7 +102,7 @@ Rested.commandList["storylines"] = { ["help"] = {"[storyline,...]","Track quests
 /rested quests 85037,84906,84905,84904,84903,84902,84900,84899,84898,84897,
 /rested quests 86820
 
-/rested storylines 5690,5717,5696,5734,5733
+/rested storylines 5690,5717,5696,5734,5733,5780
 
 
 C_QuestLog.IsOnQuest(questID)
