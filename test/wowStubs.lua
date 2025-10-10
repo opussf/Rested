@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  December 23 2024
--- Revision:  9.5-17-g1916682
+-- Date    :  September 22 2025
+-- Revision:  9.5.1-17-g28f1478
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -20,6 +20,12 @@ settings = {
 }
 actionLog = {
 }
+buildInfo = {
+	"1.1.1",       --version
+	"3255",        --build
+	"Sep 12 2025", --date
+	20400          --TOC Version
+}
 -- append actions to the log to track actions that may not have an other sideeffects.
 -- record the function calls
 -- [1] = "DoEmote(....)""
@@ -30,6 +36,14 @@ chatLog = {
 
 local itemDB = {
 }
+
+_G["GUILD"] = "Guild"
+_G["INSTANCE"] = "instance"
+_G["PARTY"] = "Party"
+_G["RAID"] = "Raid"
+_G["SAY"] = "Say"
+_G["WHISPER"] = "Whisper"
+_G["YELL"] = "Yell"
 
 -- simulate an internal inventory
 -- myInventory = { ["9999"] = 52, }
@@ -458,15 +472,18 @@ Frame = {
 		["GetHeight"] = function(self) return( self.height ); end,
 		["SetMovable"] = function(self, value) self.movable = value end,
 		["CreateFontString"] = function(self, ...) return(CreateFontString(...)) end,
-		["SetSize"] = function(self, x, y) end,
-		["GetSize"] = function(self) return 400,125 end,
+		["CreateTexture"] = function(self, name, ...) return(CreateTexture(...)) end,
+		["SetSize"] = function(self, x, y) self.width=x; self.height=y; end,
+		["GetSize"] = function(self) return self.width,self.height end,
 		["ClearAllPoints"] = function(self) self.points={}; end,
 		["GetPoint"] = function(self) end,
 		["GetNumPoints"] = function(self) end,
+		["SetAllPoints"] = function(self) end,
 		["StopMovingOrSizing"] = function(self) end,
 
 		["SetMinMaxValues"] = function(self, min, max) self.min=min; self.max=max; end,
 		["SetValue"] = function(self, value) self.value=value end,
+		["GetValue"] = function(self) return self.value end,
 		["SetStatusBarColor"] = function() end,
 		["SetScript"] = function(self, event, func) end,
 		["SetAttribute"] = function() end,
@@ -650,7 +667,27 @@ function CreateButton( name, ... )
 	me.name = name
 	return me
 end
-
+Texture = {
+	["SetTexture"] = function(self) end,
+}
+function CreateTexture( name, ... )
+	me = {}
+	for k,v in pairs(Frame) do
+		me[k] = v
+	end
+	for k,v in pairs(Texture) do
+		me[k] = v
+	end
+	me.name=name
+	return me
+end
+function UIDropDownMenu_Initialize( self )
+end
+function UIDropDownMenu_JustifyText( self, justify )
+end
+function UIDropDownMenu_GetText( self )
+	return ""
+end
 function ChatFrame_AddMessageEventFilter()
 end
 
@@ -666,6 +703,7 @@ UIErrorsFrame={ ["AddMessage"] = function( self, msg )
 		)
 	end, }
 WeeklyRewardsFrame = CreateFrame()
+BankFrame = CreateFrame()
 
 -- stub some external API functions (try to keep alphabetical)
 function BuyMerchantItem( index, quantity )
@@ -871,6 +909,9 @@ function GetAchievementNumCriteria( achievementID )
 	if Achievements[achievementID] then
 		return #Achievements[achievementID]["criteria"]
 	end
+end
+function GetBuildInfo()
+	return table.unpack(buildInfo)
 end
 function GetCurrentRegion()
 	-- @TODO: find region info
@@ -1200,9 +1241,25 @@ function GetNumRoutes( nodeId )
 	-- returns numHops
 	return TaxiNodes[nodeId].hops
 end
+mySavedInstances = {}
+-- mySavedInstances = { { "raidName", id, secondsUntilLockResets, difficulty(number),
+--      isLocked(bool), isExtended(bool), instanceIDMostSig?(number), isRaid(bool),
+--      maxPlayers(number), "difficulty", numEncounters(number), encounterProgress(number),
+--      {{bossName, fileDataID, isKilled, unknown}, {}, ...} }, {}, ... }
 function GetNumSavedInstances()
-	-- @TODO: Research this
-	return 0
+	-- https://addonstudio.org/wiki/WoW:API_GetNumSavedInstances
+	--     numInstances (Number) - number of instances saved to, zero if none
+	-- See GetSavedInstanceInfo
+	return #mySavedInstances
+end
+function GetSavedInstanceInfo( index )
+	-- https://addonstudio.org/wiki/WoW:API_GetSavedInstanceInfo
+	-- name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(index)
+	-- add the above info as a table to mySavedInstances
+	return table.unpack( mySavedInstances[index] )
+end
+function GetSavedInstanceEncounterInfo( raidIndex, bossIndex )
+	return table.unpack( mySavedInstances[raidIndex][13][bossIndex] )
 end
 -- GetNumTradeSkills is deprecated
 --function GetNumTradeSkills( )
@@ -1354,6 +1411,8 @@ end
 function IsFlying()
 end
 function IsMounted()
+end
+function IsShiftKeyDown()
 end
 function GetCritChance()
 	return 25.42345
@@ -1854,15 +1913,21 @@ myMacros = {
 		table.sort( myMacros.personal, function( l, r ) return( l.name < r.name ); end )
 	end,
 }
+function GetNumMacros()
+	-- return number of global, number of personal
+	return #myMacros.general, #myMacros.personal
+end
 function GetMacroInfo( macroName )
 	-- returns:  macroName, macroIcon, macroText
 	if macroName then
-		local mIndex = GetMacroIndexByName( macroName )
+		local mIndex = tonumber(macroName) or GetMacroIndexByName( macroName )
 		if mIndex ~= 0 then
 			local location = mIndex > 120 and "personal" or "general"
 			mIndex = mIndex>120 and mIndex-120 or mIndex
-			return myMacros[location][mIndex].name, myMacros[location][mIndex].icon, myMacros[location][mIndex].text
-    	end
+			if myMacros[location][mIndex] then
+				return myMacros[location][mIndex].name, myMacros[location][mIndex].icon, myMacros[location][mIndex].text
+			end
+		end
 	end
 end
 function GetMacroIndexByName( macroName )
@@ -2012,6 +2077,146 @@ function C_QuestLog.IsQuestFlaggedCompleted( qnum )
 end
 function C_QuestLog.GetTitleForQuestID( qnum )
 	return "Test Quest"
+end
+
+----------
+-- C_TaskQuest
+----------
+C_TaskQuest = {}
+function C_TaskQuest.GetQuestInfoByQuestID( qnum )
+end
+
+----------
+-- C_ClassTalents
+----------
+C_ClassTalents = {}
+function C_ClassTalents.GetActiveConfigID()
+end
+
+----------
+-- C_Traits
+----------
+C_Traits = {}
+function C_Traits.GetConfigInfo( id )
+	return {["ID"] = 13659962, ["name"] = "Holy", ["treeIDs"] = {790}, ["type"] = 1, ["usesSharedActionBars"] = false}
+end
+function C_Traits.GenerateImportString( configID )
+	return "someReallyLongString"
+end
+
+----------
+-- PlayerUtil
+----------
+PlayerUtil = {}
+function PlayerUtil.GetCurrentSpecID()
+	return {65, "Holy", "Desc", 135920, "HEALER", 4}
+end
+
+----------
+-- C_PlayerInfo
+----------
+C_PlayerInfo = {}
+function C_PlayerInfo.GetPlayerMythicPlusRatingSummary( unitStr )
+	return {["runs"] = {}, ["currentSeasonScore"] = 0 }
+end
+
+----------
+-- C_DateAndTime
+----------
+C_DateAndTime = {}
+-- These functions return a non-lua-normal struct.
+-- year 	number 	The current year (e.g. 2019)
+-- month 	number 	The current month [1-12]
+-- monthDay 	number 	The current day of the month [1-31]
+-- weekday 	number 	The current day of the week (1=Sunday, 2=Monday, ..., 7=Saturday)
+-- hour 	number 	The current time in hours [0-23]
+-- minute 	number 	The current time in minutes [0-59]
+C_DateAndTimeTS = time()  -- set this to control what is returned
+function C_DateAndTime.GetCurrentCalendarTime()
+	-- This is the realm's current time
+	local out = date( "*t", C_DateAndTimeTS )
+	out.monthDay = out.day; out.day = nil
+	out.weekday = out.wday; out.wday = nil
+	out.yday = nil
+	out.isdst = nil
+	out.sec = nil
+	return out
+end
+
+-------
+-- EventRegistry
+-------
+EventRegistry = {}
+function EventRegistry.RegisterCallback( self )
+end
+
+----------
+-- Settings
+----------
+Settings = {}
+function Settings.OpenToCategory( id )
+end
+function Settings.RegisterCanvasLayoutCategory( frame, name )
+	-- return a category structure
+	return ( {["GetID"] = function() return 234; end} )
+end
+function Settings.RegisterAddOnCategory(category)
+end
+
+----------
+-- C_Reputation
+----------
+C_Reputation = {}
+function C_Reputation.GetFactionDataByID( idIn )
+	for _, factionData in pairs( FactionInfo ) do
+		if factionData.factionID == idIn then
+			return factionData
+		end
+	end
+end
+function C_Reputation.GetFactionParagonInfo()
+end
+
+----------
+-- C_GossipInfo
+----------
+C_GossipInfo = {}
+function C_GossipInfo.GetFriendshipReputation( idIn )
+	return {["maxRep"]=0, ["text"]="", ["reversedColor"]=false, ["reaction"]="", ["standing"]=0, ["reactionThreshold"]=0, ["friendshipFactionID"]=0, ["textrue"]=0}
+end
+
+----------
+-- C_Item
+----------
+C_Item = {}
+C_Item.GetItemCount = GetItemCount
+
+----------
+-- Menu
+----------
+Menu = {}
+function Menu.ModifyMenu( ... )
+end
+
+----------
+-- C_Timer
+----------
+C_Timer = {}
+function C_Timer.After( seconds, callback )
+end
+
+----------
+-- C_QuestLog
+----------
+C_QuestLog = {}
+function C_QuestLog.IsQuestFlaggedCompleted( qnum )
+	return ( qnum % 2 == 0 and true or false )
+end
+function C_QuestLog.GetTitleForQuestID( qnum )
+	return "Test Quest"
+end
+function C_QuestLog.IsOnQuest( qnum )
+	return true
 end
 
 ----------
@@ -2241,22 +2446,19 @@ function ParseTOC( tocFile, useRequire )
 	local f = io.open( tocFile, "r" )
 	if f then
 		local tocContents = f:read( "*all" )
-		while true do
-			local linestart, lineend, line = string.find( tocContents, "(.-)\n" )
-			if linestart then
-				local lua, luaEnd, luaFile = string.find( line, "([_%a]*)%.lua" )
-				local xml, xmlEnd, xmlFile = string.find( line, "([_%a]*)%.xml" )
-				local hash, hashEnd, hashKey, hashValue = string.find( line, "## ([_%a]*): (.*)" )
-				if( hash ) then
-					addonData[ hashKey ] = hashValue
-				elseif( lua ) then
-					table.insert( tocFileTable, { "lua", luaFile } )
-				elseif( xml ) then
-					table.insert( tocFileTable, { "xml", xmlFile } )
+		for line in tocContents:gmatch("([^\n]*)\n?") do
+			if line ~= "" then
+				local luaFile = line:match("([_%a][_%w]*)%.lua")
+				local xmlFile = line:match("([_%a][_%w]*)%.xml")
+				local hashKey, hashValue = line:match("## ([_%a]*): (.*)")
+
+				if hashKey then
+					addonData[hashKey] = hashValue
+				elseif luaFile then
+					table.insert(tocFileTable, { "lua", luaFile })
+				elseif xmlFile then
+					table.insert(tocFileTable, { "xml", xmlFile })
 				end
-				tocContents = string.sub( tocContents, lineend+1 )
-			else
-				break
 			end
 		end
 		pathSeparator = string.sub(package.config, 1, 1)

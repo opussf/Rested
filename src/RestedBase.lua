@@ -33,8 +33,18 @@ function Rested.SetIgnore( param )
 		Rested.Print( "SetIgnore: "..param )
 		for realm in pairs( Rested_restedState ) do
 			for name, struct in pairs( Rested_restedState[realm] ) do
-				if( ( string.find( string.upper( realm ), param ) ) or
-						( string.find( string.upper( name ), param ) ) ) then
+				local match = false
+				if( string.find( string.upper( realm ), param ) or
+						string.find( string.upper( name ), param ) ) then
+					match = true
+				else
+					for _, key in pairs( Rested.filterKeys ) do
+						if( struct[key] and string.find( string.upper( struct[key] ), param ) ) then
+							match = true
+						end
+					end
+				end
+				if match then
 					struct.ignore = time() + Rested_options.ignoreTime
 					Rested.Print( string.format( "Ignoring %s:%s for %s", realm, name, SecondsToTime( Rested_options.ignoreTime ) ) )
 				end
@@ -448,4 +458,44 @@ function Rested.MaxCharacters( realm, name, charStruct )
 		return 1
 	end
 	return 0
+end
+
+-- Character age
+Rested.dropDownMenuTable["Age"] = "age"
+Rested.commandList["age"] = {["help"] = {"","Show character ages"}, ["func"] = function()
+		Rested.reportName = "Character Ages"
+		Rested.UIShowReport( Rested.CharacterAges )
+	end
+}
+function Rested.CharacterAges( realm, name, charStruct )
+	local rn = Rested.FormatName( realm, name )
+	local age = time() - (charStruct.initAt or time())
+	Rested.maxAge = math.max( age, (Rested.maxAge or 0) )
+	local years = math.floor( age / ( 86400 * 365.25 ) )
+	local yearStr = years > 0 and string.format( "%d Year%s ", years, years>1 and "s" or "" ) or ""
+	Rested.strOut = string.format( "%s%s :: %s", string.format( yearStr ), SecondsToTime( age - (years * ( 86400 * 365.25 ) ) ), rn )
+	table.insert( Rested.charList, {age / Rested.maxAge * 150, Rested.strOut} )
+	return 1
+end
+
+-- Character Birthday
+Rested.dropDownMenuTable["Birthdays"] = "bday"
+Rested.reportReverseSort["Birthdays"] = true  -- shortest time to go is sorted to the top (next birthday is on top)
+Rested.commandList["bday"] = {["help"] = {"","Show time until character's upcoming birthday"}, ["func"] = function()
+		Rested.reportName = "Birthdays"
+		Rested.UIShowReport( Rested.Birthdays )
+	end
+}
+function Rested.Birthdays( realm, name, charStruct )
+	local rn = Rested.FormatName( realm, name )
+	local age = time() - (charStruct.initAt or time())
+	local years = age / ( 86400 * 365.25 )
+	local nextBday = date( "*t", charStruct.initAt )
+	nextBday.year = nextBday.year + math.ceil(years)
+	nextBday = time( nextBday )
+	local toGo = nextBday - time()
+
+	Rested.strOut = string.format( "%s (%s) Age: %d :: %s", date("%x", nextBday), SecondsToTime(toGo), math.ceil( years ), rn )
+	table.insert( Rested.charList, {toGo / (86400 * 365) * 150, Rested.strOut} )
+	return 1
 end

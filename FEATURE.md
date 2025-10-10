@@ -4,6 +4,14 @@
 
 Include what report to show at startup, nag or other.
 
+## Birthday
+
+Finally a use for .initAt.  Show the characters' upcoming birthdays, and show their game age.
+
+## RaidBoss
+
+Show the raid bosses, and how many killed in each raid until raid reset.
+
 ## Default
 
 Allow the user to set a default report.
