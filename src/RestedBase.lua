@@ -155,6 +155,7 @@ function Rested.RestedReminderValues( realm, name, struct )
 			end
 		end
 	end
+	return returnStruct
 end
 Rested.ReminderCallback( Rested.RestedReminderValues )
 
