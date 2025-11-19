@@ -2043,7 +2043,7 @@ function test.test_birthday_thisWeek()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	local ts = next(Rested.reminders)
-	assertAlmostEquals( time()+30, next(Rested.reminders), nil )
+	assertAlmostEquals( time()+30, ts )
 end
 
 
