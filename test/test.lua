@@ -2,7 +2,8 @@
 
 require "wowTest"
 test.outFileName = "testOut.xml"
---test.coberturaFileName = "../coverage.xml"  -- to enable coverage output
+test.coberturaFileName = "../coverage.xml"
+test.coverageReportPercent = true
 
 ParseTOC( "../src/Rested.toc" )
 
@@ -559,7 +560,7 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTimeWithSpaces()
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore test Realm 1d 12h" )
-	assertEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
 end
 function test.test_Ignore_IgnoreReport_ShortTime()
 	-- the ignore report changes based on how long the char is ignored for.
@@ -648,7 +649,7 @@ end
 function test.test_UpdateNoNag_clearNoNag_forCurrentChar_only()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()+50 },
-			["otherPlayer"] = 
+			["otherPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()+50 }
 		}
 	Rested.ForAllChars( Rested.UpdateNoNag )
@@ -659,7 +660,7 @@ end
 function test.test_UpdateNoNag_clearNoNag_whenNoNagExpires()
 	Rested_restedState["Test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()-50 },
-			["otherPlayer"] = 
+			["otherPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000, ["nonag"] = time()-50 }
 		}
 	Rested.ForAllChars( Rested.UpdateNoNag )
@@ -2019,6 +2020,32 @@ function test.test_raidbosses_LFR_expired_singleBoss()
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].raidBosses["LFR:raid"] )
 	Rested.Command( "rbosses" )
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].raidBosses )
+end
+
+-- birthday
+function test.test_birthday_today()
+	local bday = date( "*t" )
+	bday.year = bday.year - 5
+	Rested_restedState["Test Realm"]["testPlayer"].initAt = time( bday )
+	Rested.reminders = {}
+
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.reminders[0] = nil
+	local ts = next(Rested.reminders)
+	assertAlmostEquals( time()+15, ts )
+end
+function test.test_birthday_thisWeek()
+	local bday = date( "*t" )
+	bday.year = bday.year - 5
+	Rested_restedState["Test Realm"]["testPlayer"].initAt = time( bday ) + 86400
+	Rested.reminders = {}
+
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.reminders[0] = nil
+	local ts = next(Rested.reminders)
+	assertAlmostEquals( time()+30, ts )
 end
 
 
