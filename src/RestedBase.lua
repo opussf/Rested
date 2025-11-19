@@ -507,48 +507,21 @@ Rested.birthdayReminders = {
 function Rested.BirthdayReminderValues( realm, name, struct )
 	local returnStruct = {}
 	local now = time()
+	local today = date( "*t", now )
+	local bday = date( "*t", struct.initAt )
 
+	if today.month == bday.month and today.day == bday.day and today.year ~= bday.year then
+		returnStruct[now+15] = returnStruct[now+15] or {}
+		table.insert( returnStruct[now+15], string.format( "Today is %s-%s's birthday", name, realm ) )
+	end
+	bday.year = today.year
+	bday = time( bday )
+	if (bday > now ) and ((bday - now) < 604800) then
+		returnStruct[now+30] = returnStruct[now+30] or {}
+		table.insert( returnStruct[now+30], string.format( "%s-%s has a birthday in the next week.", name, realm ) )
+	end
+
+	return returnStruct
 
 end
 Rested.ReminderCallback( Rested.BirthdayReminderValues )
-
--- Rested.reminderValues = {
--- 	[0] = COLOR_GREEN.."RESTED:"..COLOR_END.." %s:%s is now fully rested.",
--- 	[60] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 minute until %s:%s is fully rested.",
--- 	[300] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 minutes until %s:%s is fully rested.",
--- 	[600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 10 minutes until %s:%s is fully rested.",
--- 	[900] = COLOR_GREEN.."RESTED:"..COLOR_END.." 15 minutes until %s:%s is fully rested.",
--- 	[1800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 30 minutes until %s:%s is fully rested.",
--- 	[3600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 hour until %s:%s is fully rested.",
--- 	[7200] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 hours until %s:%s is fully rested.",
--- 	[14400] = COLOR_GREEN.."RESTED:"..COLOR_END.." 4 hours until %s:%s is fully rested.",
--- 	[21600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 6 hours until %s:%s is fully rested.",
--- 	[28800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 8 hours until %s:%s is fully rested.",
--- 	[43200] = COLOR_GREEN.."RESTED:"..COLOR_END.." 12 hours until %s:%s is fully rested.",
--- 	[57600] = COLOR_GREEN.."RESTED:"..COLOR_END.." 16 hours until %s:%s is fully rested.",
--- 	[86400] = COLOR_GREEN.."RESTED:"..COLOR_END.." 1 day until %s:%s is fully rested.",
--- 	[172800] = COLOR_GREEN.."RESTED:"..COLOR_END.." 2 days until %s:%s is fully rested.",
--- 	[432000] = COLOR_GREEN.."RESTED:"..COLOR_END.." 5 days until %s:%s is fully rested.",
--- }
--- Rested.restedRates = { [ true ] = 5/(8*3600), [ false ] = 5/(32*3600) }  -- 5% every 8 hours
--- function Rested.RestedReminderValues( realm, name, struct )
--- 	returnStruct = {}
--- 	if( struct.lvlNow and struct.lvlNow < Rested.maxLevel ) then
--- 		local now = time()
--- 		local timeSince = now - struct.updated
--- 		local restRate = Rested.restedRates[struct.isResting]
--- 		local restAdded = restRate * timeSince
--- 		local restedVal = struct.restedPC + restAdded
--- 		local restedAt = now + ( ( (Rested.maxRestedByRace[struct.race] or 150) - restedVal ) / restRate )
--- 		for diff, format in pairs( Rested.reminderValues ) do
--- 			reminderTime = tonumber( restedAt - diff )
--- 			if( reminderTime > now ) then
--- 				if( not returnStruct[reminderTime] ) then
--- 					returnStruct[reminderTime] = {}
--- 				end
--- 				table.insert( returnStruct[reminderTime], string.format( format, realm, name ) )
--- 			end
--- 		end
--- 	end
--- end
--- Rested.ReminderCallback( Rested.RestedReminderValues )
