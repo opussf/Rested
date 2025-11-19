@@ -2,7 +2,8 @@
 
 require "wowTest"
 test.outFileName = "testOut.xml"
---test.coberturaFileName = "../coverage.xml"  -- to enable coverage output
+test.coberturaFileName = "../coverage.xml"
+test.coverageReportPercent = true
 
 ParseTOC( "../src/Rested.toc" )
 
