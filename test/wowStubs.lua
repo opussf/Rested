@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  November 17 2025
--- Revision:  9.7.1
+-- Date    :  November 24 2025
+-- Revision:  9.7.1-1-ge9b1efd
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -494,6 +494,15 @@ Frame = {
 		["GetText"] = function(self) return( self.textValue ); end,
 		["SetFrameLevel"] = function(self) end,
 		["SetAlpha"] = function(self, value) end,
+		["GetNumLines"] = function(self)
+				if self.textValue == "" then return 0 end
+				local _, count = self.textValue:gsub("\n", "")
+				if self.textValue:sub(-1) == "\n" then
+					return count
+				else
+					return count + 1
+				end
+			end,
 }
 FrameGameTooltip = {
 		["HookScript"] = function( self, callback ) end,
@@ -613,8 +622,8 @@ function CreateFontString( name, ... )
 		FontString[k] = v
 	end
 	FontString.text = ""
-	FontString["SetText"] = function(self,text) self.text=text; end
-	FontString["GetText"] = function(self) return(self.text); end
+	FontString["SetText"] = function(self,text) self.textValue=text; end
+	FontString["GetText"] = function(self) return(self.textValue); end
 	FontString.name=name
 	--print("FontString made?")
 	return FontString
@@ -649,8 +658,8 @@ function CreateCheckButton( name, ... )
 	me[name.."Text"] = CreateFontString(name.."Text")
 	return me
 end
-EditBox = {
-		["SetText"] = function(self,text) self.text=text; end,
+FrameEditBox = {
+		["SetText"] = function(self,text) self.textValue=text; end,
 		["SetCursorPosition"] = function(self,pos) self.cursorPosition=pos; end,
 		["HighlightText"] = function(self,start,last) end,
 		["IsNumeric"] = function() end,
