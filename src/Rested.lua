@@ -156,7 +156,10 @@ Rested.commandList["default"] = { ["help"] = {"<reportCommand>","Set the default
 	["desc"] = {"Sets the default report."}
 }
 
-
+function Rested.FormatNumber( numIn )
+	-- reverse it, add a comma every 3 digits, reverse again, remove any leading comma
+	return tostring(numIn):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,","")
+end
 function Rested.FormatName( realm, name, useColor )
 	-- only use Color formatting if current player
 	-- unless useColor is passed as 'false'
