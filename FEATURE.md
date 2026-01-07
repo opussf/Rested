@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## Close
+
+Add a `/rested close` for scripting.
+
 ## RaidBoss
 
 
