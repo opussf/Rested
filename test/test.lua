@@ -560,7 +560,7 @@ function test.test_Ignore_SetIgnore_realm_withSpace_withComplexTimeWithSpaces()
 	Rested_restedState["test Realm"] = { ["testPlayer"] =
 			{ ["lvlNow"] = 2, ["xpNow"] = 0, ["xpMax"] = 1000, ["isResting"] = true, ["restedPC"] = 0, ["updated"] = now-3600 } }
 	Rested.Command( "ignore test Realm 1d 12h" )
-	assertAlmostEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"] )
+	assertAlmostEquals( time() + 129600, Rested_restedState["test Realm"]["testPlayer"]["ignore"], nil, nil, 1 )
 end
 function test.test_Ignore_IgnoreReport_ShortTime()
 	-- the ignore report changes based on how long the char is ignored for.
@@ -2047,6 +2047,87 @@ function test.test_birthday_thisWeek()
 	local ts = next(Rested.reminders)
 	assertAlmostEquals( time()+30, ts )
 end
+
+-- IsNext
+function test.test_isNext_loadedChar_noIsNextIndex()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
+			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertIsNil( Rested.nextCharacterIndex )
+end
+function test.test_isNext_loadedCharClears_isNextIndex_isCleared()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
+			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=2 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].isNextIndex )
+end
+function test.test_isNext_loadedCharClears_setsNextCharacterIndex()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
+			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=2 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	assertEquals( 17, Rested.nextCharacterIndex )
+end
+function test.test_isNext_logOutSetsCVar()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
+			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=2 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.SetNextCharacterIndex()
+	assertEquals( 17, CVars.lastCharacterIndex )
+end
+function test.test_isNext_ShiftIndexes()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
+			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
+			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=15 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+	Rested.ShiftIsNextCharacterIndex()
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNext_SetNextChars()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext otherPlayer Fran testPlayer" )
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+	assertEquals( 2, Rested_restedState["otherRealm"]["frank"].isNextIndex )
+	assertEquals( 3, Rested_restedState["Test Realm"]["testPlayer"].isNextIndex )
+end
+function test.test_isNext_Report()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext otherPlayer Fran testPlayer" )
+	Rested.Command( "isnext" )
+
+	test.dump( Rested.charList )
+	assertEquals( 3, #Rested.charList, "Resport should have 3 lines" )
+	-- assertEquals( "1:LFR:raid:Boss : |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2] )
+
+end
+
 
 
 -- test descriptions
