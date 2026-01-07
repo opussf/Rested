@@ -50,11 +50,19 @@ function Rested.SetNextCharacters( param )
 		local currentIndex= Rested.ShiftIsNextCharacterIndex() or 0
 		for searchName in string.gmatch( param, "([^ ]+)" ) do
 			searchName = string.lower(searchName)
+			local toRemove = ( string.sub( searchName, 1, 1 ) == "-" )
+			if toRemove then
+				searchName = string.sub( searchName, 2 )
+			end
 			for r, _ in pairs( Rested_restedState ) do
 				for n, cs in pairs( Rested_restedState[r] ) do
-					if string.find(string.lower(n), searchName) then
-						currentIndex = currentIndex + 1
-						cs.isNextIndex = currentIndex
+					if string.find( string.lower(n), searchName ) then
+						if toRemove then
+							cs.isNextIndex = nil
+						else
+							currentIndex = currentIndex + 1
+							cs.isNextIndex = currentIndex
+						end
 					end
 				end
 			end

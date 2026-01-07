@@ -2122,12 +2122,22 @@ function test.test_isNext_Report()
 	Rested.Command( "isnext otherPlayer Fran testPlayer" )
 	Rested.Command( "isnext" )
 
-	test.dump( Rested.charList )
 	assertEquals( 3, #Rested.charList, "Resport should have 3 lines" )
 	assertEquals( "1 :: otherPlayer:otherRealm", Rested.charList[1][2] )
 	assertEquals( "2 :: frank:otherRealm (?)", Rested.charList[2][2] )
 end
+function test.test_isNext_RemoveToonFromList()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { initAt=time() }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 
+	Rested.Command( "isnext otherPlayer Fran testPlayer" )
+	Rested.Command( "isnext -Fran" )
+
+	assertIsNil( Rested_restedState["otherRealm"]["frank"].isNextIndex )
+end
 
 
 -- test descriptions
