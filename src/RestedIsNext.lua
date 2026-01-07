@@ -90,8 +90,8 @@ end
 
 --[[
 
-/run local ci=1;for r,rs in pairs( Rested_restedState ) do for n,cs in pairs(rs) do cs.characterIndex=ci;ci=ci+1;end;end
+/run local ci=2;for r,rs in pairs( Rested_restedState ) do for n,cs in pairs(rs) do cs.characterIndex=ci;ci=ci+1;end;end
 
-
+/rested isnext ^a. ^b. ^c. ^d. ^e. ^f. ^g. ^h. ^i. ^j. ^k. ^l. ^m. ^n. ^o. ^p. ^q. ^r. ^s. ^t. ^u. ^v. ^w. ^x. ^y. ^z.
 
 ]]
