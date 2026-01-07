@@ -1,5 +1,9 @@
 # Feature document for Rested
 
+## Close
+
+Add a `/rested close` for scripting.
+
 ## isNext
 
 I found that I wanted a way to visit 5 toons.
@@ -15,7 +19,6 @@ If it knows where the character is in the list, it will set the character choice
 
 This should give a semi alphabetical character list to visit next:
 `/rested isnext ^a. ^b. ^c. ^d. ^e. ^f. ^g. ^h. ^i. ^j. ^k. ^l. ^m. ^n. ^o. ^p. ^q. ^r. ^s. ^t. ^u. ^v. ^w. ^x. ^y. ^z.`
-
 
 ## RaidBoss
 
