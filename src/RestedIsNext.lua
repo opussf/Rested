@@ -71,17 +71,17 @@ Rested.EventCallback( "PLAYER_LOGOUT", Rested.SetNextCharacterIndex )
 
 Rested.dropDownMenuTable["IsNext"] = "isnext"
 Rested.commandList["isnext"] = {
-	["help"] = {"comma seperated character list", "Add the next characters to visit."},
+	["help"] = {"space seperated character list", "Add the next characters to visit."},
 	["func"] = Rested.SetNextCharacters,
 }
 
 function Rested.NextCharsReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
 	if charStruct.isNextIndex then
-		Rested.strOut = string.format( "%s :: %s (%s)",
+		Rested.strOut = string.format( "%s :: %s%s",
 			charStruct.isNextIndex,
 			rn,
-			(charStruct.characterIndex or "?") )
+			(charStruct.characterIndex and "" or " (?)") )
 		table.insert( Rested.charList, { 150 - charStruct.isNextIndex, Rested.strOut } )
 		return 1
 	end
