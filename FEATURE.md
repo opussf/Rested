@@ -13,6 +13,10 @@ Remove characters with:  /rested isnext -match -match .....
 
 If it knows where the character is in the list, it will set the character choice screen to that character after logout.
 
+This should give a semi alphabetical character list to visit next:
+`/rested isnext ^a. ^b. ^c. ^d. ^e. ^f. ^g. ^h. ^i. ^j. ^k. ^l. ^m. ^n. ^o. ^p. ^q. ^r. ^s. ^t. ^u. ^v. ^w. ^x. ^y. ^z.`
+
+
 ## RaidBoss
 
 
