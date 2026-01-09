@@ -62,7 +62,7 @@ function Rested.SetNextCharacters( param )
 						match = true
 					else
 						for _, key in pairs( Rested.filterKeys ) do
-							if( cs[key] and string.find( string.upper( cs[key] ), searchName ) ) then
+							if( cs[key] and string.find( string.lower( cs[key] ), searchName ) ) then
 								match = true
 							end
 						end
