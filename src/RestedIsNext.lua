@@ -2,11 +2,20 @@
 RESTED_SLUG, Rested  = ...
 
 function Rested.GetCharacterIndex()
-	Rested_restedState[Rested.realm][Rested.name].characterIndex = GetCVar("lastCharacterIndex")
+	local characterIndex = GetCVar("lastCharacterIndex")
+
+	for r, _ in pairs( Rested_restedState ) do
+		for n, cs in pairs( Rested_restedState[r] ) do
+			if cs.characterIndex == characterIndex then
+				cs.characterIndex = nil
+			end
+		end
+	end
+
+	Rested_restedState[Rested.realm][Rested.name].characterIndex = characterIndex
 	Rested_restedState[Rested.realm][Rested.name].isNextIndex = nil
 	Rested.ShiftIsNextCharacterIndex()
 	_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
-
 end
 function Rested.SetNextCharacterIndex()
 	if Rested.nextCharacterIndex then
