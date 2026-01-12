@@ -1,6 +1,10 @@
 -- RestedIsNext.lua
 RESTED_SLUG, Rested  = ...
 
+function Rested.RegisterIsNext()
+	SLASH_ISNEXT1 = "/isnext"
+	SlashCmdList["ISNEXT"] = Rested.SetNextCharacters
+end
 function Rested.GetCharacterIndex()
 	local characterIndex = GetCVar("lastCharacterIndex")
 
@@ -94,6 +98,7 @@ function Rested.SetNextCharacters( param )
 end
 
 Rested.InitCallback( Rested.GetCharacterIndex )
+Rested.InitCallback( Rested.RegisterIsNext)
 Rested.EventCallback( "PLAYER_LOGOUT", Rested.SetNextCharacterIndex )
 
 Rested.dropDownMenuTable["IsNext"] = "isnext"
