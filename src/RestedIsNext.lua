@@ -106,6 +106,7 @@ Rested.commandList["isnext"] = {
 	["help"] = {"space seperated character list", "Add the next characters to visit."},
 	["func"] = Rested.SetNextCharacters,
 }
+table.insert( Rested.CSVFields, {"CharacterIndex", "characterIndex"} )
 
 function Rested.NextCharsReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
