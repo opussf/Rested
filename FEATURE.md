@@ -8,6 +8,26 @@ Include what report to show at startup, nag or other.
 
 Finally a use for .initAt.  Show the characters' upcoming birthdays, and show their game age.
 
+## Close
+
+Add a `/rested close` for scripting.
+
+## isNext
+
+I found that I wanted a way to visit 5 toons.
+Either to get items from them for crafting, or to visit stale toons, or dark moon faire, garrison cache, or what ever.
+
+Finding the right CVar for this, makes it something that makes sense, and not just another report to check.
+It might not choose the right character all the time, but it should work if you have a stable collection of toons.
+
+Add characters with:  /rested isnext match match match .....
+Remove characters with:  /rested isnext -match -match .....
+
+If it knows where the character is in the list, it will set the character choice screen to that character after logout.
+
+This should give a semi alphabetical character list to visit next:
+`/rested isnext ^a. ^b. ^c. ^d. ^e. ^f. ^g. ^h. ^i. ^j. ^k. ^l. ^m. ^n. ^o. ^p. ^q. ^r. ^s. ^t. ^u. ^v. ^w. ^x. ^y. ^z.`
+
 ## RaidBoss
 
 Show the raid bosses, and how many killed in each raid until raid reset.

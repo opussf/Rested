@@ -35,3 +35,6 @@ RestedDMF.lua
 RestedGarrisonCache.lua
 
 RestedRaid.lua
+
+# Experimental
+RestedIsNext.lua
