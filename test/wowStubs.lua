@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  January 01 2026
--- Revision:  9.7.1-7-g327449e
+-- Date    :  January 16 2026
+-- Revision:  9.7.1-8-ge2587c6
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -1654,6 +1654,9 @@ function SetAchievementComparisonUnit( lookupStr )
 end
 function ClearAchievementComparisonUnit()
 	-- mostly does nothing...
+end
+function SetItemButtonTexture( frame, iconID )
+	frame.iconID = iconID
 end
 function SetRaidTarget( target, iconID )
 	-- sets the raid icon ID on target
