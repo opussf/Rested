@@ -2057,6 +2057,8 @@ function test.test_isNext_loadedChar_noIsNextIndex()
 	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	assertIsNil( Rested.nextCharacterIndex )
 end
 function test.test_isNext_loadedCharClears_isNextIndex_isCleared()
@@ -2068,6 +2070,8 @@ function test.test_isNext_loadedCharClears_isNextIndex_isCleared()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].isNextIndex )
 end
 function test.test_isNext_loadedCharClears_setsNextCharacterIndex()
@@ -2079,6 +2083,8 @@ function test.test_isNext_loadedCharClears_setsNextCharacterIndex()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	assertEquals( 17, Rested.nextCharacterIndex )
 end
 function test.test_isNext_logOutSetsCVar()
@@ -2090,6 +2096,7 @@ function test.test_isNext_logOutSetsCVar()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.GetCharacterIndex()
 	Rested.SetNextCharacterIndex()
 	assertEquals( 17, CVars.lastCharacterIndex )
 end
@@ -2102,6 +2109,8 @@ function test.test_isNext_ShiftIndexes()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	Rested.ShiftIsNextCharacterIndex()
 	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
