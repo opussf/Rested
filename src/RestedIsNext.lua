@@ -1,14 +1,33 @@
 -- RestedIsNext.lua
 RESTED_SLUG, Rested  = ...
 
+function Rested.RegisterIsNext()
+	SLASH_ISNEXT1 = "/isnext"
+	SlashCmdList["ISNEXT"] = Rested.SetNextCharacters
+end
 function Rested.GetCharacterIndex()
-	Rested_restedState[Rested.realm][Rested.name].characterIndex = GetCVar("lastCharacterIndex")
+	if Rested_misc.prevChar and Rested_misc.prevIndex and Rested_misc.prevChar == Rested.realm.."-"..Rested.name then
+		SetCVar("lastCharacterIndex", Rested_misc.prevIndex)  -- Reset the index.
+	end
+
+	local characterIndex = GetCVar("lastCharacterIndex")
+
+	for r, _ in pairs( Rested_restedState ) do
+		for n, cs in pairs( Rested_restedState[r] ) do
+			if cs.characterIndex == characterIndex then
+				cs.characterIndex = nil  -- Always clear current, then set.
+			end
+		end
+	end
+
+	Rested_restedState[Rested.realm][Rested.name].characterIndex = characterIndex
 	Rested_restedState[Rested.realm][Rested.name].isNextIndex = nil
 	Rested.ShiftIsNextCharacterIndex()
 	_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
-
 end
 function Rested.SetNextCharacterIndex()
+	Rested_misc.prevChar = Rested.realm.."-"..Rested.name
+	Rested_misc.prevIndex = Rested_restedState[Rested.realm][Rested.name].characterIndex
 	if Rested.nextCharacterIndex then
 		SetCVar("lastCharacterIndex", Rested.nextCharacterIndex)
 	end
@@ -84,14 +103,16 @@ function Rested.SetNextCharacters( param )
 	Rested.UIShowReport( Rested.NextCharsReport, true )
 end
 
-Rested.InitCallback( Rested.GetCharacterIndex )
-Rested.EventCallback( "PLAYER_LOGOUT", Rested.SetNextCharacterIndex )
+Rested.InitCallback(Rested.RegisterIsNext)
+Rested.EventCallback("PLAYER_ENTERING_WORLD", function() C_Timer.After(5, Rested.GetCharacterIndex) end)
+Rested.EventCallback("PLAYER_LOGOUT", Rested.SetNextCharacterIndex)
 
 Rested.dropDownMenuTable["IsNext"] = "isnext"
 Rested.commandList["isnext"] = {
 	["help"] = {"space seperated character list", "Add the next characters to visit."},
 	["func"] = Rested.SetNextCharacters,
 }
+table.insert( Rested.CSVFields, {"CharacterIndex", "characterIndex"} )
 
 function Rested.NextCharsReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )

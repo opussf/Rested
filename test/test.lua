@@ -2050,15 +2050,19 @@ end
 
 -- IsNext
 function test.test_isNext_loadedChar_noIsNextIndex()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
 			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17 } }
 	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	assertIsNil( Rested.nextCharacterIndex )
 end
 function test.test_isNext_loadedCharClears_isNextIndex_isCleared()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
 			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=2 } }
@@ -2066,9 +2070,12 @@ function test.test_isNext_loadedCharClears_isNextIndex_isCleared()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	assertIsNil( Rested_restedState["Test Realm"]["testPlayer"].isNextIndex )
 end
 function test.test_isNext_loadedCharClears_setsNextCharacterIndex()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
 			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=2 } }
@@ -2076,9 +2083,12 @@ function test.test_isNext_loadedCharClears_setsNextCharacterIndex()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	assertEquals( 17, Rested.nextCharacterIndex )
 end
 function test.test_isNext_logOutSetsCVar()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
 			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=2 } }
@@ -2086,10 +2096,12 @@ function test.test_isNext_logOutSetsCVar()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.GetCharacterIndex()
 	Rested.SetNextCharacterIndex()
 	assertEquals( 17, CVars.lastCharacterIndex )
 end
 function test.test_isNext_ShiftIndexes()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] =
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-3600,
 			["garrisonCache"] = time() - 1164100, ["garrisonQuantity"] = 10000, characterIndex=17, isNextIndex=15 } }
@@ -2097,10 +2109,13 @@ function test.test_isNext_ShiftIndexes()
 	Rested_restedState["Test Realm"]["testPlayer"].isNextIndex=1
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
+	Rested.PLAYER_ENTERING_WORLD()
+	Rested.GetCharacterIndex()
 	Rested.ShiftIsNextCharacterIndex()
 	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 function test.test_isNext_SetNextChars()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
 	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
 	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
@@ -2113,6 +2128,7 @@ function test.test_isNext_SetNextChars()
 	assertEquals( 3, Rested_restedState["Test Realm"]["testPlayer"].isNextIndex )
 end
 function test.test_isNext_Report()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
 	Rested_restedState["otherRealm"]["frank"] = { initAt=time() }
 	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
@@ -2127,6 +2143,7 @@ function test.test_isNext_Report()
 	assertEquals( "2 :: frank:otherRealm (?)", Rested.charList[2][2] )
 end
 function test.test_isNext_RemoveToonFromList()
+	CVars.lastCharacterIndex = 42
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
 	Rested_restedState["otherRealm"]["frank"] = { initAt=time() }
 	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
