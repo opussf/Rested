@@ -35,3 +35,8 @@ end
 function Rested.OptionsPanel_CheckButton_OnClick( self, option )
 	Rested_options[option] = self:GetChecked()
 end
+
+Rested.commandList["options"] = {
+		["help"] = {"","Open the options panel"},
+		["func"] = function() Settings.OpenToCategory( RestedOptionsFrame.category:GetID() ) end,
+}
