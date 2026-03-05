@@ -67,8 +67,9 @@ function EscapeStrXML( strIn )
 	strIn = string.gsub( strIn, "\"", "&quot;" )
 	return strIn
 end
-function EscapeStrNoSpaces( strIn)
+function EscapeStrXMLKey( strIn)
 	strIn = string.gsub( strIn, " ", "_" )
+	strIn = string.gsub( strIn, "'", "_" )
 	return strIn
 end
 function MakeCharTable( realm, name, c )
@@ -111,7 +112,7 @@ function ExportXML()
 				charStruct = MakeCharTable( realm, name, c )
 				charOut = {}
 				for k,v in sorted_pairs(charStruct) do
-					table.insert(charOut, string.format('%s="%s"', EscapeStrNoSpaces(k), EscapeStrXML(v)))
+					table.insert(charOut, string.format('%s="%s"', EscapeStrXMLKey(k), EscapeStrXML(v)))
 				end
 				strOut = strOut .. '\t<c '..table.concat( charOut, " " )..'/>\n'
 			end
