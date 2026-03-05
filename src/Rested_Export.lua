@@ -68,8 +68,7 @@ function EscapeStrXML( strIn )
 	return strIn
 end
 function EscapeStrXMLKey( strIn)
-	strIn = string.gsub( strIn, " ", "_" )
-	strIn = string.gsub( strIn, "'", "_" )
+	strIn = string.gsub( strIn, "[' :]", "_" )
 	return strIn
 end
 function MakeCharTable( realm, name, c )
