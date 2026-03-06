@@ -50,7 +50,7 @@
 			<EditBox name="$parent_NagTimeOut" inherits="InputBoxTemplate" autoFocus="false">
 				<Size x="100" y="16"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent_AutoShowHeader" relativePoint="RIGHT" x="10" y="-16" />
+					<Anchor point="LEFT" relativeTo="$parent_AutoShowHeader" relativePoint="RIGHT" x="10" y="0" />
 				</Anchors>
 				<Scripts>
 					<!-- <OnShow>INEED.OptionsPanel_EditBox_OnLoad( self, "emote" )</OnShow>
@@ -58,6 +58,14 @@
 				</Scripts>
 			</EditBox>
 			<CheckButton name="$parent_IncludeLeveling" inherits="RESTEDOptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_ShowNagReport" relativePoint="BOTTOM" x="0" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>self.tooltip = "Include Leveing toons";</OnLoad>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnLoad(self,"nagIncludeLeveling","Include Leveing toons");</OnShow>
+					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagIncludeLeveling")</OnClick>
+				</Scripts>
 			</CheckButton>
 
 		</Frames>
