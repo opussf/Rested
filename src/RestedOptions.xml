@@ -43,7 +43,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Enable auto display of Nag Report";</OnLoad>
-					<OnShow>Rested.OptionsPanel_CheckButton_OnLoad(self,"nagEnabled","Enable");</OnShow>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagEnabled","Enable");</OnShow>
 					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagEnabled")</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -62,12 +62,38 @@
 					<Anchor point="TOP" relativeTo="$parent_ShowNagReport" relativePoint="BOTTOM" x="0" y="0" />
 				</Anchors>
 				<Scripts>
-					<OnLoad>self.tooltip = "Include Leveing toons";</OnLoad>
-					<OnShow>Rested.OptionsPanel_CheckButton_OnLoad(self,"nagIncludeLeveling","Include Leveing toons");</OnShow>
+					<OnLoad>self.tooltip = "Include Leveing Toons";</OnLoad>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeLeveling","Include Leveing toons");</OnShow>
 					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagIncludeLeveling")</OnClick>
 				</Scripts>
 			</CheckButton>
-
+			<CheckButton name="$parent_IncludeToEndOfLevel" inherits="UIRadioButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>self.tooltip="Include if rested to end of level";</OnLoad>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include if rested to end of level")</OnShow>
+					<OnClick>RestedOptionsFrame_IncludeOverPercent:SetChecked(false)</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_IncludeOverPercent" inherits="UIRadioButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_IncludeToEndOfLevel" relativePoint="BOTTOM" x="0" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnClick>RestedOptionsFrame_IncludeToEndOfLevel:SetChecked(false)</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_IncludeMaxLevel" inherits="RESTEDOptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOM" x="0" y="-32"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>self.tooltip="Include Max Level Toons"</OnLoad>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include if Max Level")</OnShow>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 		<Scripts>
 			<OnLoad>

@@ -28,7 +28,7 @@ end
 
 
 
-function Rested.OptionsPanel_CheckButton_OnLoad( self, option, text )
+function Rested.OptionsPanel_CheckButton_OnShow( self, option, text )
 	getglobal(self:GetName().."Text"):SetText(text);
 	self:SetChecked(Rested_options[option]);
 end
