@@ -82,9 +82,17 @@
 					<Anchor point="TOP" relativeTo="$parent_IncludeToEndOfLevel" relativePoint="BOTTOM" x="0" y="0" />
 				</Anchors>
 				<Scripts>
+					<OnLoad>self.tooltip="Include if over";</OnLoad>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeOverPercent","Include if over")</OnShow>
 					<OnClick>RestedOptionsFrame_IncludeToEndOfLevel:SetChecked(false)</OnClick>
 				</Scripts>
 			</CheckButton>
+			<EditBox name="$parent_IncludeOverPercentValue" inherits="InputBoxTemplate" autoFocus="false">
+				<Size x="100" y="16"/>
+				<Anchors>
+					<Anchor/>
+				</Anchors>
+			</EditBox>
 			<CheckButton name="$parent_IncludeMaxLevel" inherits="RESTEDOptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOM" x="0" y="-32"/>
