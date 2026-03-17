@@ -10,6 +10,13 @@ Type '/rested' to see a list of alts and their rested status.
 5w = 5 weeks
 1h52m = 1 hour and 52 minutes.
 
+Time units are:
+s = seconds
+m = minutes
+h = hours
+d = days
+w = weeks
+
 
 Commands:
 age                         -> Show character ages
@@ -68,10 +75,20 @@ Time Since visiting character >= staleStart -->  show in Stale report.
 
 A character can be 'ignored'.
 This is a way to not see a toon for a while.
-
+The toon will only appear in the ignore report, until the ignore time expires, or they are visited.
 
 
 Change Log:
+3.27.3  - Updated: Readme.txt has better description of commands.
+3.27.2  - Fixed: IsNext is more stable
+3.27.1  - Updated: 12.0.1
+        - Fixed: IsNext issues
+3.27    - Updated: 12.0.0
+        - Removed: Caches
+        - Added: `/isnext` command as shortcut
+        - Fixed: issecretvalue checks for detecting mounts
+3.26.1  - Fixed: InNext search
+        - Added: "No guild" in guild report for chars not in a guild.
 3.26    - Added: IsNext. Create a list of characters to visit next.
 3.25.2  - Updated: 11.2.7 version
 3.25.1  - Updated: 11.2.5 version
