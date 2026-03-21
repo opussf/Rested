@@ -46,7 +46,8 @@ function test.test_printHelp()
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
 	Rested.ForAllChars( Rested.HelpReport )
-	-- test.showCharList()
+	Rested.Command("help")
+	-- test.dump( chatLog )
 end
 -- VARIABLES_LOADED Inits data
 function test.test_maxLevel_set()
@@ -2156,7 +2157,6 @@ function test.test_isNext_RemoveToonFromList()
 	assertIsNil( Rested_restedState["otherRealm"]["frank"].isNextIndex )
 end
 
-
 -- test descriptions
 -------------
 -- commandDescs = {
@@ -2177,7 +2177,6 @@ end
 --		assertEquals( commandDescs[k], chatLog[3].msg, "Desc for "..k.." is missing." )
 --	end
 --end
-
 
 
 
