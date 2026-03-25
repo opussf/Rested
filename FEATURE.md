@@ -1,5 +1,30 @@
 # Feature document for Rested
 
+## isNext Macro
+
+Add in macros for isNext.
+Macros start with : and take some parameters
+Macros can be added for each report, and included in that file.
+Last perameter is optional, and is a + to the index.
+
+For the example below, it mine look like:
+`/rested isnext :alpha`
+
+My current macros would be something like:
+`:cooldowns 100`  - Queue anyone with a prof cooldown, add 100 to their index.
+`:gcache 300`  - Queue anyone with less than full resources, and less than 24 hours to get the cache (before it is full), add 300 to the index.
+`:farm 7 500`  -
+
+Other macros could be:
+`:conc 750 700`  - Queue anyone with more than 750 conc, starting at 700
+`:rand` - Choose a random character
+
+Macro maintinance:
+`:macros`
+
+Could also allow creating personal macros.
+
+
 ## Close
 
 Add a `/rested close` for scripting.
