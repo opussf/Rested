@@ -69,29 +69,33 @@ function Rested.SetNextCharacters( param )
 		local currentIndex= Rested.ShiftIsNextCharacterIndex() or 0
 		for searchName in string.gmatch( param, "([^ ]+)" ) do
 			searchName = string.lower(searchName)
-			local toRemove = ( string.sub( searchName, 1, 1 ) == "-" )
-			if toRemove then
-				searchName = string.sub( searchName, 2 )
-			end
-			for r, _ in pairs( Rested_restedState ) do
-				for n, cs in pairs( Rested_restedState[r] ) do
-					local match = false
-					if( string.find( string.lower(r), searchName ) or
-							string.find( string.lower(n), searchName ) ) then
-						match = true
-					else
-						for _, key in pairs( Rested.filterKeys ) do
-							if( cs[key] and string.find( string.lower( cs[key] ), searchName ) ) then
-								match = true
+			if Rested.isNextMacros[searchName] and Rested.isNextMacros[searchName].func then
+				Rested.isNextMacros[searchName].func(param)
+			else
+				local toRemove = ( string.sub( searchName, 1, 1 ) == "-" )
+				if toRemove then
+					searchName = string.sub( searchName, 2 )
+				end
+				for r, _ in pairs( Rested_restedState ) do
+					for n, cs in pairs( Rested_restedState[r] ) do
+						local match = false
+						if( string.find( string.lower(r), searchName ) or
+								string.find( string.lower(n), searchName ) ) then
+							match = true
+						else
+							for _, key in pairs( Rested.filterKeys ) do
+								if( cs[key] and string.find( string.lower( cs[key] ), searchName ) ) then
+									match = true
+								end
 							end
 						end
-					end
-					if match then
-						if toRemove then
-							cs.isNextIndex = nil
-						else
-							currentIndex = currentIndex + 1
-							cs.isNextIndex = currentIndex
+						if match then
+							if toRemove then
+								cs.isNextIndex = nil
+							else
+								currentIndex = currentIndex + 1
+								cs.isNextIndex = currentIndex
+							end
 						end
 					end
 				end
@@ -125,3 +129,36 @@ function Rested.NextCharsReport( realm, name, charStruct )
 		return 1
 	end
 end
+
+-- macros
+function Rested.isNextAlpha(param)
+	local offset = string.match(param, " (%d+)") or 0
+	local alpha = {}
+	for realm,chars in pairs(Rested_restedState) do
+		for name, charStruct in pairs(chars) do
+			alpha[#alpha + 1] = name..":"..realm
+		end
+	end
+	table.sort(alpha)
+	for i, nameRealm in ipairs(alpha) do
+		local name, realm = string.match(nameRealm, "^(.*):(.*)$")
+		Rested_restedState[realm][name].isNextIndex = i + offset
+	end
+end
+
+
+
+Rested.isNextMacros = {
+	[":alpha"] = {
+		["help"] = {"offset", "Queue all toons alphabetically."},
+		["func"] = Rested.isNextAlpha,
+	},
+	[":rand"] = {
+		["help"] = {"offset", "Queue a random character."},
+		["func"] = Rested.isNextRandom,
+	},
+	[":macros"] = {
+		["help"] = {},
+		["func"] = nil,
+	},
+}

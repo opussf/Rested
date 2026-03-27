@@ -2157,6 +2157,72 @@ function test.test_isNext_RemoveToonFromList()
 	assertIsNil( Rested_restedState["otherRealm"]["frank"].isNextIndex )
 end
 
+------ isnext macros
+function test.test_isNextMacros_aplha()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha" )
+
+	assertEquals(1, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(2, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_aplha_missingCharIndex()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { } }
+	Rested_restedState["otherRealm"]["frank"] = {  }
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha" )
+
+	assertEquals(1, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(2, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_aplha_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha 100" )
+
+	assertEquals(101, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(102, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_aplha_missingCharIndex_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha 100" )
+
+	assertEquals(101, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(102, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_random()
+
+
+	Rested.Command("isnext :rand")
+	test.dump(Rested_restedState)
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex or 0)
+		end
+	end
+	assertEquals(1, numQueued)
+end
+function test.test_isNextMacros_random_withOffset()
+	fail("Write me")
+end
+
 -- test descriptions
 -------------
 -- commandDescs = {
