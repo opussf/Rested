@@ -134,7 +134,7 @@ end
 function Rested.isNextAlpha(param)
 	local offset = string.match(param, " (%d+)") or 0
 	local alpha = {}
-	for realm,chars in pairs(Rested_restedState) do
+	for realm, chars in pairs(Rested_restedState) do
 		for name, charStruct in pairs(chars) do
 			alpha[#alpha + 1] = name..":"..realm
 		end
@@ -145,7 +145,42 @@ function Rested.isNextAlpha(param)
 		Rested_restedState[realm][name].isNextIndex = i + offset
 	end
 end
+function Rested.isNextRandom(param)
+	local offset = string.match(param, " (%d+)") or 0
+	local r = {}
+	for realm, chars in pairs(Rested_restedState) do
+		for name, charStruct in pairs(chars) do
+			r[#r + 1] = charStruct
+		end
+	end
+	for lcv = 1, #r do
+		rc = r[random(1, #r)]
+		if not rc.isNextIndex then
+			rc.isNextIndex = 1 + offset
+			break
+		end
+	end
+end
+function Rested.isNextFarm(param)
+	-- print("Param:", param)
+	local mod, offset = string.match(param, "(%d+)%s*(%d*)")
+	mod, offset = tonumber(mod) or 7, tonumber(offset) or 0
+	-- print( "mod:", mod )
+	-- print( "offset:", offset )
 
+	Rested.ForAllChars(function(r,n,c)
+		-- print(r,n,c.characterIndex, c.characterIndex%mod, date("%w")%mod)
+		if not c.isNextIndex
+				and c.characterIndex
+				and c.farm
+				and c.farm.lastHarvest
+				and c.farm.lastHarvest<time()-86400
+				and c.characterIndex%mod==date("%w")%mod
+				and n~=Rested.name then
+			c.isNextIndex = c.characterIndex+offset
+		end
+	end, true)
+end
 
 
 Rested.isNextMacros = {
@@ -156,6 +191,10 @@ Rested.isNextMacros = {
 	[":rand"] = {
 		["help"] = {"offset", "Queue a random character."},
 		["func"] = Rested.isNextRandom,
+	},
+	[":farm"] = {
+		["help"] = {"day offset", "Queue for pandarian farm."},
+		["func"] = Rested.isNextFarm,
 	},
 	[":macros"] = {
 		["help"] = {},

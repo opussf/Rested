@@ -2206,10 +2206,13 @@ function test.test_isNextMacros_aplha_missingCharIndex_withOffset()
 	assertEquals(102, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
 end
 function test.test_isNextMacros_random()
-
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
 
 	Rested.Command("isnext :rand")
-	test.dump(Rested_restedState)
 
 	local numQueued = 0
 	for rn, r in pairs(Rested_restedState) do
@@ -2220,7 +2223,133 @@ function test.test_isNextMacros_random()
 	assertEquals(1, numQueued)
 end
 function test.test_isNextMacros_random_withOffset()
-	fail("Write me")
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :rand 150")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex or 0)
+		end
+	end
+	assertEquals(151, numQueued)
+end
+function test.test_isNextMacros_farm()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm")
+
+	local sumQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			sumQueued = sumQueued + (c.isNextIndex or 0)
+		end
+	end
+	assertEquals(tonumber(date("%w")), sumQueued)
+end
+function test.test_isNextMacros_farm_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm 7 500")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex and 1 or 0)
+		end
+	end
+	assertEquals(2, numQueued)
+end
+function test.test_isNextMacros_farm_2()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm 2")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex and 1 or 0)
+		end
+	end
+	assertEquals(3, numQueued)
+end
+function test.test_isNextMacros_farm_2_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm 2 600")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex and 1 or 0)
+		end
+	end
+	assertEquals(3, numQueued)
 end
 
 -- test descriptions
