@@ -71,6 +71,7 @@ function Rested.SetNextCharacters( param )
 			searchName = string.lower(searchName)
 			if Rested.isNextMacros[searchName] and Rested.isNextMacros[searchName].func then
 				Rested.isNextMacros[searchName].func(param)
+				break  -- @TODO:  Remove this
 			else
 				local toRemove = ( string.sub( searchName, 1, 1 ) == "-" )
 				if toRemove then
@@ -169,7 +170,8 @@ function Rested.isNextFarm(param)
 	-- print( "offset:", offset )
 
 	Rested.ForAllChars(function(r,n,c)
-		-- print(r,n,c.characterIndex, c.characterIndex%mod, date("%w")%mod)
+		-- print(r,n,c.characterIndex, c.characterIndex%mod, date("%w")%mod, c.farm)
+		-- print("not c.isNextIndex", not c.isNextIndex)
 		if not c.isNextIndex
 				and c.characterIndex
 				and c.farm
