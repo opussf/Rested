@@ -200,7 +200,7 @@ function Rested.isNextProfCooldowns(param)
 	end, true)
 end
 function Rested.isNextGarrisonCache(param)
-	local offset = string.match(pram, "(%d+)")
+	local offset = string.match(param, "(%d+)")
 
 	Rested.ForAllChars(function(r, n, c)
 		if not c.isNextIndex
