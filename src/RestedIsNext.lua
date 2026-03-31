@@ -169,7 +169,7 @@ function Rested.isNextFarm(param)
 	-- print( "mod:", mod )
 	-- print( "offset:", offset )
 
-	Rested.ForAllChars(function(r,n,c)
+	Rested.ForAllChars(function(r, n, c)
 		-- print(r,n,c.characterIndex, c.characterIndex%mod, date("%w")%mod, c.farm)
 		-- print("not c.isNextIndex", not c.isNextIndex)
 		if not c.isNextIndex
@@ -183,7 +183,36 @@ function Rested.isNextFarm(param)
 		end
 	end, true)
 end
+function Rested.isNextProfCooldowns(param)
+	local offset = string.match(param, "(%d+)")
 
+	Rested.ForAllChars(function(r, n, c)
+		if not c.isNextIndex
+				and c.tradeCD
+				and n~=Rested.name then
+			for id,t in pairs(c.tradeCD) do
+				if t.cdTS and t.cdTS<time() then
+					c.isNextIndex=c.characterIndex+offset
+					return
+				end
+			end
+		end
+	end, true)
+end
+function Rested.isNextGarrisonCache(param)
+	local offset = string.match(pram, "(%d+)")
+
+	Rested.ForAllChars(function(r, n, c)
+		if not c.isNextIndex
+				and c.garrisonQuantity
+				and c.garrisonQuantity<10000
+				and c.garrisonCache
+				and c.garrisonCache<time()-216000
+				and n~=Rested.name then
+			c.isNextIndex = c.characterIndex+offset
+		end
+	end, true)
+end
 
 Rested.isNextMacros = {
 	[":alpha"] = {
@@ -195,8 +224,16 @@ Rested.isNextMacros = {
 		["func"] = Rested.isNextRandom,
 	},
 	[":farm"] = {
-		["help"] = {"day offset", "Queue for pandarian farm."},
+		["help"] = {"day, offset", "Queue for pandarian farm."},
 		["func"] = Rested.isNextFarm,
+	},
+	[":cooldowns"] = {
+		["help"] = {"offset", "Queue for profession cooldowns."},
+		["func"] = Rested.isNextProfCooldowns,
+	},
+	[":gcache"] = {
+		["help"] = {"offset", "Queue for garrison cache"},
+		["func"] = Rested.isNextGarrisonCache,
 	},
 	[":macros"] = {
 		["help"] = {},
