@@ -2265,7 +2265,10 @@ function test.test_isNextMacros_farm()
 			sumQueued = sumQueued + (c.isNextIndex or 0)
 		end
 	end
-	assertEquals(tonumber(date("%w")), sumQueued)
+
+	local resultMatrix = {0, 1, 0}
+
+	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
 function test.test_isNextMacros_farm_withOffset()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
@@ -2294,7 +2297,7 @@ function test.test_isNextMacros_farm_withOffset()
 		end
 	end
 
-	local resultMatrix = {0, 1}
+	local resultMatrix = {0, 1, 0}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2324,7 +2327,7 @@ function test.test_isNextMacros_farm_2()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {0, 4}
+	local resultMatrix = {0, 4, 3}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2354,7 +2357,7 @@ function test.test_isNextMacros_farm_2_withOffset()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {0, 4}
+	local resultMatrix = {0, 4, 3}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
