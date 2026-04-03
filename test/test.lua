@@ -2266,7 +2266,7 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {0, 1, 0}
+	local resultMatrix = {0, 1, 0, -1, 5}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
@@ -2297,7 +2297,7 @@ function test.test_isNextMacros_farm_withOffset()
 		end
 	end
 
-	local resultMatrix = {0, 1, 0}
+	local resultMatrix = {0, 1, 0, -1, 1}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2327,7 +2327,7 @@ function test.test_isNextMacros_farm_2()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {0, 4, 3}
+	local resultMatrix = {0, 4, 3, -1, 3}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2357,10 +2357,14 @@ function test.test_isNextMacros_farm_2_withOffset()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {0, 4, 3}
+	local resultMatrix = {0, 4, 3, -1, 3}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
+-- function test.test_isNextMacros_
+
+
+
 
 -- test descriptions
 -------------

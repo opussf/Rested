@@ -184,7 +184,7 @@ function Rested.isNextFarm(param)
 	end, true)
 end
 function Rested.isNextProfCooldowns(param)
-	local offset = string.match(param, "(%d+)")
+	local offset = string.match(param, "(%d+)") or 0
 
 	Rested.ForAllChars(function(r, n, c)
 		if not c.isNextIndex
@@ -200,7 +200,7 @@ function Rested.isNextProfCooldowns(param)
 	end, true)
 end
 function Rested.isNextGarrisonCache(param)
-	local offset = string.match(param, "(%d+)")
+	local offset = string.match(param, "(%d+)") or 0
 
 	Rested.ForAllChars(function(r, n, c)
 		if not c.isNextIndex
@@ -224,7 +224,7 @@ Rested.isNextMacros = {
 		["func"] = Rested.isNextRandom,
 	},
 	[":farm"] = {
-		["help"] = {"day, offset", "Queue for pandarian farm."},
+		["help"] = {"day offset", "Queue for pandarian farm."},
 		["func"] = Rested.isNextFarm,
 	},
 	[":cooldowns"] = {
