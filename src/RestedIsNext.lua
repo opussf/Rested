@@ -112,6 +112,7 @@ Rested.InitCallback(Rested.RegisterIsNext)
 Rested.EventCallback("PLAYER_ENTERING_WORLD", function() C_Timer.After(5, Rested.GetCharacterIndex) end)
 Rested.EventCallback("PLAYER_LOGOUT", Rested.SetNextCharacterIndex)
 
+Rested.reportShowIgnored["Play Next"] = true
 Rested.dropDownMenuTable["IsNext"] = "isnext"
 Rested.commandList["isnext"] = {
 	["help"] = {"space seperated character list", "Add the next characters to visit."},
