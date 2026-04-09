@@ -133,6 +133,24 @@ function Rested.NextCharsReport( realm, name, charStruct )
 end
 
 -- macros
+function Rested.isNextMacroList(param)
+	local command = param and string.lower(param)
+	print("MacroList( "..command or "nil".." )")
+	for macro, info in Rested.SortedPairs( Rested.isNextMacroList ) do
+		if command and command == macro then
+			Rested.Print( string.format("  %s %s -> %s",
+				macro, info.help[1], info.help[2]), false)
+			if info.desc then
+				for _, l in ipairs(info.desc) do
+					Rested.Print(l, false)
+				end
+			end
+		elseif command == "" then
+			Rested.Print( string.format("   %s %s -> %s",
+				macro, info.help[1], info.help[2] ), false )
+		end
+	end
+end
 function Rested.isNextAlpha(param)
 	local offset = string.match(param, " (%d+)") or 0
 	local alpha = {}
@@ -214,6 +232,22 @@ function Rested.isNextGarrisonCache(param)
 		end
 	end, true)
 end
+function Rested.isNextAuctions(param)
+	local offset = string.match(param, "(%d+)") or 0
+
+	Rested.ForAllChars(function(r,n,c)
+		if not c.isNextIndex
+				and c.Auctions
+				and n~=Rested.name then
+			for id, a in pairs(c.Auctions) do
+				if a.created <= time() - a.duration then
+					c.isNextIndex = c.characterIndex + offset
+					return
+				end
+			end
+		end
+	end, true)
+end
 
 Rested.isNextMacros = {
 	[":alpha"] = {
@@ -236,8 +270,12 @@ Rested.isNextMacros = {
 		["help"] = {"offset", "Queue for garrison cache"},
 		["func"] = Rested.isNextGarrisonCache,
 	},
+	[":auctions"] = {
+		["help"] = {"offset", "Queue for expired auctions"},
+		["func"] = Rested.isNextAuctions,
+	},
 	[":macros"] = {
-		["help"] = {},
-		["func"] = nil,
+		["help"] = {"", "List macros"},
+		["func"] = Rested.isNextMacroList,
 	},
 }
