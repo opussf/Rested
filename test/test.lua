@@ -142,7 +142,7 @@ function test.testPlayerUpdatedIsSet()
 	-- this should always be updated.
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated )
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated, nil, nil, 1 )
 end
 function test.testPlayerUpdatedIsUpdated()
 	-- this should always be updated.
@@ -2034,7 +2034,7 @@ function test.test_birthday_today()
 	Rested.VARIABLES_LOADED()
 	Rested.reminders[0] = nil
 	local ts = next(Rested.reminders)
-	assertAlmostEquals( time()+15, ts )
+	assertAlmostEquals( time()+15, ts, nil, nil, 1 )
 end
 function test.test_birthday_thisWeek()
 	local bday = date( "*t" )
@@ -2266,7 +2266,7 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {9, 1, 0, 4, 5}
+	local resultMatrix = {9, 1, 0, 4, 5, 6}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
@@ -2297,7 +2297,7 @@ function test.test_isNextMacros_farm_withOffset()
 		end
 	end
 
-	local resultMatrix = {2, 1, 0, 1, 1}
+	local resultMatrix = {2, 1, 0, 1, 1, 1}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2327,7 +2327,7 @@ function test.test_isNextMacros_farm_2()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {3, 4, 3, 4, 3}
+	local resultMatrix = {3, 4, 3, 4, 3, 4}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2357,10 +2357,39 @@ function test.test_isNextMacros_farm_2_withOffset()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {3, 4, 3, 4, 3}
+	local resultMatrix = {3, 4, 3, 4, 3, 4}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
+function test.test_isNextMacros_cooldowns()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		["tradeCD"] = {
+			[176513] = {
+				["cdTS"] = time() - 90000,
+				["category"] = "Draenor Merchant Order",
+			},
+		},
+	} }
+
+	Rested.Command("isnext :cooldowns")
+
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_cooldowns_not_ready()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		["tradeCD"] = {
+			[176513] = {
+				["cdTS"] = time() + 3600,
+				["category"] = "Draenor Merchant Order",
+			},
+		},
+	} }
+
+	Rested.Command("isnext :cooldowns")
+
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+
 -- function test.test_isNextMacros_
 
 

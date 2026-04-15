@@ -134,21 +134,9 @@ end
 
 -- macros
 function Rested.isNextMacroList(param)
-	local command = param and string.lower(param)
-	print("MacroList( "..command or "nil".." )")
-	for macro, info in Rested.SortedPairs( Rested.isNextMacroList ) do
-		if command and command == macro then
-			Rested.Print( string.format("  %s %s -> %s",
-				macro, info.help[1], info.help[2]), false)
-			if info.desc then
-				for _, l in ipairs(info.desc) do
-					Rested.Print(l, false)
-				end
-			end
-		elseif command == "" then
-			Rested.Print( string.format("   %s %s -> %s",
+	for macro, info in Rested.SortedPairs( Rested.isNextMacros ) do
+		Rested.Print( string.format("   %s %s -> %s",
 				macro, info.help[1], info.help[2] ), false )
-		end
 	end
 end
 function Rested.isNextAlpha(param)
@@ -218,6 +206,27 @@ function Rested.isNextProfCooldowns(param)
 		end
 	end, true)
 end
+-- function Rested.isNextConcentration(param)
+-- 	local offset = string.match(param, "(%d+)") or 0
+
+-- 	Rested.ForAllChars(function(r, n, c)
+-- 		if not c.isNextIndex
+-- 				and c.concentration
+-- 				and n~=Rested.name then
+-- 			for profName, struct in pairs( c.concentration ) do
+-- 				if struct.value < struct.max then
+-- 					local timeToFull = ((struct.max - struct.value) / Rested.ConcentrationRateGain) - (time() - struct.ts)
+
+-- 					print(n.."-"..r.." Needs: "..(struct.max - struct.value).." in "..SecondsToTime(timeToFull).." ("..timeToFull.."s)")
+-- 					if timeToFull < 86400 then
+-- 						c.isNextIndex = c.characterIndex + offset
+-- 						return
+-- 					end
+-- 				end
+-- 			end
+-- 		end
+-- 	end, true)
+-- end
 function Rested.isNextGarrisonCache(param)
 	local offset = string.match(param, "(%d+)") or 0
 
@@ -266,6 +275,10 @@ Rested.isNextMacros = {
 		["help"] = {"offset", "Queue for profession cooldowns."},
 		["func"] = Rested.isNextProfCooldowns,
 	},
+	-- [":conc"] = {
+	-- 	["help"] = {"offset", "Queue for profession concentration."},
+	-- 	["func"] = Rested.isNextConcentration,
+	-- },
 	[":gcache"] = {
 		["help"] = {"offset", "Queue for garrison cache"},
 		["func"] = Rested.isNextGarrisonCache,
