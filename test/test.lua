@@ -2386,11 +2386,36 @@ function test.test_isNextMacros_cooldowns_not_ready()
 	} }
 
 	Rested.Command("isnext :cooldowns")
-
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 
--- function test.test_isNextMacros_
+function test.test_isNextMacros_garrison_queue()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 0,
+		garrisonCache = time() - (3 * 86400),
+	} }
+
+	Rested.Command("isnext :gcache")
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_garrison_noQueue_time()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 0,
+		garrisonCache = time() - 60,
+	} }
+
+	Rested.Command("isnext :gcache")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_garrison_noQueue_quantity()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 10000,
+		garrisonCache = time() - (3 * 86400),
+	} }
+
+	Rested.Command("isnext :gcache")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
 
 
 
