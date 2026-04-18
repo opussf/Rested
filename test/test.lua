@@ -2398,6 +2398,15 @@ function test.test_isNextMacros_garrison_queue()
 	Rested.Command("isnext :gcache")
 	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
+function test.test_isNextMacros_garrison_queue_offset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 0,
+		garrisonCache = time() - (3 * 86400),
+	} }
+
+	Rested.Command("isnext :gcache 1000")
+	assertEquals( 1001, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
 function test.test_isNextMacros_garrison_noQueue_time()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
 		garrisonQuantity = 0,
@@ -2416,8 +2425,41 @@ function test.test_isNextMacros_garrison_noQueue_quantity()
 	Rested.Command("isnext :gcache")
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
-
-
+function test.test_isNextMacros_auctions_noAuctions()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+	} }
+	Rested.Command("isnext :auctions")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_expired()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		Auctions = { [976550686] = { created = time() - (3*86400), duration = 2*86400,
+		}, },
+	}, }
+	Rested.Command("isnext :auctions")
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_expired_offset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		Auctions = { [976550686] = { created = time() - (3*86400), duration = 2*86400,
+		}, },
+	}, }
+	Rested.Command("isnext :auctions 1000")
+	assertEquals( 1001, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_active()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		Auctions = { [976550686] = { created = time() - (86400), duration = 2*86400,
+		}, },
+	}, }
+	Rested.Command("isnext :auctions")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_list()
+	Rested.Command("isnext :macros")
+	test.dump(chatLog)
+	assertEquals()
+end
 
 
 -- test descriptions

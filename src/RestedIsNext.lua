@@ -134,6 +134,7 @@ end
 
 -- macros
 function Rested.isNextMacroList(param)
+	Rested.Print("isnext macro list:")
 	for macro, info in Rested.SortedPairs( Rested.isNextMacros ) do
 		Rested.Print( string.format("   %s %s -> %s",
 				macro, info.help[1], info.help[2] ), false )
