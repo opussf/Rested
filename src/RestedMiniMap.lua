@@ -2,7 +2,7 @@
 RESTED_SLUG, Rested  = ...
 
 Rested.InitCallback( function()
-		Rested_options.minimapAngle = Rested_options.minimapAngle or 180 -- 225?
+		Rested_options.minimapAngle = Rested_options.minimapAngle or 225 -- 225?
 	end
 )
 
@@ -25,7 +25,7 @@ function Rested.MinimapButton_OnLoad(self)
 	self:RegisterEvent("ADDON_LOADED")
 	self:SetScript("OnEvent", function(self, event, addonName)
 		if addonName == RESTED_SLUG then
-			print("OnEvent: "..event..","..addonName..","..RESTED_SLUG)
+			-- print("OnEvent: "..event..","..addonName..","..RESTED_SLUG)
 			Rested.MinimapButton_UpdatePosition(Rested_options.minimapAngle)
 			self:UnregisterEvent("ADDON_LOADED")
 		end
@@ -41,32 +41,40 @@ function Rested.MinimapButton_OnEnter(self)
 end
 
 function Rested.MinimapButton_OnLeave(self)
-	print("OnLeave")
 	GameTooltip:Hide()
 end
 
-function Rested.MinimapButton_OnClick(self)
-	print("OnClick")
+function Rested.MinimapButton_OnClick(self, button)
+	print("OnClick", button, self.isDragging)
+	if not self.isDragging then
+		if button == "LeftButton" then
+			if RestedUIFrame:IsVisible() then
+				RestedUIFrame:Hide()
+			else
+				RestedUIFrame:Show()
+			end
+		end
+	end
 end
 
-function Rested.MinimapButton_OnDragStart(self)
-	print("OnDragStart: ",self.isDragging)
+function Rested.MinimapButton_OnDragStart(self, button)
+	self.isDragging = true
+	print("OnDragStart: ",self.isDragging, button)
+	self:SetScript("OnUpdate", function()
+		local mx, my = Minimap:GetCenter()
+		local cx, cy = GetCursorPosition()
+		local scale = UIParent:GetEffectiveScale()
+		cx, cy = cx / scale, cy / scale
+		Rested_options.minimapAngle = math.deg(math.atan2(cy - my, cx - mx))
+		print(Rested_options.minimapAngle)
+		Rested.MinimapButton_UpdatePosition(Rested_options.minimapAngle)
+	end)
 end
 
 function Rested.MinimapButton_OnDragStop(self)
-	print("OnDragStop: ",self.isDragging)
+	self.isDragging = nil
+	self:SetScript("OnUpdate", nil)
 end
--- function MyAddon_MinimapButton_OnClick(self, button)
---     if isDragging then return end
-
---     if button == "LeftButton" then
---         -- TODO: toggle your main frame
---         print("MyAddon: left clicked!")
---     elseif button == "RightButton" then
---         -- TODO: open a menu
---         print("MyAddon: right clicked!")
---     end
--- end
 
 -- function MyAddon_MinimapButton_OnDragStart(self)
 --     isDragging = true
