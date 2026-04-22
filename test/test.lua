@@ -2458,7 +2458,7 @@ end
 function test.test_isNextMacros_list()
 	Rested.Command("isnext :macros")
 	test.dump(chatLog)
-	assertEquals()
+	assertEquals("|cffff0000Rested Reporter> |risnext macro list:",chatLog[2].msg)
 end
 
 
