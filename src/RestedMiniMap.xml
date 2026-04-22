@@ -16,10 +16,10 @@
 
 		<!-- Circular border overlay -->
 		<Layers>
-			<Layer level="BACKGROUND">
+			<Layer level="ARTWORK">
 				<Texture name="RestedMinimapButtonIcon" file="Interface\Addons\Rested\imgs\icon">
 					<Size>
-						<AbsDimension x="32" y="32"/>
+						<AbsDimension x="18" y="18"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER" relativePoint="CENTER"/>
@@ -28,11 +28,11 @@
 			</Layer>
 			<Layer level="OVERLAY">
 				<Texture name="RestedMinimapButtonBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
-					<Size x="56" y="56"/>
+					<Size x="50" y="50"/>
 					<Anchors>
 						<Anchor point="CENTER" relativePoint="CENTER">
 							<Offset>
-								<AbsDimension x="1" y="-1"/>
+								<AbsDimension x="10" y="-10"/>
 							</Offset>
 						</Anchor>
 					</Anchors>

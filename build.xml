@@ -71,10 +71,12 @@
 		<include name="*.xml"/>
 		<include name="*.toc"/>
 		<include name="*.lua"/>
-		<include name="**/*.png"/>
 		<include name="Readme.txt"/>
 		<include name="HowTo.md"/>
 		<include name="../${working.dir}/*.txt"/>
+	</patternset>
+	<patternset id="imgFiles">
+		<include name="**/*.tga"/>
 	</patternset>
 
 <!-- -->
@@ -97,6 +99,11 @@
 		<copy	todir="${package.dir}" filtering="true">
 			<fileset dir="src">
 				<patternset refid="packageFiles"/>
+			</fileset>
+		</copy>
+		<copy   todir="${package.dir" filtering="false">
+			<fileset dir="src">
+				<patternset refid="imgFiles"/>
 			</fileset>
 		</copy>
 		<zip 	destfile="${target.dir}/${project.zip}"
@@ -126,12 +133,12 @@
 		</delete>
 		<copy todir="${addon.dir}" filtering="true" verbose="true">
 			<fileset dir="src">
-				<include name="*.lua"/>
-				<include name="*.toc"/>
-				<include name="*.xml"/>
-				<include name="**/*.png"/>
-				<include name="Readme.txt"/>
-				<include name="HowTo.md"/>
+				<patternset refid="packageFiles"/>
+			</fileset>
+		</copy>
+		<copy todir="${addon.dir}" filtering="false" verbose="true">
+			<fileset dir="src">
+				<patternset refid="imgFiles"/>
 			</fileset>
 		</copy>
 		<chmod perm="ugo+x" dir="${addon.dir}" includes="Rested_*.lua" />
