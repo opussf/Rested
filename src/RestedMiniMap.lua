@@ -1,123 +1,88 @@
--- Minimap Button (no libraries)
-local MyAddon = MyAddon or {}
+-- RestedIsNext.lua
+RESTED_SLUG, Rested  = ...
 
--- Default settings
-local DEFAULT_ANGLE = 225 -- starting position on minimap (degrees)
+Rested.InitCallback( function()
+		Rested_options.minimapAngle = Rested_options.minimapAngle or 180 -- 225?
+	end
+)
 
--- Math helpers
 local function AngleToPosition(angle, radius)
-    local rad = math.rad(angle)
-    return math.cos(rad) * radius, math.sin(rad) * radius
+	local rad = math.rad(angle)
+	return math.cos(rad) * radius, math.sin(rad) * radius
 end
 
--- Create the button
-local minimapButton = CreateFrame("Button", "MyAddonMinimapButton", Minimap)
-minimapButton:SetSize(32, 32)
-minimapButton:SetFrameStrata("MEDIUM")
-minimapButton:SetFrameLevel(8)
-
--- Circular masking (clips the button to a circle like other minimap buttons)
-minimapButton:SetClampedToScreen(false)
-
--- Normal texture (your icon)
-local icon = minimapButton:CreateTexture(nil, "BACKGROUND")
-icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark") -- replace with your icon
-icon:SetAllPoints()
-minimapButton:SetNormalTexture(icon)
-
--- Highlight texture (hover glow)
-local highlight = minimapButton:CreateTexture(nil, "HIGHLIGHT")
-highlight:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-highlight:SetAllPoints()
-minimapButton:SetHighlightTexture(highlight)
-
--- Pushed texture (click feedback)
-local pushed = minimapButton:CreateTexture(nil, "BACKGROUND")
-pushed:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-pushed:SetAllPoints()
-minimapButton:SetPushedTexture(pushed)
-
--- Border overlay (the circular frame border around minimap buttons)
-local border = minimapButton:CreateTexture(nil, "OVERLAY")
-border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-border:SetSize(56, 56)
-border:SetPoint("CENTER", minimapButton, "CENTER", 0, 0)
-
--- Position the button on the minimap edge
-local function UpdateButtonPosition(angle)
-    local radius = 80 -- distance from minimap center
-    local x, y = AngleToPosition(angle, radius)
-    minimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
+function Rested.MinimapButton_UpdatePosition(angle)
+	print("UpdatePosition")
+	local radius = Minimap:GetWidth() / 2
+	local x, y = AngleToPosition(angle, radius) -- hardcoded radius
+	RestedMinimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
 end
 
--- Save and load angle
-local function GetAngle()
-    MyAddonDB = MyAddonDB or {}
-    return MyAddonDB.minimapAngle or DEFAULT_ANGLE
+function Rested.MinimapButton_OnLoad(self)
+	self:RegisterForDrag("LeftButton")
+	self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+	self:RegisterEvent("ADDON_LOADED")
+	self:SetScript("OnEvent", function(self, event, addonName)
+		if addonName == RESTED_SLUG then
+			print("OnEvent: "..event..","..addonName..","..RESTED_SLUG)
+			Rested.MinimapButton_UpdatePosition(Rested_options.minimapAngle)
+			self:UnregisterEvent("ADDON_LOADED")
+		end
+	end)
 end
 
-local function SaveAngle(angle)
-    MyAddonDB = MyAddonDB or {}
-    MyAddonDB.minimapAngle = angle
+function Rested.MinimapButton_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+	GameTooltip:AddLine("Rested")
+	GameTooltip:AddLine(COLOR_GREY.."Left-click|r to toggle", 1, 1, 1)
+	GameTooltip:AddLine(COLOR_GREY.."Drag|r to move", 1, 1, 1)
+	GameTooltip:Show()
 end
 
--- Dragging logic
-local isDragging = false
+function Rested.MinimapButton_OnLeave(self)
+	print("OnLeave")
+	GameTooltip:Hide()
+end
 
-minimapButton:RegisterForDrag("LeftButton")
+function Rested.MinimapButton_OnClick(self)
+	print("OnClick")
+end
 
-minimapButton:SetScript("OnDragStart", function(self)
-    isDragging = true
-    self:SetScript("OnUpdate", function()
-        local mx, my = Minimap:GetCenter()
-        local cx, cy = GetCursorPosition()
-        local scale  = UIParent:GetEffectiveScale()
-        cx, cy = cx / scale, cy / scale
+function Rested.MinimapButton_OnDragStart(self)
+	print("OnDragStart: ",self.isDragging)
+end
 
-        local angle = math.deg(math.atan2(cy - my, cx - mx))
-        SaveAngle(angle)
-        UpdateButtonPosition(angle)
-    end)
-end)
+function Rested.MinimapButton_OnDragStop(self)
+	print("OnDragStop: ",self.isDragging)
+end
+-- function MyAddon_MinimapButton_OnClick(self, button)
+--     if isDragging then return end
 
-minimapButton:SetScript("OnDragStop", function(self)
-    isDragging = false
-    self:SetScript("OnUpdate", nil)
-end)
+--     if button == "LeftButton" then
+--         -- TODO: toggle your main frame
+--         print("MyAddon: left clicked!")
+--     elseif button == "RightButton" then
+--         -- TODO: open a menu
+--         print("MyAddon: right clicked!")
+--     end
+-- end
 
--- Click handlers
-minimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+-- function MyAddon_MinimapButton_OnDragStart(self)
+--     isDragging = true
+--     self:SetScript("OnUpdate", function()
+--         local mx, my = Minimap:GetCenter()
+--         local cx, cy = GetCursorPosition()
+--         local scale  = UIParent:GetEffectiveScale()
+--         cx, cy = cx / scale, cy / scale
 
-minimapButton:SetScript("OnClick", function(self, button)
-    if isDragging then return end
+--         local angle = math.deg(math.atan2(cy - my, cx - mx))
+--         SaveAngle(angle)
+--         UpdateButtonPosition(angle)
+--     end)
+-- end
 
-    if button == "LeftButton" then
-        -- TODO: toggle your main frame here
-        print("MyAddon: left clicked!")
-
-    elseif button == "RightButton" then
-        -- TODO: show a menu, or toggle something else
-        print("MyAddon: right clicked!")
-    end
-end)
-
--- Tooltip
-minimapButton:SetScript("OnEnter", function(self)
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:AddLine("MyAddon")
-    GameTooltip:AddLine("|cffadadadadLeft-click|r to toggle", 1, 1, 1)
-    GameTooltip:AddLine("|cffadadadadDrag|r to move", 1, 1, 1)
-    GameTooltip:Show()
-end)
-
-minimapButton:SetScript("OnLeave", function()
-    GameTooltip:Hide()
-end)
-
--- Initialize on load
-local loader = CreateFrame("Frame")
-loader:RegisterEvent("ADDON_LOADED")
-loader:SetScript("OnEvent", function(self, event, addonName)
-    if addonName ~= "MyAddon" then return end -- replace with your addon name
-    UpdateButtonPosition(GetAngle())
-end)
+-- function MyAddon_MinimapButton_OnDragStop(self)
+--     isDragging = false
+--     self:SetScript("OnUpdate", nil)
+-- end
