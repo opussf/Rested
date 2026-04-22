@@ -101,7 +101,7 @@
 				<patternset refid="packageFiles"/>
 			</fileset>
 		</copy>
-		<copy   todir="${package.dir" filtering="false">
+		<copy   todir="${package.dir}" filtering="false">
 			<fileset dir="src">
 				<patternset refid="imgFiles"/>
 			</fileset>
