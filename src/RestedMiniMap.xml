@@ -17,7 +17,7 @@
 		<!-- Circular border overlay -->
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="RestedMinimapButtonIcon" file="Interface\Addons\Rested\imgs\icon"/>
+				<Texture name="RestedMinimapButtonIcon" file="Interface\Addons\Rested\imgs\icon">
 					<Size>
 						<AbsDimension x="32" y="32"/>
 					</Size>

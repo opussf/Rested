@@ -2,7 +2,7 @@
 RESTED_SLUG, Rested  = ...
 
 Rested.InitCallback( function()
-		Rested_options.minimapAngle = Rested_options.minimapAngle or 225 -- 225?
+		Rested_options.minimapAngle = Rested_options.minimapAngle or 45
 	end
 )
 
@@ -12,7 +12,6 @@ local function AngleToPosition(angle, radius)
 end
 
 function Rested.MinimapButton_UpdatePosition(angle)
-	print("UpdatePosition")
 	local radius = Minimap:GetWidth() / 2
 	local x, y = AngleToPosition(angle, radius) -- hardcoded radius
 	RestedMinimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
@@ -45,7 +44,6 @@ function Rested.MinimapButton_OnLeave(self)
 end
 
 function Rested.MinimapButton_OnClick(self, button)
-	print("OnClick", button, self.isDragging)
 	if not self.isDragging then
 		if button == "LeftButton" then
 			if RestedUIFrame:IsVisible() then
@@ -59,14 +57,12 @@ end
 
 function Rested.MinimapButton_OnDragStart(self, button)
 	self.isDragging = true
-	print("OnDragStart: ",self.isDragging, button)
 	self:SetScript("OnUpdate", function()
 		local mx, my = Minimap:GetCenter()
 		local cx, cy = GetCursorPosition()
 		local scale = UIParent:GetEffectiveScale()
 		cx, cy = cx / scale, cy / scale
 		Rested_options.minimapAngle = math.deg(math.atan2(cy - my, cx - mx))
-		print(Rested_options.minimapAngle)
 		Rested.MinimapButton_UpdatePosition(Rested_options.minimapAngle)
 	end)
 end
@@ -75,22 +71,3 @@ function Rested.MinimapButton_OnDragStop(self)
 	self.isDragging = nil
 	self:SetScript("OnUpdate", nil)
 end
-
--- function MyAddon_MinimapButton_OnDragStart(self)
---     isDragging = true
---     self:SetScript("OnUpdate", function()
---         local mx, my = Minimap:GetCenter()
---         local cx, cy = GetCursorPosition()
---         local scale  = UIParent:GetEffectiveScale()
---         cx, cy = cx / scale, cy / scale
-
---         local angle = math.deg(math.atan2(cy - my, cx - mx))
---         SaveAngle(angle)
---         UpdateButtonPosition(angle)
---     end)
--- end
-
--- function MyAddon_MinimapButton_OnDragStop(self)
---     isDragging = false
---     self:SetScript("OnUpdate", nil)
--- end
