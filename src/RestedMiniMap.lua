@@ -12,8 +12,8 @@ local function AngleToPosition(angle, radius)
 end
 
 function Rested.MinimapButton_UpdatePosition(angle)
-	local radius = Minimap:GetWidth() / 2
-	local x, y = AngleToPosition(angle, radius) -- hardcoded radius
+	local radius = (Minimap:GetWidth() / 2) + 7
+	local x, y = AngleToPosition(angle, radius)
 	RestedMinimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
 end
 
