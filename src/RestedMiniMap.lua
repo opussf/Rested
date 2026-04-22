@@ -1,8 +1,8 @@
 -- RestedIsNext.lua
 RESTED_SLUG, Rested  = ...
-
 Rested.InitCallback( function()
 		Rested_options.minimapAngle = Rested_options.minimapAngle or 45
+		Rested.MinimapButton_UpdatePosition(Rested_options.minimapAngle)
 	end
 )
 
@@ -20,15 +20,6 @@ end
 function Rested.MinimapButton_OnLoad(self)
 	self:RegisterForDrag("LeftButton")
 	self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-
-	self:RegisterEvent("ADDON_LOADED")
-	self:SetScript("OnEvent", function(self, event, addonName)
-		if addonName == RESTED_SLUG then
-			-- print("OnEvent: "..event..","..addonName..","..RESTED_SLUG)
-			Rested.MinimapButton_UpdatePosition(Rested_options.minimapAngle)
-			self:UnregisterEvent("ADDON_LOADED")
-		end
-	end)
 end
 
 function Rested.MinimapButton_OnEnter(self)
