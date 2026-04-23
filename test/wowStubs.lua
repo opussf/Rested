@@ -691,8 +691,10 @@ function CreateEditBox( name, ... )
 end
 Button = {
 	["enabled"] = true,
+	["points"] = {},
 	["SetEnabled"] = function(self,enabled) self.enabled = enabled; end,
 	["IsEnabled"] = function(self) return self.enabled; end,
+	["SetPoint"] = function(self, ... ) table.insert( self.points, {...} ); end,
 }
 function CreateButton( name, ... )
 	me = {}
@@ -739,6 +741,7 @@ UIErrorsFrame={ ["AddMessage"] = function( self, msg )
 	end, }
 WeeklyRewardsFrame = CreateFrame()
 BankFrame = CreateFrame()
+Minimap = CreateFrame()
 
 -- stub some external API functions (try to keep alphabetical)
 function BuyMerchantItem( index, quantity )
