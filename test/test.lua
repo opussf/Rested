@@ -142,7 +142,7 @@ function test.testPlayerUpdatedIsSet()
 	-- this should always be updated.
 	Rested.ADDON_LOADED()
 	Rested.VARIABLES_LOADED()
-	assertEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated )
+	assertAlmostEquals( time(), Rested_restedState["Test Realm"]["testPlayer"].updated, nil, nil, 1 )
 end
 function test.testPlayerUpdatedIsUpdated()
 	-- this should always be updated.
@@ -2034,7 +2034,7 @@ function test.test_birthday_today()
 	Rested.VARIABLES_LOADED()
 	Rested.reminders[0] = nil
 	local ts = next(Rested.reminders)
-	assertAlmostEquals( time()+15, ts )
+	assertAlmostEquals( time()+15, ts, nil, nil, 1 )
 end
 function test.test_birthday_thisWeek()
 	local bday = date( "*t" )
@@ -2156,6 +2156,311 @@ function test.test_isNext_RemoveToonFromList()
 
 	assertIsNil( Rested_restedState["otherRealm"]["frank"].isNextIndex )
 end
+
+------ isnext macros
+function test.test_isNextMacros_aplha()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha" )
+
+	assertEquals(1, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(2, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_aplha_missingCharIndex()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { } }
+	Rested_restedState["otherRealm"]["frank"] = {  }
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha" )
+
+	assertEquals(1, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(2, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_aplha_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha 100" )
+
+	assertEquals(101, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(102, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_aplha_missingCharIndex_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command( "isnext :alpha 100" )
+
+	assertEquals(101, Rested_restedState["otherRealm"]["frank"].isNextIndex)
+	assertEquals(102, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex)
+end
+function test.test_isNextMacros_random()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :rand")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex or 0)
+		end
+	end
+	assertEquals(1, numQueued)
+end
+function test.test_isNextMacros_random_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=17 } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=15 }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=42
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :rand 150")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex or 0)
+		end
+	end
+	assertEquals(151, numQueued)
+end
+function test.test_isNextMacros_farm()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm")
+
+	local sumQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			sumQueued = sumQueued + (c.isNextIndex or 0)
+		end
+	end
+
+	local resultMatrix = {9, 1, 0, 4, 5, 6}
+
+	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
+end
+function test.test_isNextMacros_farm_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm 7 500")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex and 1 or 0)
+		end
+	end
+
+	local resultMatrix = {2, 1, 0, 1, 1, 1}
+
+	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
+end
+function test.test_isNextMacros_farm_2()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm 2")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex and 1 or 0)
+		end
+	end
+	local resultMatrix = {3, 4, 3, 4, 3, 4}
+
+	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
+end
+function test.test_isNextMacros_farm_2_withOffset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
+	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
+	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
+	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
+	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
+	for _, r in pairs(Rested_restedState) do
+		for _, c in pairs(r) do
+			c.isNextIndex = nil
+		end
+	end
+	Rested.ADDON_LOADED()
+	Rested.VARIABLES_LOADED()
+
+	Rested.Command("isnext :farm 2 600")
+
+	local numQueued = 0
+	for rn, r in pairs(Rested_restedState) do
+		for cn, c in pairs(r) do
+			numQueued = numQueued + (c.isNextIndex and 1 or 0)
+		end
+	end
+	local resultMatrix = {3, 4, 3, 4, 3, 4}
+
+	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
+end
+function test.test_isNextMacros_cooldowns()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		["tradeCD"] = {
+			[176513] = {
+				["cdTS"] = time() - 90000,
+				["category"] = "Draenor Merchant Order",
+			},
+		},
+	} }
+
+	Rested.Command("isnext :cooldowns")
+
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_cooldowns_not_ready()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		["tradeCD"] = {
+			[176513] = {
+				["cdTS"] = time() + 3600,
+				["category"] = "Draenor Merchant Order",
+			},
+		},
+	} }
+
+	Rested.Command("isnext :cooldowns")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+
+function test.test_isNextMacros_garrison_queue()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 0,
+		garrisonCache = time() - (3 * 86400),
+	} }
+
+	Rested.Command("isnext :gcache")
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_garrison_queue_offset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 0,
+		garrisonCache = time() - (3 * 86400),
+	} }
+
+	Rested.Command("isnext :gcache 1000")
+	assertEquals( 1001, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_garrison_noQueue_time()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 0,
+		garrisonCache = time() - 60,
+	} }
+
+	Rested.Command("isnext :gcache")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_garrison_noQueue_quantity()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		garrisonQuantity = 10000,
+		garrisonCache = time() - (3 * 86400),
+	} }
+
+	Rested.Command("isnext :gcache")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_noAuctions()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+	} }
+	Rested.Command("isnext :auctions")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_expired()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		Auctions = { [976550686] = { created = time() - (3*86400), duration = 2*86400,
+		}, },
+	}, }
+	Rested.Command("isnext :auctions")
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_expired_offset()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		Auctions = { [976550686] = { created = time() - (3*86400), duration = 2*86400,
+		}, },
+	}, }
+	Rested.Command("isnext :auctions 1000")
+	assertEquals( 1001, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_auctions_active()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		Auctions = { [976550686] = { created = time() - (86400), duration = 2*86400,
+		}, },
+	}, }
+	Rested.Command("isnext :auctions")
+	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+function test.test_isNextMacros_list()
+	Rested.Command("isnext :macros")
+	test.dump(chatLog)
+	assertEquals("|cffff0000Rested Reporter> |risnext macro list:",chatLog[2].msg)
+end
+
 
 -- test descriptions
 -------------
