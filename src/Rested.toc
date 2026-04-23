@@ -33,5 +33,8 @@ RestedGarrisonCache.lua
 
 RestedRaid.lua
 
+RestedMiniMap.lua
+RestedMiniMap.xml
+
 # Experimental
 RestedIsNext.lua
