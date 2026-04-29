@@ -2266,7 +2266,7 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {9, 1, 0, 4, 5, 6}
+	local resultMatrix = {9, 1, 7, 4, 5, 6}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
@@ -2297,7 +2297,7 @@ function test.test_isNextMacros_farm_withOffset()
 		end
 	end
 
-	local resultMatrix = {2, 1, 0, 1, 1, 1}
+	local resultMatrix = {2, 1, 1, 1, 1, 1}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end

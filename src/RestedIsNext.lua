@@ -185,7 +185,7 @@ function Rested.isNextFarm(param)
 				and c.farm
 				and c.farm.lastHarvest
 				and c.farm.lastHarvest<time()-86400
-				and c.characterIndex%mod==date("%w")%mod
+				and c.characterIndex%mod==date("%j")%mod
 				and n~=Rested.name then
 			c.isNextIndex = c.characterIndex+offset
 		end
