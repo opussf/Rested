@@ -22,6 +22,7 @@ function Rested.GetCharacterIndex()
 
 	Rested_restedState[Rested.realm][Rested.name].characterIndex = characterIndex
 	Rested_restedState[Rested.realm][Rested.name].isNextIndex = nil
+	Rested_restedState[Rested.realm][Rested.name].isNextReason = nil
 	Rested.ShiftIsNextCharacterIndex()
 	_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
 end
@@ -127,7 +128,7 @@ function Rested.NextCharsReport( realm, name, charStruct )
 			charStruct.isNextIndex,
 			rn,
 			(charStruct.characterIndex and "" or " (?)"),
-			(charStruct.isNextReason and " "..charStruct.isNextReason or "" ) )
+			(charStruct.isNextReason and " -"..charStruct.isNextReason.."-" or "" ) )
 		table.insert( Rested.charList, { 150 - charStruct.isNextIndex, Rested.strOut } )
 		return 1
 	end
