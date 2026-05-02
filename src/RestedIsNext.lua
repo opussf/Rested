@@ -123,10 +123,11 @@ table.insert( Rested.CSVFields, {"CharacterIndex", "characterIndex"} )
 function Rested.NextCharsReport( realm, name, charStruct )
 	local rn = Rested.FormatName( realm, name )
 	if charStruct.isNextIndex then
-		Rested.strOut = string.format( "%s :: %s%s",
+		Rested.strOut = string.format( "%s :: %s%s%s",
 			charStruct.isNextIndex,
 			rn,
-			(charStruct.characterIndex and "" or " (?)") )
+			(charStruct.characterIndex and "" or " (?)"),
+			(charStruct.isNextReason and " "..charStruct.isNextReason or "" ) )
 		table.insert( Rested.charList, { 150 - charStruct.isNextIndex, Rested.strOut } )
 		return 1
 	end
@@ -141,7 +142,6 @@ function Rested.isNextMacroList(param)
 	end
 end
 function Rested.isNextAlpha(param)
-	local offset = string.match(param, " (%d+)") or 0
 	local alpha = {}
 	for realm, chars in pairs(Rested_restedState) do
 		for name, charStruct in pairs(chars) do
@@ -151,11 +151,10 @@ function Rested.isNextAlpha(param)
 	table.sort(alpha)
 	for i, nameRealm in ipairs(alpha) do
 		local name, realm = string.match(nameRealm, "^(.*):(.*)$")
-		Rested_restedState[realm][name].isNextIndex = i + offset
+		Rested_restedState[realm][name].isNextIndex = i
 	end
 end
 function Rested.isNextRandom(param)
-	local offset = string.match(param, " (%d+)") or 0
 	local r = {}
 	for realm, chars in pairs(Rested_restedState) do
 		for name, charStruct in pairs(chars) do
@@ -165,7 +164,8 @@ function Rested.isNextRandom(param)
 	for lcv = 1, #r do
 		rc = r[random(1, #r)]
 		if not rc.isNextIndex then
-			rc.isNextIndex = 1 + offset
+			rc.isNextIndex = 1
+			rc.isNextReason = ":random"
 			break
 		end
 	end
@@ -173,7 +173,7 @@ end
 function Rested.isNextFarm(param)
 	-- print("Param:", param)
 	local mod, offset = string.match(param, "(%d+)%s*(%d*)")
-	mod, offset = tonumber(mod) or 7, tonumber(offset) or 0
+	mod, offset = tonumber(mod) or 7, 100
 	-- print( "mod:", mod )
 	-- print( "offset:", offset )
 
@@ -188,12 +188,12 @@ function Rested.isNextFarm(param)
 				and c.characterIndex%mod==date("%j")%mod
 				and n~=Rested.name then
 			c.isNextIndex = c.characterIndex+offset
+			c.isNextReason = ":farm"
 		end
 	end, true)
 end
 function Rested.isNextProfCooldowns(param)
-	local offset = string.match(param, "(%d+)") or 0
-
+	local offset = 100
 	Rested.ForAllChars(function(r, n, c)
 		if not c.isNextIndex
 				and c.tradeCD
@@ -201,6 +201,7 @@ function Rested.isNextProfCooldowns(param)
 			for id,t in pairs(c.tradeCD) do
 				if t.cdTS and t.cdTS<time() then
 					c.isNextIndex=c.characterIndex+offset
+					c.isNextReason = ":cooldowns"
 					return
 				end
 			end
@@ -229,8 +230,7 @@ end
 -- 	end, true)
 -- end
 function Rested.isNextGarrisonCache(param)
-	local offset = string.match(param, "(%d+)") or 0
-
+	local offset = 100
 	Rested.ForAllChars(function(r, n, c)
 		if not c.isNextIndex
 				and c.garrisonQuantity
@@ -239,12 +239,12 @@ function Rested.isNextGarrisonCache(param)
 				and c.garrisonCache<time()-216000
 				and n~=Rested.name then
 			c.isNextIndex = c.characterIndex+offset
+			c.isNextReason = ":gcache"
 		end
 	end, true)
 end
 function Rested.isNextAuctions(param)
-	local offset = string.match(param, "(%d+)") or 0
-
+	local offset = 100
 	Rested.ForAllChars(function(r,n,c)
 		if not c.isNextIndex
 				and c.Auctions
@@ -252,6 +252,7 @@ function Rested.isNextAuctions(param)
 			for id, a in pairs(c.Auctions) do
 				if a.created <= time() - a.duration then
 					c.isNextIndex = c.characterIndex + offset
+					c.isNextReason = ":auctions"
 					return
 				end
 			end
@@ -261,19 +262,19 @@ end
 
 Rested.isNextMacros = {
 	[":alpha"] = {
-		["help"] = {"offset", "Queue all toons alphabetically."},
+		["help"] = {"", "Queue all toons alphabetically."},
 		["func"] = Rested.isNextAlpha,
 	},
 	[":rand"] = {
-		["help"] = {"offset", "Queue a random character."},
+		["help"] = {"", "Queue a random character."},
 		["func"] = Rested.isNextRandom,
 	},
 	[":farm"] = {
-		["help"] = {"day offset", "Queue for pandarian farm."},
+		["help"] = {"day", "Queue for pandarian farm."},
 		["func"] = Rested.isNextFarm,
 	},
 	[":cooldowns"] = {
-		["help"] = {"offset", "Queue for profession cooldowns."},
+		["help"] = {"", "Queue for profession cooldowns."},
 		["func"] = Rested.isNextProfCooldowns,
 	},
 	-- [":conc"] = {
@@ -281,11 +282,11 @@ Rested.isNextMacros = {
 	-- 	["func"] = Rested.isNextConcentration,
 	-- },
 	[":gcache"] = {
-		["help"] = {"offset", "Queue for garrison cache"},
+		["help"] = {"", "Queue for garrison cache"},
 		["func"] = Rested.isNextGarrisonCache,
 	},
 	[":auctions"] = {
-		["help"] = {"offset", "Queue for expired auctions"},
+		["help"] = {"", "Queue for expired auctions"},
 		["func"] = Rested.isNextAuctions,
 	},
 	[":macros"] = {
