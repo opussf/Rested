@@ -66,6 +66,8 @@ function Rested.ShiftIsNextCharacterIndex()
 	return maxOut
 end
 function Rested.SetNextCharacters( param )
+	Rested.reportName = "Play Next"
+	Rested.UIShowReport( Rested.NextCharsReport, true )
 	if( param and strlen( param ) > 0 ) then
 		local currentIndex= Rested.ShiftIsNextCharacterIndex() or 0
 		for searchName in string.gmatch( param, "([^ ]+)" ) do
@@ -105,8 +107,6 @@ function Rested.SetNextCharacters( param )
 		end
 		_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
 	end
-	Rested.reportName = "Play Next"
-	Rested.UIShowReport( Rested.NextCharsReport, true )
 end
 
 Rested.InitCallback(Rested.RegisterIsNext)
@@ -142,13 +142,31 @@ function Rested.isNextMacroList(param)
 				macro, info.help[1], info.help[2] ), false )
 	end
 end
-function Rested.isNextHelp(param)
-	Rested.Print("isnext help:")
-	Rested.Print("This lets you queue characters to visit.")
-	Rested.Print("Use a macro name (isnext :list for a list)")
-	Rested.Print("or use a search to match a character.")
-	Rested.Print("Prepend the search with a \"-\" to remove a search match.")
-	Rested.Print("Searching \"-.\" will clear the list.")
+Rested.isNextHelpLines = {
+	"/isnext help:",
+	"This lets you queue characters to visit.",
+	"Use a macro name (isnext :list for a list)",
+	"or use a search to match a character.",
+	"Prepend the search with a '-'' to remove a search match.",
+	"Searching '-.' will clear the list.",
+	"Macros:",
+}
+function Rested.isNextHelpReport( )
+	-- normally takes realm, name, charStruct
+	local index = 0
+	if( #Rested.charList == 0 ) then
+		for i, text in ipairs( Rested.isNextHelpLines ) do
+			index = index + 1
+			table.insert( Rested.charList, { 150-(index*0.01), text } )
+		end
+		for macro, info in Rested.SortedPairs( Rested.isNextMacros ) do
+			index = index + 1
+			table.insert( Rested.charList, { 150-(index*0.01), string.format("%s %s -> %s",
+					macro, info.help[1], info.help[2] ) } )
+		end
+		return index
+	end
+	return 0
 end
 function Rested.isNextAlpha(param)
 	local alpha = {}
@@ -305,6 +323,6 @@ Rested.isNextMacros = {
 	},
 	[":help"] = {
 		["help"] = {"", "Macro help"},
-		["func"] = Rested.isNextHelp,
+		["func"] = function() Rested.reportName = "isNext Help"; Rested.UIShowReport(Rested.isNextHelpReport); end,
 	},
 }
