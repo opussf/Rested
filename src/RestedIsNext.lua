@@ -142,6 +142,14 @@ function Rested.isNextMacroList(param)
 				macro, info.help[1], info.help[2] ), false )
 	end
 end
+function Rested.isNextHelp(param)
+	Rested.Print("isnext help:")
+	Rested.Print("This lets you queue characters to visit.")
+	Rested.Print("Use a macro name (isnext :list for a list)")
+	Rested.Print("or use a search to match a character.")
+	Rested.Print("Prepend the search with a \"-\" to remove a search match.")
+	Rested.Print("Searching \"-.\" will clear the list.")
+end
 function Rested.isNextAlpha(param)
 	local alpha = {}
 	for realm, chars in pairs(Rested_restedState) do
@@ -157,15 +165,17 @@ function Rested.isNextAlpha(param)
 end
 function Rested.isNextRandom(param)
 	local r = {}
+	local maxIsNext = 0
 	for realm, chars in pairs(Rested_restedState) do
 		for name, charStruct in pairs(chars) do
 			r[#r + 1] = charStruct
+			maxIsNext = math.max(maxIsNext, charStruct.isNextIndex or 0)
 		end
 	end
 	for lcv = 1, #r do
 		rc = r[random(1, #r)]
 		if not rc.isNextIndex then
-			rc.isNextIndex = 1
+			rc.isNextIndex = maxIsNext + 1
 			rc.isNextReason = ":random"
 			break
 		end
@@ -260,7 +270,6 @@ function Rested.isNextAuctions(param)
 		end
 	end, true)
 end
-
 Rested.isNextMacros = {
 	[":alpha"] = {
 		["help"] = {"", "Queue all toons alphabetically."},
@@ -290,8 +299,12 @@ Rested.isNextMacros = {
 		["help"] = {"", "Queue for expired auctions"},
 		["func"] = Rested.isNextAuctions,
 	},
-	[":macros"] = {
+	[":list"] = {
 		["help"] = {"", "List macros"},
 		["func"] = Rested.isNextMacroList,
+	},
+	[":help"] = {
+		["help"] = {"", "Macro help"},
+		["func"] = Rested.isNextHelp,
 	},
 }

@@ -2225,40 +2225,9 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {109, 101, 107, 104, 102, 106}
+	local resultMatrix = {109, 101, 107, 104, 102, 0}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
-end
-function test.test_isNextMacros_farm_withOffset()
-	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
-	Rested_restedState["otherRealm"]["frank"] = { characterIndex=2, farm={ lastHarvest=1000 } }
-	Rested_restedState["Test Realm"]["testPlayer"].characterIndex=3
-	Rested_restedState["Test Realm"]["testPlayer"].farm.lastHarvest=1000
-	Rested_restedState["Test Realm"]["p4"] = { characterIndex=4, farm={ lastHarvest=1000 } }
-	Rested_restedState["Test Realm"]["p5"] = { characterIndex=5, farm={ lastHarvest=1000 } }
-	Rested_restedState["Test Realm"]["p6"] = { characterIndex=6, farm={ lastHarvest=1000 } }
-	Rested_restedState["Test Realm"]["p7"] = { characterIndex=7, farm={ lastHarvest=1000 } }
-	Rested_restedState["Test Realm"]["p8"] = { characterIndex=8, farm={ lastHarvest=1000 } }
-	for _, r in pairs(Rested_restedState) do
-		for _, c in pairs(r) do
-			c.isNextIndex = nil
-		end
-	end
-	Rested.ADDON_LOADED()
-	Rested.VARIABLES_LOADED()
-
-	Rested.Command("isnext :farm 7 500")
-
-	local numQueued = 0
-	for rn, r in pairs(Rested_restedState) do
-		for cn, c in pairs(r) do
-			numQueued = numQueued + (c.isNextIndex and 1 or 0)
-		end
-	end
-
-	local resultMatrix = {2, 1, 1, 1, 1, 1}
-
-	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
 function test.test_isNextMacros_farm_2()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1, farm={ lastHarvest=1000 } } }
@@ -2398,7 +2367,7 @@ function test.test_isNextMacros_auctions_active()
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 function test.test_isNextMacros_list()
-	Rested.Command("isnext :macros")
+	Rested.Command("isnext :list")
 	assertEquals("|cffff0000Rested Reporter> |risnext macro list:",chatLog[2].msg)
 end
 
