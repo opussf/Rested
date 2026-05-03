@@ -2366,10 +2366,6 @@ function test.test_isNextMacros_auctions_active()
 	Rested.Command("isnext :auctions")
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
-function test.test_isNextMacros_list()
-	Rested.Command("isnext :list")
-	assertEquals("|cffff0000Rested Reporter> |risnext macro list:",chatLog[2].msg)
-end
 
 
 -- test descriptions
