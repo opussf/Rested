@@ -140,7 +140,7 @@ Rested.isNextHelpLines = {
 	"This lets you queue characters to visit.",
 	"Use a macro name (isnext :list for a list)",
 	"or use a search to match a character.",
-	"Prepend the search with a '-'' to remove a search match.",
+	"Prepend the search with a '-' to remove a search match.",
 	"Searching '-.' will clear the list.",
 	"Macros:",
 }
