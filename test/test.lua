@@ -2336,6 +2336,13 @@ function test.test_isNextMacros_auctions_active()
 	Rested.Command("isnext :auctions")
 	assertIsNil( Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
+function test.test_isNextMacros_vault()
+	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
+		weeklyRewards = true,
+	}, }
+	Rested.Command("isnext :vault")
+	assertEquals( 101, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
 
 
 -- test descriptions
