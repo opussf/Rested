@@ -96,6 +96,7 @@ function Rested.SetNextCharacters( param )
 						if match then
 							if toRemove then
 								cs.isNextIndex = nil
+								cs.isNextReason = nil
 							else
 								currentIndex = currentIndex + 1
 								cs.isNextIndex = currentIndex
