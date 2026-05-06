@@ -1,13 +1,8 @@
 -- RestedGarrisonShipments.lua
 
-
-function Rested.SHIPMENT_CRAFTER_OPENED( ... )
-	print("SHIPMENT_CRAFTER_OPENED", ...)
-end
 function Rested.Shipments_CRAFTER_CLOSED()
 	print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
 	if Rested.me.garrisonShipments then
-
 		print(Rested.me.garrisonShipments[Rested.buildingName].queuedShipments)
 	end
 end
@@ -18,15 +13,13 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 	local numPending = C_Garrison.GetNumPendingShipments()
 	local name, texture, quality, itemID, followerID, duration = C_Garrison.GetShipmentItemInfo();
 
-
-
-	local timeRemaining = (numPending and numPending > 0) and select(7, C_Garrison.GetPendingShipmentInfo(numPending)) or 0;
+	-- local timeRemaining = (numPending and numPending > 0) and select(7, C_Garrison.GetPendingShipmentInfo(numPending)) or 0;
 
 	-- local available = max(maxShipments - numPending - ownedShipments, 0);  -- open slots (not what I want)
 
 
-	print("SHIPMENT_CRAFTER_INFO", ...)
-	print(z, buildingName, ownedShipments, "/", queuedShipments, numPending, duration, timeRemaining )
+	-- print("SHIPMENT_CRAFTER_INFO", ...)
+	-- print(z, buildingName, ownedShipments, "/", queuedShipments, numPending, duration, timeRemaining )
 	-- durration = 14400
 
 	Rested.me.garrisonShipments = Rested.me.garrisonShipments or {}
@@ -37,37 +30,16 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 		for i = 1, numPending do
 			local t = {C_Garrison.GetPendingShipmentInfo(i)}
 			Rested.me.garrisonShipments[buildingName].shipments[i] = t[7]
+			Rested.me.garrisonShipments[buildingName].duration = duration
 		end
 	end
 	-- Rested.me.garrisonShipments[buildingName].queuedShipments = queuedShipments
 	-- Rested.me.garrisonShipments[buildingName].singleTime = duration
 	-- Rested.me.garrisonShipments[buildingName].timeComplete = time()+timeRemaining
 end
-function Rested.SHIPMENT_CRAFTER_REAGENT_UPDATE()
-	print("SHIPMENT_CRAFTER_REAGENT_UPDATE")
-end
-function Rested.SHIPMENT_UPDATE()
-	print("SHIPMENT_UPDATE")
-end
 
-function Rested.Shipments_VIGNETTE_UPDATED(...)
-	print("VIGNETTES_UPDATED", ...)
-	local vigs = C_VignetteInfo.GetVignettes()
-	for _, vGUID in ipairs(vigs) do  -- returns vignetteGUIDs  (table)
-		print(vGUID)
-		local vInfo = C_VignetteInfo.GetVignetteInfo(vGUID)  -- returns table of vignette info
-		for k,v in pairs(vInfo) do
-			print(k,v)
-		end
-	end
-end
-
--- Rested.EventCallback("SHIPMENT_CRAFTER_OPENED")
 Rested.EventCallback("SHIPMENT_CRAFTER_CLOSED", Rested.Shipments_CRAFTER_CLOSED )
 Rested.EventCallback("SHIPMENT_CRAFTER_INFO", Rested.Shipments_CRAFTER_INFO )
--- Rested.EventCallback("SHIPMENT_CRAFTER_REAGENT_UPDATE")
--- Rested.EventCallback("SHIPMENT_UPDATE")
--- Rested.EventCallback("VIGNETTES_UPDATED", Rested.Shipments_VIGNETTE_UPDATED)
 
 Rested.dropDownMenuTable["Garrison Work Orders"] = "gwo"
 Rested.commandList["gwo"] = { ["help"] = {"","Show garrison work order report."}, ["func"] = function()
