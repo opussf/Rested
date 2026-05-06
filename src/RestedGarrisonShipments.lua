@@ -27,7 +27,7 @@ function Rested.SHIPMENT_CRAFTER_INFO( ... )
 
 
 
-	local timeRemaining = numPending > 0 and select(7, C_Garrison.GetPendingShipmentInfo(numPending)) or 0;
+	local timeRemaining = (numPending and numPending > 0) and select(7, C_Garrison.GetPendingShipmentInfo(numPending)) or 0;
 
 	-- local available = max(maxShipments - numPending - ownedShipments, 0);  -- open slots (not what I want)
 
@@ -59,20 +59,21 @@ Rested.commandList["gwo"] = { ["help"] = {"","Show garrison work order report."}
 }
 
 function Rested.GShipmentReport( realm, name, charStruct )
-
 	if( charStruct.garrisonShipments ) then
 		local rn = Rested.FormatName( realm, name )
 		local count = 0
 		for buildingName, si in Rested.SortedPairs( charStruct.garrisonShipments ) do
-			table.insert( Rested.charList,
-				{ tonumber(si.timeComplete/(si.queuedShipments*si.singleTime))*150,
-					string.format("%i :: %s : %s %s",
-						si.queuedShipments,
-						rn,
-						buildingName,
-						SecondsToTime( si.timeComplete - time() ))
-			})
-			count = count + 1
+			if si.queuedShipments > 0 then
+				table.insert( Rested.charList,
+					{ tonumber(si.timeComplete/(si.queuedShipments*si.singleTime))*150,
+						string.format("%i :: %s : %s %s",
+							si.queuedShipments,
+							rn,
+							buildingName,
+							SecondsToTime( si.timeComplete - time() ))
+				})
+				count = count + 1
+			end
 		end
 		return count
 	end
