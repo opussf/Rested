@@ -13,13 +13,18 @@ function Rested.SHIPMENT_CRAFTER_OPENED( ... )
 	print("SHIPMENT_CRAFTER_OPENED", ...)
 end
 function Rested.SHIPMENT_CRAFTER_CLOSED()
-	print("SHIPMENT_CRAFTER_CLOSED")
+	print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
+	if Rested.me.garrisonShipments then
+		print(Rested.me.garrisonShipments[Rested.buildingName].queuedShipments)
+	end
 end
 function Rested.SHIPMENT_CRAFTER_INFO( ... )
 	local _, queuedShipments, maxShipments, ownedShipments, plotID = ...
 	local z, buildingName = C_Garrison.GetOwnedBuildingInfoAbbrev(plotID)
+	Rested.buildingName = buildingName
 	local numPending = C_Garrison.GetNumPendingShipments()
 	local name, texture, quality, itemID, followerID, duration = C_Garrison.GetShipmentItemInfo();
+
 
 
 	local timeRemaining = numPending > 0 and select(7, C_Garrison.GetPendingShipmentInfo(numPending)) or 0;
@@ -28,7 +33,7 @@ function Rested.SHIPMENT_CRAFTER_INFO( ... )
 
 
 	print("SHIPMENT_CRAFTER_INFO", ...)
-	print(z, buildingName, ownedShipments, "/", queuedShipments, duration, timeRemaining )
+	print(z, buildingName, ownedShipments, "/", queuedShipments, numPending, duration, timeRemaining )
 	-- durration = 14400
 
 	Rested.me.garrisonShipments = Rested.me.garrisonShipments or {}
@@ -60,7 +65,7 @@ function Rested.GShipmentReport( realm, name, charStruct )
 		local count = 0
 		for buildingName, si in Rested.SortedPairs( charStruct.garrisonShipments ) do
 			table.insert( Rested.charList,
-				{ (si.timeComplete/(si.queuedShipments*si.singleTime))*150,
+				{ tonumber(si.timeComplete/(si.queuedShipments*si.singleTime))*150,
 					string.format("%i :: %s : %s %s",
 						si.queuedShipments,
 						rn,
