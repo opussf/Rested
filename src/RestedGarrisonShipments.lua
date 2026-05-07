@@ -1,7 +1,9 @@
 -- RestedGarrisonShipments.lua
 
 function Rested.Shipments_CRAFTER_CLOSED()
+	-- this IS the prune function.
 	-- print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
+
 	if Rested.me.garrisonShipments then
 		local buildingCount = 0
 		for buildingName, si in pairs( Rested.me.garrisonShipments ) do
@@ -42,18 +44,19 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 end
 Rested.WORK_ORDER_OBJECTS = {
 	[235885] = "Herb Garden",
-	[235886] = "Lunarfall Excavation",
+	[235886] = "Lunarfall Excavation",  -- Alliance Mine
 	[236650] = "Scribe's Quarters",
 	[237666] = "Tailoring Emporium",
 	[239238] = "Herb Garden",
+	[239237] = "Frostwall Mines", -- Horde Mine
 }
 function Rested.Shipments_LOOT_READY()
-for i = 1, GetNumLootItems() do
+	for i = 1, GetNumLootItems() do
 		local guid, quantity = GetLootSourceInfo(i)
 		local type, _, _, _, _, id = strsplit("-", guid)
 		local buildingName = Rested.WORK_ORDER_OBJECTS[tonumber(id)]
 		-- if not buildingName then
-		-- 	print("Looting from GUID:", guid, buildingName, quantity)
+			-- print("Looting from GUID:", guid, buildingName, quantity)
 		-- end
 		if buildingName then
 			-- print("Trim down", buildingName, Rested.me.garrisonShipments[buildingName])
@@ -70,6 +73,7 @@ for i = 1, GetNumLootItems() do
 			end
 		end
     end
+    Rested.Shipments_CRAFTER_CLOSED()
 end
 
 
