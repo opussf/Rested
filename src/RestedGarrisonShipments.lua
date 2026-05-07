@@ -52,9 +52,9 @@ for i = 1, GetNumLootItems() do
 		local guid, quantity = GetLootSourceInfo(i)
 		local type, _, _, _, _, id = strsplit("-", guid)
 		local buildingName = Rested.WORK_ORDER_OBJECTS[tonumber(id)]
-		if not buildingName then
-			print("Looting from GUID:", guid, buildingName, quantity)
-		end
+		-- if not buildingName then
+		-- 	print("Looting from GUID:", guid, buildingName, quantity)
+		-- end
 		if buildingName then
 			-- print("Trim down", buildingName, Rested.me.garrisonShipments[buildingName])
 			if Rested.me.garrisonShipments and Rested.me.garrisonShipments[buildingName] then
