@@ -3,7 +3,18 @@
 function Rested.Shipments_CRAFTER_CLOSED()
 	print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
 	if Rested.me.garrisonShipments then
-		print(Rested.me.garrisonShipments[Rested.buildingName].queuedShipments)
+		local buildingCount = 0
+		for buildingName, si in pairs( Rested.me.garrisonShipments ) do
+			buildingCount = buildingCount + 1
+			print(buildingName, #Rested.me.garrisonShipments[buildingName].shipments, buildingCount)
+			if #Rested.me.garrisonShipments[buildingName].shipments == 0 then
+				Rested.me.garrisonShipments[buildingName] = nil
+				buildingCount = buildingCount - 1
+			end
+		end
+		if buildingCount == 0 then
+			Rested.me.garrisonShipments = nil
+		end
 	end
 end
 function Rested.Shipments_CRAFTER_INFO( ... )
@@ -13,29 +24,21 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 	local numPending = C_Garrison.GetNumPendingShipments()
 	local name, texture, quality, itemID, followerID, duration = C_Garrison.GetShipmentItemInfo();
 
-	-- local timeRemaining = (numPending and numPending > 0) and select(7, C_Garrison.GetPendingShipmentInfo(numPending)) or 0;
-
-	-- local available = max(maxShipments - numPending - ownedShipments, 0);  -- open slots (not what I want)
-
-
 	-- print("SHIPMENT_CRAFTER_INFO", ...)
-	-- print(z, buildingName, ownedShipments, "/", queuedShipments, numPending, duration, timeRemaining )
+	-- print(z, buildingName, ownedShipments, "/", queuedShipments, numPending)
 	-- durration = 14400
 
 	Rested.me.garrisonShipments = Rested.me.garrisonShipments or {}
 	Rested.me.garrisonShipments[buildingName] = Rested.me.garrisonShipments[buildingName] or {}
 	Rested.me.garrisonShipments[buildingName].sampleTS = time()
-	Rested.me.garrisonShipments[buildingName].shipments = {}
 	if numPending then
+		Rested.me.garrisonShipments[buildingName].shipments = {}
 		for i = 1, numPending do
 			local t = {C_Garrison.GetPendingShipmentInfo(i)}
 			Rested.me.garrisonShipments[buildingName].shipments[i] = t[7]
 			Rested.me.garrisonShipments[buildingName].duration = duration
 		end
 	end
-	-- Rested.me.garrisonShipments[buildingName].queuedShipments = queuedShipments
-	-- Rested.me.garrisonShipments[buildingName].singleTime = duration
-	-- Rested.me.garrisonShipments[buildingName].timeComplete = time()+timeRemaining
 end
 
 Rested.EventCallback("SHIPMENT_CRAFTER_CLOSED", Rested.Shipments_CRAFTER_CLOSED )
