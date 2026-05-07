@@ -2493,6 +2493,52 @@ function issecretvalue( value )
 	return false  -- default to false for now.
 end
 
+--------
+-- Garrison Work Order info
+--------
+myLootItems = {
+	-- {}    -- table of guid, and int
+}
+function AddLootItems( id )
+	table.insert(myLootItems, {id, 1})
+end
+function GetNumLootItems()
+	-- returns integer
+	return #myLootItems
+end
+function GetLootSourceInfo( index )
+	-- returns: guid (str), quantity (int)
+	return myLootItems[index][1], myLootItems[index][2]
+end
+
+---------
+-- C_Garrison
+---------
+C_Garrison = {}
+function C_Garrison.MakeTestData( buildingName, plotID, shipments )
+	-- this is probably handled with a few other methods.
+	C_Garrison.plotID = plotID
+	C_Garrison.testData = {}
+	C_Garrison.testData[plotID] = {}
+	C_Garrison.testData[plotID].buildingName = buildingName
+	C_Garrison.testData[plotID].shipments = shipments -- { array of expire times }
+end
+function C_Garrison.GetOwnedBuildingInfoAbbrev( plotID )
+	-- returns ? (int), buildingName (str)
+	return 16, C_Garrison.testData[plotID].buildingName
+end
+function C_Garrison.GetNumPendingShipments()
+	-- returns numPending (int)
+	return #C_Garrison.testData[C_Garrison.plotID].shipments
+end
+function C_Garrison.GetShipmentItemInfo()
+	-- returns name, texture, quality, itemID, followerID, duraation
+	return "", 0, 0, 0, 0, 14400
+end
+function C_Garrison.GetPendingShipmentInfo( index )
+	-- returns
+	return "herbs", 263455, 1, 238763, "nil", 14400, C_Garrison.testData[C_Garrison.plotID].shipments[index]
+end
 -----------------------------------------
 -- A SAX parser takes a content handler, which provides these methods:
 --     startDocument()                 -- called at the start of the Document

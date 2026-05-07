@@ -2,8 +2,6 @@
 
 function Rested.Shipments_CRAFTER_CLOSED()
 	-- this IS the prune function.
-	-- print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
-
 	if Rested.me.garrisonShipments then
 		local buildingCount = 0
 		for buildingName, si in pairs( Rested.me.garrisonShipments ) do
@@ -76,22 +74,6 @@ function Rested.Shipments_LOOT_READY()
     Rested.Shipments_CRAFTER_CLOSED()
 end
 
-
---[[
-["garrisonShipments"] = {
-	["Herb Garden"] = {
-		["shipments"] = {
-			14320,
-			28721,
-			43121,
-		},
-		["duration"] = 43124,
-		["sampleTS"] = 1778107991,
-	},
-},
-]]
-
-
 Rested.EventCallback("SHIPMENT_CRAFTER_CLOSED", Rested.Shipments_CRAFTER_CLOSED)
 Rested.EventCallback("SHIPMENT_CRAFTER_INFO", Rested.Shipments_CRAFTER_INFO)
 Rested.EventCallback("LOOT_READY", Rested.Shipments_LOOT_READY)
@@ -139,34 +121,3 @@ function Rested.GShipmentReport( realm, name, charStruct )
 		return count
 	end
 end
-
-
---[[
-
-
-
-local WORK_ORDER_OBJECTS = {
--- Profession buildings
-[236639] = "Alchemy Work Order",
-[236640] = "Blacksmithing Work Order",       -- Alliance (Lunarfall)
-[236641] = "Blacksmithing Work Order",       -- Horde (Frostwall)
-[236644] = "Enchanting Work Order",
-[236646] = "Engineering Work Order",
-[236948] = "Leatherworking Work Order",
-[237666] = "Tailoring Work Order",
-
--- Garrison buildings
-[233832] = "Lumber Mill Work Order",
-[237355] = "Trading Post Work Order",
-[238756] = "Workshop Work Order",
-[238761] = "Barn Work Order",
-[239066] = "Dwarven Bunker Work Order",      -- Alliance
-[239067] = "War Mill Work Order",            -- Horde
-
-
--- Other
-[218750] = "Work Orders",                    -- MoP (Valley of the Four Winds)
-[502917] = "Misplaced Work Order",           -- TWW (Undermine)
-}
-
-]]
