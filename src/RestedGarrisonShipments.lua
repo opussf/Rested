@@ -1,12 +1,12 @@
 -- RestedGarrisonShipments.lua
 
 function Rested.Shipments_CRAFTER_CLOSED()
-	print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
+	-- print("SHIPMENT_CRAFTER_CLOSED", Rested.buildingName)
 	if Rested.me.garrisonShipments then
 		local buildingCount = 0
 		for buildingName, si in pairs( Rested.me.garrisonShipments ) do
 			buildingCount = buildingCount + 1
-			print(buildingName, #Rested.me.garrisonShipments[buildingName].shipments, buildingCount)
+			-- print(buildingName, #Rested.me.garrisonShipments[buildingName].shipments, buildingCount)
 			if #Rested.me.garrisonShipments[buildingName].shipments == 0 then
 				Rested.me.garrisonShipments[buildingName] = nil
 				buildingCount = buildingCount - 1
