@@ -52,17 +52,19 @@ for i = 1, GetNumLootItems() do
 		local guid, quantity = GetLootSourceInfo(i)
 		local type, _, _, _, _, id = strsplit("-", guid)
 		local buildingName = Rested.WORK_ORDER_OBJECTS[tonumber(id)]
-		print("Looting from GUID:", guid, buildingName, quantity)
+		if not buildingName then
+			print("Looting from GUID:", guid, buildingName, quantity)
+		end
 		if buildingName then
-			print("Trim down", buildingName, Rested.me.garrisonShipments[buildingName])
-			if Rested.me.garrisonShipments[buildingName] then
-				print("Have Table, will trim.", #Rested.me.garrisonShipments[buildingName].shipments)
+			-- print("Trim down", buildingName, Rested.me.garrisonShipments[buildingName])
+			if Rested.me.garrisonShipments and Rested.me.garrisonShipments[buildingName] then
+				-- print("Have Table, will trim.", #Rested.me.garrisonShipments[buildingName].shipments)
 				for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
-					print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
-							Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
+					-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
+							-- Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
 					if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
 						table.remove(Rested.me.garrisonShipments[buildingName].shipments, i)
-						print("Removing", i)
+						-- print("Removing", i)
 					end
 				end
 			end
