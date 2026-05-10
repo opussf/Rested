@@ -39,6 +39,37 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 			Rested.me.garrisonShipments[buildingName].duration = duration
 		end
 	end
+--[[
+local function GetCurrentMapPosition()
+    local mapID = C_Map.GetBestMapForUnit("player")
+    if not mapID then return end
+
+    local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+    if not pos then return end
+
+    local mapInfo = C_Map.GetMapInfo(mapID)
+    return {
+        mapID   = mapID,
+        mapName = mapInfo and mapInfo.name or "Unknown",
+        x       = math.floor(pos.x * 10000) / 100,  -- 0-100 range
+        y       = math.floor(pos.y * 10000) / 100,
+    }
+end
+
+local function MapCoordsToYards(mapID, x, y)
+    local width, height = C_Map.GetMapWorldSize(mapID)
+    if not width or not height then return end
+    return x * width, y * height
+end
+
+-- Distance between two map coord pairs on the same map
+local function DistanceYards(mapID, x1, y1, x2, y2)
+    local ax, ay = MapCoordsToYards(mapID, x1, y1)
+    local bx, by = MapCoordsToYards(mapID, x2, y2)
+    return math.sqrt((bx - ax)^2 + (by - ay)^2)
+end
+]]
+
 end
 Rested.WORK_ORDER_OBJECTS = {
 	[235885] = "Herb Garden",
@@ -53,6 +84,7 @@ function Rested.Shipments_LOOT_READY()
 		local guid, quantity = GetLootSourceInfo(i)
 		local type, _, _, _, _, id = strsplit("-", guid)
 		local buildingName = Rested.WORK_ORDER_OBJECTS[tonumber(id)]
+
 		-- if not buildingName then
 			-- print("Looting from GUID:", guid, buildingName, quantity)
 		-- end

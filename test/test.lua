@@ -2256,7 +2256,7 @@ function test.test_isNextMacros_farm_2()
 		end
 	end
 
-	local resultMatrix = {[0] = 3, 4, 3, 4, 3, 3, 4}
+	local resultMatrix = {[0] = 3, 4, 3, 4, 3, 4, 4}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
