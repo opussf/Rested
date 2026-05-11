@@ -47,9 +47,8 @@ function Rested.IsWithInDistance(x, y, d)
 	if x and y then
 		local cx, cy = C_Map.GetPlayerMapPosition( C_Map.GetBestMapForUnit("player"), "player" ):GetXY()
 		cx = cx*100; cy = cy*100
-		print(cx,cy, x,y)
 		local distance = math.sqrt((cx-x)^2 + (cy-y)^2)
-		print("Distance:",distance)
+		print(cx,cy, x,y, "Distance:",distance)
 		if distance <= d then
 			return true
 		end
