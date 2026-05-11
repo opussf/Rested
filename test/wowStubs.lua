@@ -2434,12 +2434,27 @@ end
 -- C_Map
 ----------
 C_Map = {}
+C_Map.playerPositions = {["player"] = {5, 0.51, 0.51}}  -- ["player"] = {mapID, x, y}
+function C_Map.GetXY(this)
+	return C_Map.x, C_Map.y
+end
+function C_Map.SetPlayerMapPosition(mapID, x, y, player)
+	C_Map.playerPositions[player] = {mapID, x, y}
+end
 function C_Map.GetBestMapForUnit( unitStr )
 	return 5
 end
 function C_Map.GetMapInfo( mapID )
 	return { mapID=5, name="map name", parentMapID=0, mapType=1, flags=2 }
 end
+function C_Map.GetPlayerMapPosition(mapID, player)
+	if C_Map.playerPositions[player] and C_Map.playerPositions[player][1] == mapID then
+		C_Map.x = C_Map.playerPositions[player][2]
+		C_Map.y = C_Map.playerPositions[player][3]
+		return C_Map
+	end
+end
+
 
 ----------
 -- ItemLocation
@@ -2539,6 +2554,8 @@ function C_Garrison.GetPendingShipmentInfo( index )
 	-- returns
 	return "herbs", 263455, 1, 238763, "nil", 14400, C_Garrison.testData[C_Garrison.plotID].shipments[index]
 end
+
+
 -----------------------------------------
 -- A SAX parser takes a content handler, which provides these methods:
 --     startDocument()                 -- called at the start of the Document

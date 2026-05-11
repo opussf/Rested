@@ -39,70 +39,35 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 			Rested.me.garrisonShipments[buildingName].duration = duration
 		end
 	end
---[[
-local function GetCurrentMapPosition()
-    local mapID = C_Map.GetBestMapForUnit("player")
-    if not mapID then return end
-
-    local pos = C_Map.GetPlayerMapPosition(mapID, "player")
-    if not pos then return end
-
-    local mapInfo = C_Map.GetMapInfo(mapID)
-    return {
-        mapID   = mapID,
-        mapName = mapInfo and mapInfo.name or "Unknown",
-        x       = math.floor(pos.x * 10000) / 100,  -- 0-100 range
-        y       = math.floor(pos.y * 10000) / 100,
-    }
+	local x, y = C_Map.GetPlayerMapPosition( C_Map.GetBestMapForUnit("player"), "player" ):GetXY();
+	Rested.me.garrisonShipments[buildingName].x = x*100
+	Rested.me.garrisonShipments[buildingName].y = y*100
 end
-
-local function MapCoordsToYards(mapID, x, y)
-    local width, height = C_Map.GetMapWorldSize(mapID)
-    if not width or not height then return end
-    return x * width, y * height
+function Rested.IsWithInDistance(x, y, d)
+	if x and y then
+		local cx, cy = C_Map.GetPlayerMapPosition( C_Map.GetBestMapForUnit("player"), "player" ):GetXY()
+		cx = cx*100; cy = cy*100
+		print(cx,cy, x,y)
+		local distance = math.sqrt((cx-x)^2 + (cy-y)^2)
+		print("Distance:",distance)
+		if distance <= d then
+			return true
+		end
+	end
 end
-
--- Distance between two map coord pairs on the same map
-local function DistanceYards(mapID, x1, y1, x2, y2)
-    local ax, ay = MapCoordsToYards(mapID, x1, y1)
-    local bx, by = MapCoordsToYards(mapID, x2, y2)
-    return math.sqrt((bx - ax)^2 + (by - ay)^2)
-end
-]]
-
-end
-Rested.WORK_ORDER_OBJECTS = {
-	[235885] = "Herb Garden",
-	[235886] = "Lunarfall Excavation",  -- Alliance Mine
-	[236650] = "Scribe's Quarters",
-	[237666] = "Tailoring Emporium",
-	[239238] = "Herb Garden",
-	[239237] = "Frostwall Mines", -- Horde Mine
-}
 function Rested.Shipments_LOOT_READY()
-	for i = 1, GetNumLootItems() do
-		local guid, quantity = GetLootSourceInfo(i)
-		local type, _, _, _, _, id = strsplit("-", guid)
-		local buildingName = Rested.WORK_ORDER_OBJECTS[tonumber(id)]
-
-		-- if not buildingName then
-			-- print("Looting from GUID:", guid, buildingName, quantity)
-		-- end
-		if buildingName then
-			-- print("Trim down", buildingName, Rested.me.garrisonShipments[buildingName])
-			if Rested.me.garrisonShipments and Rested.me.garrisonShipments[buildingName] then
-				-- print("Have Table, will trim.", #Rested.me.garrisonShipments[buildingName].shipments)
-				for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
-					-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
-							-- Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
-					if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
-						table.remove(Rested.me.garrisonShipments[buildingName].shipments, i)
-						-- print("Removing", i)
-					end
+	for buildingName, si in pairs(Rested.me.garrisonShipments or {}) do
+		if Rested.IsWithInDistance(si.x, si.y, 0.6) then  -- distance of .5 might be good.   .6 is a bit safer?
+			for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
+				-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
+						-- Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
+				if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
+					table.remove(Rested.me.garrisonShipments[buildingName].shipments, i)
+					-- print("Removing", i)
 				end
 			end
 		end
-    end
+	end
     Rested.Shipments_CRAFTER_CLOSED()
 end
 

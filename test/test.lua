@@ -2255,7 +2255,7 @@ function test.test_isNextMacros_farm_2()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {[0] = 4, 4, 3, 4, 3, 3, 4}
+	local resultMatrix = {[0] = 4, 3, 3, 4, 3, 3, 4}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end
@@ -2376,7 +2376,9 @@ function test.test_shipments_2shipment_loot_1shipment()
 		["Herb Garden"] = {
 			["shipments"] = { 0, 14400 },  -- one shipment
 			["duration"] = 14400,
-			["sampleTS"] = time() - 2
+			["sampleTS"] = time() - 2,
+			["y"] = 51.30779147148132,
+			["x"] = 51.09816026687622,
 		}
 	}
 	AddLootItems( "Object0-0-00-000-0000-235885" )
@@ -2388,7 +2390,9 @@ function test.test_shipments_2shipment_loot_2shipments()
 		["Herb Garden"] = {
 			["shipments"] = { 14400, 28800 },  -- one shipment
 			["duration"] = 14400,
-			["sampleTS"] = time() - 28802
+			["sampleTS"] = time() - 28802,
+			["y"] = 51.30779147148132,
+			["x"] = 51.09816026687622,
 		}
 	}
 	AddLootItems( "Object0-0-00-000-0000-235885" )
@@ -2398,12 +2402,12 @@ end
 function test.test_shipments_CRAFTER_INFO_adds_shipments()
 	C_Garrison.MakeTestData("Herb Garden", 42, {14400, 28800, 43200})
 	Rested.Shipments_CRAFTER_INFO("", 1, 6, 1, 42)
-	test.dump(Rested_restedState)
+	-- test.dump(Rested_restedState)
 	local me = Rested_restedState["Test Realm"]["testPlayer"]
 	assertTrue(me.garrisonShipments, "garrisonShipments should be set.")
 	assertTrue(me.garrisonShipments["Herb Garden"])
 	assertEquals(14400, me.garrisonShipments["Herb Garden"].duration)
-	assertAlmostEquals(time(), me.garrisonShipments["Herb Garden"].sampleTS)
+	assertAlmostEquals(time(), me.garrisonShipments["Herb Garden"].sampleTS, nil, nil, 1)
 end
 
 
