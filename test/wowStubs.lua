@@ -2434,7 +2434,7 @@ end
 -- C_Map
 ----------
 C_Map = {}
-C_Map.playerPositions = {["player"] = {5, 0.51, 0.51}}  -- ["player"] = {mapID, x, y}
+C_Map.playerPositions = {["player"] = {582, 0.51, 0.51}}  -- ["player"] = {mapID, x, y}
 function C_Map.GetXY(this)
 	return C_Map.x, C_Map.y
 end
@@ -2442,7 +2442,7 @@ function C_Map.SetPlayerMapPosition(mapID, x, y, player)
 	C_Map.playerPositions[player] = {mapID, x, y}
 end
 function C_Map.GetBestMapForUnit( unitStr )
-	return 5
+	return 582
 end
 function C_Map.GetMapInfo( mapID )
 	return { mapID=5, name="map name", parentMapID=0, mapType=1, flags=2 }

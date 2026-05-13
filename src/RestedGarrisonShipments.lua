@@ -48,26 +48,29 @@ function Rested.IsWithInDistance(x, y, d)
 		local cx, cy = C_Map.GetPlayerMapPosition( C_Map.GetBestMapForUnit("player"), "player" ):GetXY()
 		cx = cx*100; cy = cy*100
 		local distance = math.sqrt((cx-x)^2 + (cy-y)^2)
-		print(cx,cy, x,y, "Distance:",distance)
+		print(string.format("%0.2f,%0.2f %0.2f,%0.2f Distance: %0.4f", cx,cy, x,y, distance))
 		if distance <= d then
 			return true
 		end
 	end
 end
 function Rested.Shipments_LOOT_READY()
-	for buildingName, si in pairs(Rested.me.garrisonShipments or {}) do
-		if Rested.IsWithInDistance(si.x, si.y, 0.6) then  -- distance of .5 might be good.   .6 is a bit safer?
-			for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
-				-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
-						-- Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
-				if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
-					table.remove(Rested.me.garrisonShipments[buildingName].shipments, i)
-					-- print("Removing", i)
+	local mapID = C_Map.GetBestMapForUnit("player")
+	if mapID == 582 or mapID == 590 then -- only if in the garrison map
+		for buildingName, si in pairs(Rested.me.garrisonShipments or {}) do
+			if Rested.IsWithInDistance(si.x, si.y, 2.1) then  -- distance of 1.5 might be good.
+				for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
+					-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
+							-- Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
+					if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
+						table.remove(Rested.me.garrisonShipments[buildingName].shipments, i)
+						-- print("Removing", i)
+					end
 				end
 			end
 		end
+		Rested.Shipments_CRAFTER_CLOSED()
 	end
-    Rested.Shipments_CRAFTER_CLOSED()
 end
 
 Rested.EventCallback("SHIPMENT_CRAFTER_CLOSED", Rested.Shipments_CRAFTER_CLOSED)
