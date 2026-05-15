@@ -58,7 +58,7 @@ function Rested.Shipments_LOOT_READY()
 	local mapID = C_Map.GetBestMapForUnit("player")
 	if mapID == 582 or mapID == 590 then -- only if in the garrison map
 		for buildingName, si in pairs(Rested.me.garrisonShipments or {}) do
-			if Rested.IsWithInDistance(si.x, si.y, 6) then  -- distance of 1.5 might be good.
+			if Rested.IsWithInDistance(si.x, si.y, 5) then  -- distance of 1.5 might be good.
 				print(buildingName)
 				for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
 					-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
