@@ -293,6 +293,28 @@ function Rested.isNextVault(param)
 		end
 	end, true)
 end
+function Rested.isNextGWO(param)
+	local offset = 100
+	Rested.ForAllChars(function(r,n,c)
+		if not c.isNextIndex
+				and c.garrisonShipments
+				and n~=Rested.name then
+
+			for buildingName, gs in pairs(c.garrisonShipments) do
+				local queue = true
+				for _, dur in ipairs(gs.shipments) do
+					queue = queue and (gs.sampleTS + dur < time())
+				end
+				if queue then
+					c.isNextIndex = c.characterIndex+offset
+					c.isNextReason = ":gwo"
+				end
+			end
+
+		end
+	end, true)
+end
+
 Rested.isNextMacros = {
 	[":alpha"] = {
 		["help"] = {"", "Queue all toons alphabetically."},
@@ -309,6 +331,10 @@ Rested.isNextMacros = {
 	[":cooldowns"] = {
 		["help"] = {"", "Queue for profession cooldowns."},
 		["func"] = Rested.isNextProfCooldowns,
+	},
+	[":gwo"] = {
+		["help"] = {"", "Queue for Garrison Work Orders."},
+		["func"] = Rested.isNextGWO,
 	},
 	-- [":conc"] = {
 	-- 	["help"] = {"offset", "Queue for profession concentration."},
