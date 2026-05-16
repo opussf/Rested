@@ -72,7 +72,7 @@
 					<Anchor point="TOPLEFT" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOMRIGHT" x="0" y="0" />
 				</Anchors>
 				<Scripts>
-					<OnLoad>self.tooltip="Include if rested to end of level";</OnLoad>
+					<!-- <OnLoad>self.tooltip="Include if rested to end of level";</OnLoad> -->
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include if rested to end of level")</OnShow>
 					<OnClick>RestedOptionsFrame_IncludeOverPercent:SetChecked(false)</OnClick>
 				</Scripts>
@@ -82,15 +82,15 @@
 					<Anchor point="TOP" relativeTo="$parent_IncludeToEndOfLevel" relativePoint="BOTTOM" x="0" y="0" />
 				</Anchors>
 				<Scripts>
-					<OnLoad>self.tooltip="Include if over";</OnLoad>
+					<!-- <OnLoad>self.tooltip="Include if over";</OnLoad> -->
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeOverPercent","Include if over")</OnShow>
 					<OnClick>RestedOptionsFrame_IncludeToEndOfLevel:SetChecked(false)</OnClick>
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_IncludeOverPercentValue" inherits="InputBoxTemplate" autoFocus="false">
-				<Size x="100" y="16"/>
+				<Size x="40" y="16"/>
 				<Anchors>
-					<Anchor/>
+					<Anchor point="LEFT" relativeTo="$parent_IncludeOverPercent" x="110" y="0"/>
 				</Anchors>
 			</EditBox>
 			<CheckButton name="$parent_IncludeMaxLevel" inherits="RESTEDOptionsCheckButtonTemplate">
