@@ -92,8 +92,9 @@ function Rested.GShipmentReport( realm, name, charStruct )
 		for buildingName, si in Rested.SortedPairs( charStruct.garrisonShipments ) do
 			local firstComplete = 0
 			local working = 0
-
+			local queued = 0
 			for i, duration in ipairs(charStruct.garrisonShipments[buildingName].shipments or {}) do
+				queued = queued + 1
 				if si.sampleTS + duration > time() then
 					working = working + 1
 					if firstComplete == 0 then
@@ -102,7 +103,6 @@ function Rested.GShipmentReport( realm, name, charStruct )
 					end
 				end
 			end
-			local queued = #charStruct.garrisonShipments[buildingName].shipments
 			local complete = queued - working
 			table.insert( Rested.charList,
 				{ ((time() - (firstComplete - 14400)) / 14400) * 150,
