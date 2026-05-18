@@ -2256,8 +2256,9 @@ function test.test_isNextMacros_farm_2()
 		end
 	end
 	local resultMatrix = {[0] = 4, 3, 4, 3, 4, 3, 4}
+	print(date("%j")%2)
 
-	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
+	assertEquals(resultMatrix[tonumber(date("%j")%2)], numQueued)
 end
 function test.test_isNextMacros_cooldowns()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
