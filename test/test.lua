@@ -1819,6 +1819,22 @@ end
 function test.test_TextToSeconds_08()
 	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
 end
+function test.test_SecondsToText_01()
+	assertEquals( "15s", Rested.SecondsToText( 15 ) )
+end
+function test.test_SecondsToText_02()
+	assertEquals( "1m30s", Rested.SecondsToText( 90 ) )
+end
+function test.test_SecondsToText_03()
+	assertEquals( "1h1m30s", Rested.SecondsToText( 3690 ) )
+end
+function test.test_SecondsToText_04()
+	assertEquals( "1d1h1m30s", Rested.SecondsToText( 90090 ) )
+end
+function test.test_SecondsToText_05()
+	assertEquals( "1w1d1h1m30s", Rested.SecondsToText( 694890 ) )
+end
+
 -- quests
 -------------
 function test.test_quests_addQuest()

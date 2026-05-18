@@ -276,6 +276,28 @@ function Rested.TextToSeconds( strIn, defaultUnit )
 		return( hasValue and seconds or nil )
 	end
 end
+function Rested.SecondsToText( secs )
+	local possibleUnits = {}  -- [604800 = "w"]
+	local unitValues = {}     -- [604800, 86400,...]
+	local outTable = {}
+
+	for u,s in pairs( Rested.timeMultipliers ) do
+		if u ~= " " then  -- prune default
+			possibleUnits[s] = u
+			unitValues[#unitValues+1] = s
+		end
+	end
+	table.sort(unitValues, function(a, b) return a > b end)
+	local unitCount = 0
+	for _, unitValue in ipairs( unitValues ) do
+		if secs > unitValue then
+			unitCount = math.floor( secs / unitValue )
+			secs = secs - unitCount * unitValue
+			outTable[#outTable+1] = string.format("%i%s", unitCount, possibleUnits[unitValue])
+		end
+	end
+	return table.concat(outTable)
+end
 -- remove
 -- There is always the requirement to remove alts no longer being tracked
 function Rested.RemoveCharacter( param )
