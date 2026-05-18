@@ -58,16 +58,17 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Enable auto display of Nag Report";</OnLoad>
-					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagEnabled","Enable");</OnShow>
-					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagEnabled")</OnClick>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self, "nagEnabled", "Enable");</OnShow>
+					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self, "nagEnabled")</OnClick>
 				</Scripts>
 			</CheckButton>
-			<EditBox name="$parent_NagTimeOut" inherits="InputBoxTemplate" autoFocus="false">
-				<Size x="100" y="16"/>
+			<EditBox name="$parent_NagTimeOutValue" inherits="InputBoxTemplate" autoFocus="false">
+				<Size x="50" y="16"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_AutoShowHeader" relativePoint="RIGHT" x="10" y="0" />
 				</Anchors>
 				<Scripts>
+					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "nagTimeOut", "Auto Hide after")</OnShow>
 					<!-- <OnShow>INEED.OptionsPanel_EditBox_OnLoad( self, "emote" )</OnShow>
 					<OnTextChanged>INEED.OptionsPanel_EditBox_TextChanged( self, "emote" )</OnTextChanged> -->
 				</Scripts>

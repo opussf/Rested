@@ -35,6 +35,9 @@ end
 function Rested.OptionsPanel_CheckButton_OnClick( self, option )
 	Rested_options[option] = self:GetChecked()
 end
+function Rested.OptionsPanel_DurationEditBox_Onload( self, option, text )
+	self:SetValue(Rested_options[option])
+end
 
 Rested.commandList["options"] = {
 		["help"] = {"","Open the options panel"},
