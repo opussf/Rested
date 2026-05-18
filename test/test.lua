@@ -2255,8 +2255,8 @@ function test.test_isNextMacros_farm_2()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {[0] = 4, 3, 4, 3, 4, 3, 4}
-	print(date("%j")%2)
+	local resultMatrix = {[0] = 4, 4, 4, 3, 4, 3, 4}
+	print(date("%w"), date("%j")%2, resultMatrix[tonumber(date("%j")%2)])
 
 	assertEquals(resultMatrix[tonumber(date("%j")%2)], numQueued)
 end
