@@ -90,13 +90,14 @@ function Rested.GShipmentReport( realm, name, charStruct )
 		local rn = Rested.FormatName( realm, name )
 		local count = 0
 		for buildingName, si in Rested.SortedPairs( charStruct.garrisonShipments ) do
-			local firstComplete = 0
+			local firstComplete, lastComplete = 0, 0
 			local working = 0
 			local queued = 0
 			for i, duration in ipairs(charStruct.garrisonShipments[buildingName].shipments or {}) do
 				queued = queued + 1
 				if si.sampleTS + duration > time() then
 					working = working + 1
+					lastComplete = si.sampleTS + duration
 					if firstComplete == 0 then
 						firstComplete = si.sampleTS + duration
 						-- print(i, SecondsToTime(firstComplete - time()), firstComplete - 14400, (time()-(firstComplete-14400))/14400 )
@@ -104,18 +105,33 @@ function Rested.GShipmentReport( realm, name, charStruct )
 				end
 			end
 			local complete = queued - working
-			table.insert( Rested.charList,
-				{ ((time() - (firstComplete - 14400)) / 14400) * 150,
-					string.format("%s%02i%s/%02i %s :: %s : %s",
-							complete > 0 and COLOR_GREEN or "",
-							complete,
-							complete > 0 and COLOR_END or "",
-							queued,
-							SecondsToTime(firstComplete - time()),
-							buildingName,
-							rn)
-				}
-			)
+			if working == 0 then
+				table.insert( Rested.charList,
+					{ time() - lastComplete,
+						string.format("%s%02i%s/%02i %s :: %s : %s",
+								complete > 0 and COLOR_GREEN or "",
+								complete,
+								complete > 0 and COLOR_END or "",
+								queued,
+								SecondsToTime(firstComplete - time()),
+								buildingName,
+								rn)
+					}
+				)
+			else
+				table.insert( Rested.charList,
+					{ ((time() - (firstComplete - 14400)) / 14400) * 150,
+						string.format("%s%02i%s/%02i %s :: %s : %s",
+								complete > 0 and COLOR_GREEN or "",
+								complete,
+								complete > 0 and COLOR_END or "",
+								queued,
+								SecondsToTime(firstComplete - time()),
+								buildingName,
+								rn)
+					}
+				)
+			end
 			count = count + 1
 		end
 		return count
