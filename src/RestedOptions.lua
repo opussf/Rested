@@ -35,12 +35,20 @@ end
 function Rested.OptionsPanel_CheckButton_OnClick( self, option )
 	Rested_options[option] = self:GetChecked()
 end
+function Rested.OptionsPanel_RadioButton_OnClick( self, otherRadioButtons ) --"nagIncludeToEndOfLevel",[RestedOptionsFrame_IncludeOverPercent])
+	print(self:GetChecked(), self:GetAttribute("var"))
+	for _, f in ipairs(otherRadioButtons) do
+		print(_,f)
+		f:SetChecked(false)
+	end
+end
 function Rested.OptionsPanel_DurationEditBox_Onload( self, option, text )
 	self:SetText(Rested.SecondsToText(Rested_options[option]))
 end
 function Rested.OptionsPanel_DurationEditBo_TextChanged( self, option )
 	Rested_options[option] = Rested.TextToSeconds( self:GetText() )
 end
+
 
 Rested.commandList["options"] = {
 		["help"] = {"","Open the options panel"},
@@ -49,6 +57,9 @@ Rested.commandList["options"] = {
 
 
 --[[
+
+RestedOptionsFrame_IncludeOverPercent:SetChecked(false);self:SetChecked(true)
+
 
 function INEED.OptionsPanel_Duration_TextChanged( self, option )
 	if self:HasFocus() then

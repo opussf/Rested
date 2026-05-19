@@ -86,9 +86,12 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOMRIGHT" x="0" y="0" />
 				</Anchors>
+				<Attributes>
+					<Attribute name="var" type="string" value="nagIncludeToEndOfLevel"/>
+				</Attributes>
 				<Scripts>
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include if rested to end of level")</OnShow>
-					<OnClick>RestedOptionsFrame_IncludeOverPercent:SetChecked(false);</OnClick>
+					<OnClick>Rested.OptionsPanel_RadioButton_OnClick(self,{RestedOptionsFrame_IncludeOverPercent})</OnClick>
 				</Scripts>
 			</CheckButton>
 			<CheckButton name="$parent_IncludeOverPercent" inherits="UIRadioButtonTemplate">
@@ -98,7 +101,7 @@
 				<Scripts>
 					<!-- <OnLoad>self.tooltip="Include if over";</OnLoad> -->
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeOverPercent","Include if over")</OnShow>
-					<OnClick>RestedOptionsFrame_IncludeToEndOfLevel:SetChecked(false)</OnClick>
+					<OnClick>Rested.OptionsPanel_RadioButton_OnClick(self,"nagIncludeToEndOfLevel",{RestedOptionsFrame_IncludeToEndOfLevel})</OnClick>
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_IncludeOverPercentValue" inherits="InputBoxTemplate" autoFocus="false">
@@ -112,8 +115,8 @@
 					<Anchor point="TOP" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOM" x="0" y="-32"/>
 				</Anchors>
 				<Scripts>
-					<OnLoad>self.tooltip="Include Max Level Toons"</OnLoad>
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include Max Level after")</OnShow>
+					<!-- <OnClick>RestedOptionsFrame_IncludeToEndOfLevel:SetChecked(false);self:SetChecked(true)</OnClick> -->
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_NagStartValue" inherits="InputBoxTemplate" autoFocus="false">
