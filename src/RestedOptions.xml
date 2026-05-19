@@ -69,8 +69,7 @@
 				</Anchors>
 				<Scripts>
 					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "nagTimeOut", "Auto Hide after")</OnShow>
-					<!-- <OnShow>INEED.OptionsPanel_EditBox_OnLoad( self, "emote" )</OnShow>
-					<OnTextChanged>INEED.OptionsPanel_EditBox_TextChanged( self, "emote" )</OnTextChanged> -->
+					<OnTextChanged>Rested.OptionsPanel_DurationEditBo_TextChanged(self, "nagTimeOut")</OnTextChanged>
 				</Scripts>
 			</EditBox>
 			<CheckButton name="$parent_IncludeLeveling" inherits="RESTEDOptionsCheckButtonTemplate">
@@ -78,7 +77,7 @@
 					<Anchor point="TOP" relativeTo="$parent_ShowNagReport" relativePoint="BOTTOM" x="0" y="0" />
 				</Anchors>
 				<Scripts>
-					<OnLoad>self.tooltip = "Include Leveing Toons";</OnLoad>
+					<OnLoad>self.tooltip = "Include Leveling Toons";</OnLoad>
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeLeveling","Include Leveing toons");</OnShow>
 					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagIncludeLeveling")</OnClick>
 				</Scripts>
@@ -88,9 +87,8 @@
 					<Anchor point="TOPLEFT" relativeTo="$parent_IncludeLeveling" relativePoint="BOTTOMRIGHT" x="0" y="0" />
 				</Anchors>
 				<Scripts>
-					<!-- <OnLoad>self.tooltip="Include if rested to end of level";</OnLoad> -->
 					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include if rested to end of level")</OnShow>
-					<OnClick>RestedOptionsFrame_IncludeOverPercent:SetChecked(false)</OnClick>
+					<OnClick>RestedOptionsFrame_IncludeOverPercent:SetChecked(false);</OnClick>
 				</Scripts>
 			</CheckButton>
 			<CheckButton name="$parent_IncludeOverPercent" inherits="UIRadioButtonTemplate">

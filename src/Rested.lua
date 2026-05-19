@@ -277,6 +277,7 @@ function Rested.TextToSeconds( strIn, defaultUnit )
 	end
 end
 function Rested.SecondsToText( secs )
+	if not secs then return "" end
 	local possibleUnits = {}  -- [604800 = "w"]
 	local unitValues = {}     -- [604800, 86400,...]
 	local outTable = {}

@@ -36,10 +36,34 @@ function Rested.OptionsPanel_CheckButton_OnClick( self, option )
 	Rested_options[option] = self:GetChecked()
 end
 function Rested.OptionsPanel_DurationEditBox_Onload( self, option, text )
-	self:SetValue(Rested_options[option])
+	self:SetText(Rested.SecondsToText(Rested_options[option]))
+end
+function Rested.OptionsPanel_DurationEditBo_TextChanged( self, option )
+	Rested_options[option] = Rested.TextToSeconds( self:GetText() )
 end
 
 Rested.commandList["options"] = {
 		["help"] = {"","Open the options panel"},
 		["func"] = function() Settings.OpenToCategory( RestedOptionsFrame.category:GetID() ) end,
 }
+
+
+--[[
+
+function INEED.OptionsPanel_Duration_TextChanged( self, option )
+	if self:HasFocus() then
+		local myName = strmatch(self:GetName(), "_(%a*)$")
+		local duration = INEED_options[option]
+		local newValue = duration
+		local calcStruct = INEED.durationKeys[myName]
+		if calcStruct then
+			local displayValue = tonumber( self:GetNumber() ) or 0
+			local originalSec = math.floor( (duration/calcStruct[1])%calcStruct[2] ) * calcStruct[1]
+			newValue = ( duration - originalSec ) + ( displayValue * calcStruct[1] )
+		end
+		INEED.OptionPanel_KeepOriginalValue( option )
+		INEED_options[option] = newValue
+	end
+end
+
+]]
