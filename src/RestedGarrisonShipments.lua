@@ -95,9 +95,9 @@ function Rested.GShipmentReport( realm, name, charStruct )
 			local queued = 0
 			for i, duration in ipairs(charStruct.garrisonShipments[buildingName].shipments or {}) do
 				queued = queued + 1
+				lastComplete = si.sampleTS + duration
 				if si.sampleTS + duration > time() then
 					working = working + 1
-					lastComplete = si.sampleTS + duration
 					if firstComplete == 0 then
 						firstComplete = si.sampleTS + duration
 						-- print(i, SecondsToTime(firstComplete - time()), firstComplete - 14400, (time()-(firstComplete-14400))/14400 )
