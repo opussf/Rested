@@ -107,7 +107,7 @@ function Rested.GShipmentReport( realm, name, charStruct )
 			local complete = queued - working
 			if working == 0 then
 				table.insert( Rested.charList,
-					{ time() - si.sampleTS,
+					{ 150 + ( time() - lastComplete ),
 						string.format("%s%02i%s/%02i %s :: %s : %s",
 								complete > 0 and COLOR_GREEN or "",
 								complete,
