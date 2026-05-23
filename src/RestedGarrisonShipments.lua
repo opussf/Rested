@@ -24,10 +24,6 @@ function Rested.Shipments_CRAFTER_INFO( ... )
 	local numPending = C_Garrison.GetNumPendingShipments()
 	local name, texture, quality, itemID, followerID, duration = C_Garrison.GetShipmentItemInfo();
 
-	-- print("SHIPMENT_CRAFTER_INFO", ...)
-	-- print(z, buildingName, ownedShipments, "/", queuedShipments, numPending)
-	-- durration = 14400
-
 	Rested.me.garrisonShipments = Rested.me.garrisonShipments or {}
 	Rested.me.garrisonShipments[buildingName] = Rested.me.garrisonShipments[buildingName] or {}
 	Rested.me.garrisonShipments[buildingName].sampleTS = time()
@@ -48,7 +44,6 @@ function Rested.IsWithInDistance(x, y, d)
 		local cx, cy = C_Map.GetPlayerMapPosition( C_Map.GetBestMapForUnit("player"), "player" ):GetXY()
 		cx = cx*100; cy = cy*100
 		local distance = math.sqrt((cx-x)^2 + (cy-y)^2)
-		-- print(string.format("%0.2f,%0.2f %0.2f,%0.2f Distance: %0.4f", cx,cy, x,y, distance))
 		if distance <= d then
 			return true
 		end
@@ -59,7 +54,6 @@ function Rested.Shipments_LOOT_READY()
 	if mapID == 582 or mapID == 590 then -- only if in the garrison map
 		for buildingName, si in pairs(Rested.me.garrisonShipments or {}) do
 			if Rested.IsWithInDistance(si.x, si.y, 3) then  -- distance of 1.5 might be good.
-				print(buildingName)
 				for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
 					if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
 						table.remove(Rested.me.garrisonShipments[buildingName].shipments, i) -- remove work order
