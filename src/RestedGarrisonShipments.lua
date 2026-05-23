@@ -48,7 +48,7 @@ function Rested.IsWithInDistance(x, y, d)
 		local cx, cy = C_Map.GetPlayerMapPosition( C_Map.GetBestMapForUnit("player"), "player" ):GetXY()
 		cx = cx*100; cy = cy*100
 		local distance = math.sqrt((cx-x)^2 + (cy-y)^2)
-		print(string.format("%0.2f,%0.2f %0.2f,%0.2f Distance: %0.4f", cx,cy, x,y, distance))
+		-- print(string.format("%0.2f,%0.2f %0.2f,%0.2f Distance: %0.4f", cx,cy, x,y, distance))
 		if distance <= d then
 			return true
 		end
@@ -61,11 +61,8 @@ function Rested.Shipments_LOOT_READY()
 			if Rested.IsWithInDistance(si.x, si.y, 3) then  -- distance of 1.5 might be good.
 				print(buildingName)
 				for i = #Rested.me.garrisonShipments[buildingName].shipments, 1, -1 do
-					-- print(i, Rested.me.garrisonShipments[buildingName].shipments[i],
-							-- Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i], "<?", time() )
 					if Rested.me.garrisonShipments[buildingName].sampleTS + Rested.me.garrisonShipments[buildingName].shipments[i] < time() then
-						table.remove(Rested.me.garrisonShipments[buildingName].shipments, i)
-						-- print("Removing", i)
+						table.remove(Rested.me.garrisonShipments[buildingName].shipments, i) -- remove work order
 					end
 				end
 			end
@@ -113,14 +110,14 @@ function Rested.GShipmentReport( realm, name, charStruct )
 								complete,
 								complete > 0 and COLOR_END or "",
 								queued,
-								SecondsToTime(firstComplete - time()),
+								SecondsToTime(time() - lastComplete),
 								buildingName,
 								rn)
 					}
 				)
 			else
 				table.insert( Rested.charList,
-					{ ((time() - (firstComplete - 14400)) / 14400) * 150,
+					{ ((time() - (firstComplete - si.duration)) / si.duration) * 150,
 						string.format("%s%02i%s/%02i %s :: %s : %s",
 								complete > 0 and COLOR_GREEN or "",
 								complete,
