@@ -139,7 +139,7 @@ function Rested.GWOReminders( realm, name, struct )
 		end
 		if reminder then
 			returnStruct[now+30] = returnStruct[now+30] or {}
-			table.insert( returnStruct[now+30], string.format("%s-%s has a full Garrison Work Order.") )
+			table.insert( returnStruct[now+30], string.format("%s-%s has a full Garrison Work Order.", name, realm ) )
 		end
 	end
 	return returnStruct
