@@ -128,3 +128,20 @@ function Rested.GShipmentReport( realm, name, charStruct )
 		return count
 	end
 end
+
+function Rested.GWOReminders( realm, name, struct )
+	local returnStruct = {}
+	local now = time()
+	for buildingName, gs in pairs(struct.garrisonShipments or {}) do
+		local reminder = true
+		for _, dur in ipairs(gs.shipments) do
+			reminder = reminder and (gs.sampleTS + dur < time())
+		end
+		if reminder then
+			returnStruct[now+30] = returnStruct[now+30] or {}
+			table.insert( returnStruct[now+30], string.format("%s-%s has a full Garrison Work Order.") )
+		end
+	end
+	return returnStruct
+end
+Rested.ReminderCallback( Rested.GWOReminders )
