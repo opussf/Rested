@@ -104,7 +104,7 @@ function Rested.GShipmentReport( realm, name, charStruct )
 								complete,
 								complete > 0 and COLOR_END or "",
 								queued,
-								SecondsToTime(time() - lastComplete),
+								SecondsToTime(time() - lastComplete, false, false, 1),
 								buildingName,
 								rn)
 					}
