@@ -1362,6 +1362,7 @@ end
 function test.test_NagReport_MaxLevel_InNagRange()
 	now = time()
 	Rested.ADDON_LOADED()
+	Rested_options["nagIncludeMaxLevel"] = true
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
 	Rested_restedState["Test Realm"] = { ["testPlayer_MaxLevel"] =

@@ -15,10 +15,12 @@ function Rested.OptionsPanel_OnLoad(panel)
 end
 function Rested.OptionsPanel_Reset()
 	-- Called from Addon_Loaded
-	-- INEED.OptionsPanel_Refresh()
+	print("Reset")
+
 end
 function Rested.OptionsPanel_OKAY()
 	-- Data was recorded, clear the temp
+	-- this is now the 'close' button
 end
 
 function Rested.OptionsPanel_Refresh()
@@ -43,14 +45,12 @@ function Rested.OptionsPanel_RadioButton_OnClick( self, otherRadioButtons ) --"n
 	end
 end
 function Rested.OptionsPanel_DurationEditBox_Onload( self, option, text )
-	print("OnLoad", option, text)
 	self:SetText(Rested.SecondsToText(Rested_options[option]))
 end
 function Rested.OptionsPanel_DurationEditBox_OnEditFocusLost( self, option )
 	Rested_options[option] = Rested.TextToSeconds( self:GetText() )
 	self:SetText(Rested.SecondsToText(Rested_options[option]))
 end
-
 
 function Rested.OptionsPanel_EditBox_OnShow( self, option )
 	self:SetText( tostring( Rested_options[option] ) )

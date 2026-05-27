@@ -122,8 +122,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Include Max Level"</OnLoad>
-					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeToEndOfLevel","Include Max Level after")</OnShow>
-					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagIncludeToEndOfLevel")</OnClick>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeMaxLevel","Include Max Level after")</OnShow>
+					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagIncludeMaxLevel")</OnClick>
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_NagStartValue" inherits="InputBoxTemplate" autoFocus="false">

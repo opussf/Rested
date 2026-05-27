@@ -170,7 +170,7 @@ function Rested.FormatName( realm, name, useColor )
 end
 Rested.formatRestedStruct = {}  -- this is here for memory optimization only.  do not rely on this.
 function Rested.FormatRested( charStruct )
-	-- return formated rested string, restedValue, code (+ / -), timeTillRested (seconds)
+	-- return formated rested string, restedValue, code (+ / -), timeTillRested (seconds), isRestedPastEOL
 	-- rested string is color formated and shows expected current status
 	Rested.formatRestedStruct = {}
 	rs = Rested.formatRestedStruct
@@ -182,6 +182,7 @@ function Rested.FormatRested( charStruct )
 	rs.restedVal = rs.restAdded + ( charStruct.restedPC or 0 )
 	rs.restedOutStr = string.format( "%0.1f%%", rs.restedVal )
 	rs.maxRestedPC = Rested.maxRestedByRace[charStruct.race] or 150
+	rs.isRestedPastEOL = false
 
 	if( rs.restedVal >= (rs.maxRestedPC - 0.01) ) then -- 150% of current is the 'max'
 		rs.restedOutStr = COLOR_GREEN.."Fully Rested"..COLOR_END
@@ -191,12 +192,13 @@ function Rested.FormatRested( charStruct )
 			rs.lvlPCLeft = ( ( charStruct.xpMax - charStruct.xpNow ) / charStruct.xpMax ) * 100
 			if( rs.restedVal >= rs.lvlPCLeft ) then -- rested beyond the current level
 				rs.restedOutStr = COLOR_GREEN..rs.restedOutStr..COLOR_END
+				rs.isRestedPastEOL = true
 			end
 			rs.timeTillRested = ( rs.maxRestedPC - rs.restedVal ) / rs.restRate   -- restedVal is %, restedRate is %/s,
 
 		end
 	end
-	return rs.restedOutStr, rs.restedVal, rs.code, rs.timeTillRested
+	return rs.restedOutStr, rs.restedVal, rs.code, rs.timeTillRested, rs.isRestedPastEOL
 end
 
 function Rested.ForAllChars( action, processIgnored )
