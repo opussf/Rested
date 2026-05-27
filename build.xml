@@ -23,7 +23,6 @@
 		</and>
 	</condition>
 	<!-- find gitbranch -->
-	<!-- find gitbranch -->
 	<exec executable="git" dir="." outputproperty="git.branch.tmp" failifexecutionfails="false" errorproperty="">
 		<arg line="rev-parse --abbrev-ref HEAD"/>
 	</exec>

@@ -1,5 +1,13 @@
 # Feature document for Rested
 
+## Options
+
+Include what report to show at startup, nag or other.
+
+## Birthday
+
+Finally a use for .initAt.  Show the characters' upcoming birthdays, and show their game age.
+
 ## isNext Macro
 
 Add in macros for isNext.
@@ -52,7 +60,7 @@ You can do search terms first, ending with a macro.
 
 ## RaidBoss
 
-
+Show the raid bosses, and how many killed in each raid until raid reset.
 
 ## Default
 
