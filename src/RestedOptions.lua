@@ -23,7 +23,6 @@ end
 
 function Rested.OptionsPanel_Refresh()
 	-- Called when options panel is opened.
-	-- print("Rested Options Panel Refresh: ")
 end
 
 -------------
@@ -55,9 +54,24 @@ function Rested.OptionsPanel_EditBox_OnShow( self, option )
 	self:SetCursorPosition(0)
 end
 function Rested.OptionsPanel_EditBox_OnEditFocusLost( self, option )
-	Rested_options[option] = tonumber( self:GetText() )
+	print(option, self:GetText(), tonumber( self:GetText()) or 0)
+	Rested_options[option] = tonumber( self:GetText() ) or 0
+	self:SetText( tostring( Rested_options[option] ) )
 end
 
+-------------
+
+function Rested.OptionsPanel_Init()
+	if Rested_options.nagIncludeOverPercentValue == nil then
+		Rested_options.nagIncludeOverPercentValue = 75
+		Rested_options.nagEnabled = true
+		Rested_options.nagIncludeLeveling = true
+		Rested_options.nagIncludeToEndOfLevel = true
+		Rested_options.nagIncludeOverPercent = nil
+		Rested_options.nagIncludeMaxLevel = true
+	end
+end
+Rested.InitCallback( Rested.OptionsPanel_Init )
 Rested.commandList["options"] = {
 		["help"] = {"","Open the options panel"},
 		["func"] = function() Settings.OpenToCategory( RestedOptionsFrame.category:GetID() ) end,
