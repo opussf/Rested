@@ -277,19 +277,16 @@ function Rested.NagCharacters( realm, name, charStruct )
 		table.insert( Rested.charList, {(timeSince/(Rested_options.staleStart))*(Rested.maxRestedByRace[charStruct.race] or 150), Rested.strOut} )
 		return 1
 	end
-	if( Rested_options.nagIncludeLeveling and
-			charStruct.lvlNow < Rested.maxLevel and
-			charStruct.restedPC <= (Rested.maxRestedByRace[charStruct.race] or 150)-1 ) then -- leveling character
+	if( Rested_options.nagIncludeLeveling and  -- option
+			charStruct.lvlNow < Rested.maxLevel and  -- leveling char
+			charStruct.restedPC <= (Rested.maxRestedByRace[charStruct.race] or 150)-1 ) then -- was not full rested when last seen
 		local restedStr, restedVal, code, timeTillRested, isRestedPastEndOfLevel = Rested.FormatRested( charStruct )
 		if( (Rested_options.nagIncludeToEndOfLevel and isRestedPastEndOfLevel) or
-				(Rested_options.nagIncludeOverPercentValue and restedVal >= Rested_options.nagIncludeOverPercentValue) ) then
+				(Rested_options.nagIncludeOverPercent and Rested_options.nagIncludeOverPercentValue and restedVal >= Rested_options.nagIncludeOverPercentValue) ) then
 			rs = Rested.formatRestedStruct  -- side effect of FormatRested()
-			if( ( not rs.lvlPCLeft or restedVal >= rs.lvlPCLeft ) and -- lvlPCLeft is not set if you are fully rested
-					restedVal <= (Rested.maxRestedByRace[charStruct.race] or 150)+100 ) then  -- Add 100, Let it expire after a time.
-				Rested.strOut = string.format( reportStr, charStruct.lvlNow, restedStr, rn )
-				table.insert( Rested.charList, { restedVal, Rested.strOut } )
-				return 1
-			end
+			Rested.strOut = string.format( reportStr, charStruct.lvlNow, restedStr, rn )
+			table.insert( Rested.charList, { restedVal, Rested.strOut } )
+			return 1
 		end
 	end
 	useColor = useColor and ( realm == Rested.realm and name == Rested.name )
