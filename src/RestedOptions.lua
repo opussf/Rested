@@ -15,8 +15,6 @@ function Rested.OptionsPanel_OnLoad(panel)
 end
 function Rested.OptionsPanel_Reset()
 	-- Called from Addon_Loaded
-	print("Reset")
-
 end
 function Rested.OptionsPanel_OKAY()
 	-- Data was recorded, clear the temp
