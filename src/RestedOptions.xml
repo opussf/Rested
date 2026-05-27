@@ -48,6 +48,14 @@
 						<Anchor point="LEFT" relativeTo="$parent_NagHeader" relativePoint="LEFT" x="10" y="-124"/>
 					</Anchors>
 				</FontString>
+				<FontString name="$parent_durationExplainer" inherits="GameFontNormalSmall" wordWrap="true" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent_StaleText" relativePoint="BOTTOMLEFT" x="0" y="-16"/>
+					</Anchors>
+					<Scripts>
+						<OnLoad>self:SetText("Enter durations by combining numbers and units.\nThe available units are w (weeks), d (days), h (hours), m (minutes), and s (seconds).\nA plain number with no unit is treated as seconds.")</OnLoad>
+					</Scripts>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Frames>
@@ -68,6 +76,12 @@
 					<Anchor point="LEFT" relativeTo="$parent_AutoShowHeader" relativePoint="RIGHT" x="10" y="0" />
 				</Anchors>
 				<Scripts>
+					<OnLoad>self.tooltip = "If Nag report is auto shown, hide after this time."</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(self.tooltip);
+					</OnEnter>
+					<OnLeave>GameTooltip:Hide()</OnLeave>
 					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "nagTimeOut", "Auto Hide after")</OnShow>
 					<OnEditFocusLost>Rested.OptionsPanel_DurationEditBox_OnEditFocusLost(self, "nagTimeOut")</OnEditFocusLost>
 				</Scripts>
@@ -132,7 +146,13 @@
 					<Anchor point="LEFT" relativeTo="$parent_IncludeMaxLevel" x="157" y="0"/>
 				</Anchors>
 				<Scripts>
-					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "nagStart", "Show in Nag report after")</OnShow>
+					<OnLoad>self.tooltip = "Show character in Nag report if not visited for this time."</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(self.tooltip);
+					</OnEnter>
+					<OnLeave>GameTooltip:Hide()</OnLeave>
+					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "nagStart")</OnShow>
 					<OnEditFocusLost>Rested.OptionsPanel_DurationEditBox_OnEditFocusLost(self, "nagStart")</OnEditFocusLost>
 				</Scripts>
 			</EditBox>
@@ -142,7 +162,13 @@
 					<Anchor point="LEFT" relativeTo="$parent_IncludeMaxLevel" x="130" y="-22"/>
 				</Anchors>
 				<Scripts>
-					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "staleStart", "Consider Stale after")</OnShow>
+					<OnLoad>self.tooltip = "Consider character stale if not visited for this time."</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(self.tooltip);
+					</OnEnter>
+					<OnLeave>GameTooltip:Hide()</OnLeave>
+					<OnShow>Rested.OptionsPanel_DurationEditBox_Onload(self, "staleStart")</OnShow>
 					<OnEditFocusLost>Rested.OptionsPanel_DurationEditBox_OnEditFocusLost(self, "staleStart")</OnEditFocusLost>
 				</Scripts>
 			</EditBox>
