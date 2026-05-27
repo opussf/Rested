@@ -23,10 +23,10 @@ end
 
 function Rested.OptionsPanel_Refresh()
 	-- Called when options panel is opened.
+	-- print("Rested Options Panel Refresh: ")
 end
 
-
-
+-------------
 
 function Rested.OptionsPanel_CheckButton_OnShow( self, option, text )
 	getglobal(self:GetName().."Text"):SetText(text);
@@ -36,45 +36,31 @@ function Rested.OptionsPanel_CheckButton_OnClick( self, option )
 	Rested_options[option] = self:GetChecked()
 end
 function Rested.OptionsPanel_RadioButton_OnClick( self, otherRadioButtons ) --"nagIncludeToEndOfLevel",[RestedOptionsFrame_IncludeOverPercent])
-	print(self:GetChecked(), self:GetAttribute("var"))
+	Rested_options[self:GetAttribute("var")] = true
 	for _, f in ipairs(otherRadioButtons) do
-		print(_,f)
 		f:SetChecked(false)
+		Rested_options[f:GetAttribute("var")] = nil
 	end
 end
 function Rested.OptionsPanel_DurationEditBox_Onload( self, option, text )
+	print("OnLoad", option, text)
 	self:SetText(Rested.SecondsToText(Rested_options[option]))
 end
-function Rested.OptionsPanel_DurationEditBo_TextChanged( self, option )
+function Rested.OptionsPanel_DurationEditBox_OnEditFocusLost( self, option )
 	Rested_options[option] = Rested.TextToSeconds( self:GetText() )
+	self:SetText(Rested.SecondsToText(Rested_options[option]))
 end
 
+
+function Rested.OptionsPanel_EditBox_OnShow( self, option )
+	self:SetText( tostring( Rested_options[option] ) )
+	self:SetCursorPosition(0)
+end
+function Rested.OptionsPanel_EditBox_OnEditFocusLost( self, option )
+	Rested_options[option] = tonumber( self:GetText() )
+end
 
 Rested.commandList["options"] = {
 		["help"] = {"","Open the options panel"},
 		["func"] = function() Settings.OpenToCategory( RestedOptionsFrame.category:GetID() ) end,
 }
-
-
---[[
-
-RestedOptionsFrame_IncludeOverPercent:SetChecked(false);self:SetChecked(true)
-
-
-function INEED.OptionsPanel_Duration_TextChanged( self, option )
-	if self:HasFocus() then
-		local myName = strmatch(self:GetName(), "_(%a*)$")
-		local duration = INEED_options[option]
-		local newValue = duration
-		local calcStruct = INEED.durationKeys[myName]
-		if calcStruct then
-			local displayValue = tonumber( self:GetNumber() ) or 0
-			local originalSec = math.floor( (duration/calcStruct[1])%calcStruct[2] ) * calcStruct[1]
-			newValue = ( duration - originalSec ) + ( displayValue * calcStruct[1] )
-		end
-		INEED.OptionPanel_KeepOriginalValue( option )
-		INEED_options[option] = newValue
-	end
-end
-
-]]
