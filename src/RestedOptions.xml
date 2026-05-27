@@ -28,11 +28,6 @@
 						<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT" x="16" y="-10"/>
 					</Anchors>
 				</FontString>
-				<FontString name="$parent_AutoShowHeader" inherits="GameFontNormal" text="Auto show for:">
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parent_NagHeader" relativePoint="RIGHT" x="10" y="-17"/>
-					</Anchors>
-				</FontString>
 				<FontString name="$parent_percentRested" inherits="GameFontNormalSmall" text="% rested.">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_NagHeader" relativePoint="LEFT" x="180" y="-82"/>
@@ -66,14 +61,14 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Enable auto display of Nag Report";</OnLoad>
-					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self, "nagEnabled", "Enable");</OnShow>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self, "nagEnabled", "Auto show for:");</OnShow>
 					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self, "nagEnabled")</OnClick>
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_NagTimeOutValue" inherits="InputBoxTemplate" autoFocus="false">
 				<Size x="50" y="16"/>
 				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent_AutoShowHeader" relativePoint="RIGHT" x="10" y="0" />
+					<Anchor point="LEFT" relativeTo="$parent_ShowNagReport" relativePoint="RIGHT" x="90" y="0" />
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "If Nag report is auto shown, hide after this time."</OnLoad>
