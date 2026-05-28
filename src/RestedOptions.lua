@@ -47,7 +47,10 @@ end
 function Rested.OptionsPanel_DurationEditBox_OnEditFocusLost( self, option )
 	Rested_options[option] = Rested.TextToSeconds( self:GetText() )
 	if option == "nagStart" and Rested_options.nagStart > Rested_options.staleStart then
-		Rested.nagStart = Rested_options.staleStart
+		Rested_options.nagStart = Rested_options.staleStart
+	end
+	if option == "staleStart" and Rested_options.staleStart < Rested_options.nagStart then
+		Rested_options.staleStart = Rested_options.nagStart
 	end
 	self:SetText(Rested.SecondsToText(Rested_options[option]))
 end
