@@ -302,7 +302,7 @@ function Rested.isNextGWO(param)
 
 			for buildingName, gs in pairs(c.garrisonShipments) do
 				local queue = true
-				for _, dur in ipairs(gs.shipments) do
+				for _, dur in ipairs(gs.shipments or {}) do
 					queue = queue and (gs.sampleTS + dur < time())
 				end
 				if queue then

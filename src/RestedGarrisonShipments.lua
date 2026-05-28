@@ -134,7 +134,7 @@ function Rested.GWOReminders( realm, name, struct )
 	local now = time()
 	for buildingName, gs in pairs(struct.garrisonShipments or {}) do
 		local reminder = true
-		for _, dur in ipairs(gs.shipments) do
+		for _, dur in ipairs(gs.shipments or {}) do
 			reminder = reminder and (gs.sampleTS + dur < time())
 		end
 		if reminder then
