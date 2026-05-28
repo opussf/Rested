@@ -87,7 +87,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Include Leveling Toons";</OnLoad>
-					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeLeveling","Include Leveing toons");</OnShow>
+					<OnShow>Rested.OptionsPanel_CheckButton_OnShow(self,"nagIncludeLeveling","Include Leveling toons");</OnShow>
 					<OnClick>Rested.OptionsPanel_CheckButton_OnClick(self,"nagIncludeLeveling")</OnClick>
 				</Scripts>
 			</CheckButton>
