@@ -22,6 +22,7 @@
 			<length string="${git.revision}" trim="yes" length="0" when="greater"/>
 		</and>
 	</condition>
+
 	<!-- find gitbranch -->
 	<exec executable="git" dir="." outputproperty="git.branch.tmp" failifexecutionfails="false" errorproperty="">
 		<arg line="rev-parse --abbrev-ref HEAD"/>
