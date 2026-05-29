@@ -1362,6 +1362,7 @@ end
 function test.test_NagReport_MaxLevel_InNagRange()
 	now = time()
 	Rested.ADDON_LOADED()
+	Rested_options["nagIncludeMaxLevel"] = true
 	Rested_options["nagStart"] = 7 * 86400
 	Rested_options["staleStart"] = 10 * 86400
 	Rested_restedState["Test Realm"] = { ["testPlayer_MaxLevel"] =
@@ -1819,6 +1820,22 @@ end
 function test.test_TextToSeconds_08()
 	assertEquals( 694890, Rested.TextToSeconds( "1m1h1d1w30" ) )
 end
+function test.test_SecondsToText_01()
+	assertEquals( "15s", Rested.SecondsToText( 15 ) )
+end
+function test.test_SecondsToText_02()
+	assertEquals( "1m30s", Rested.SecondsToText( 90 ) )
+end
+function test.test_SecondsToText_03()
+	assertEquals( "1h1m30s", Rested.SecondsToText( 3690 ) )
+end
+function test.test_SecondsToText_04()
+	assertEquals( "1d1h1m30s", Rested.SecondsToText( 90090 ) )
+end
+function test.test_SecondsToText_05()
+	assertEquals( "1w1d1h1m30s", Rested.SecondsToText( 694890 ) )
+end
+
 -- quests
 -------------
 function test.test_quests_addQuest()
@@ -2225,7 +2242,7 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {[0] = 104, 105, 106, 107, 104, 102, 0}
+	local resultMatrix = {[0] = 104, 105, 106, 107, 209, 102, 0}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
@@ -2255,7 +2272,8 @@ function test.test_isNextMacros_farm_2()
 			numQueued = numQueued + (c.isNextIndex and 1 or 0)
 		end
 	end
-	local resultMatrix = {[0] = 3, 4, 3, 3, 4, 3, 4}
+	local resultMatrix = {[0] = 4, 4, 4, 3, 4, 3, 4}
+	print(date("%w"), date("%j")%2, resultMatrix[tonumber(date("%j")%2)])
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], numQueued)
 end

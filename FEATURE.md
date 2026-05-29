@@ -1,5 +1,13 @@
 # Feature document for Rested
 
+## Options
+
+Include what report to show at startup, nag or other.
+
+## Birthday
+
+Finally a use for .initAt.  Show the characters' upcoming birthdays, and show their game age.
+
 ## isNext Macro
 
 Add in macros for isNext.
@@ -11,19 +19,17 @@ For the example below, it mine look like:
 `/rested isnext :alpha`
 
 My current macros would be something like:
-`:cooldowns 100`  - Queue anyone with a prof cooldown, add 100 to their index.
-`:gcache 300`  - Queue anyone with less than full resources, and less than 24 hours to get the cache (before it is full), add 300 to the index.
-`:farm 7 500`  -
+`:cooldowns` - Queue anyone with a prof cooldown, add 100 to their index.
+`:gcache`    - Queue anyone with less than full resources, and less than 24 hours to get the cache (before it is full), add 300 to the index.
+`:farm 7`    - Queue anyone in today's group who have not visited the farm in a day.
 
 Other macros could be:
-`:conc 750 700`  - Queue anyone with more than 750 conc, starting at 700
 `:rand` - Choose a random character
 
-Macro maintinance:
-`:macros`
+Macro help:
+`:help`
 
 Could also allow creating personal macros.
-
 
 ## Close
 
@@ -45,9 +51,16 @@ If it knows where the character is in the list, it will set the character choice
 This should give a semi alphabetical character list to visit next:
 `/rested isnext ^a. ^b. ^c. ^d. ^e. ^f. ^g. ^h. ^i. ^j. ^k. ^l. ^m. ^n. ^o. ^p. ^q. ^r. ^s. ^t. ^u. ^v. ^w. ^x. ^y. ^z.`
 
+Can use search term to remove specific character.
+`/isnext -^a.` will remove all characters whose name starts with `a`.
+`/isnext -.` will clear the queue.
+
+Macros don't stack, search terms do.
+You can do search terms first, ending with a macro.
+
 ## RaidBoss
 
-
+Show the raid bosses, and how many killed in each raid until raid reset.
 
 ## Default
 
