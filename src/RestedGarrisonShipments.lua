@@ -130,6 +130,7 @@ function Rested.GShipmentReport( realm, name, charStruct )
 end
 
 function Rested.GWOReminders( realm, name, struct )
+	local rn = Rested.FormatName( realm, name )
 	local returnStruct = {}
 	local now = time()
 	for buildingName, gs in pairs(struct.garrisonShipments or {}) do
@@ -139,7 +140,7 @@ function Rested.GWOReminders( realm, name, struct )
 		end
 		if reminder then
 			returnStruct[now+30] = returnStruct[now+30] or {}
-			table.insert( returnStruct[now+30], string.format("%s-%s has a full Garrison Work Order.", name, realm ) )
+			table.insert( returnStruct[now+30], string.format("%s has a full Garrison Work Order.", rn ) )
 		end
 	end
 	return returnStruct
