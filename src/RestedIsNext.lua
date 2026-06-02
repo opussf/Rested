@@ -305,7 +305,7 @@ function Rested.isNextGWO(param)
 					queue = queue and (gs.sampleTS + dur < time())
 				end
 				if queue then
-					c.isNextIndex = c.characterIndex+offset
+					c.isNextIndex = (c.characterIndex or 0)+offset
 					c.isNextReason = ":gwo"
 				end
 			end
