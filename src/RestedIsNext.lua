@@ -20,6 +20,11 @@ function Rested.GetCharacterIndex()
 		end
 	end
 
+	if Rested_restedState[Rested.realm][Rested.name].isNextReason then
+		local reminderText = string.format( "You were on the IsNext queue for %s -%s-%s", COLOR_GOLD, Rested_restedState[Rested.realm][Rested.name].isNextReason, COLOR_END)
+		Rested.AddToReminderSchedule( 5, reminderText, true)
+		Rested.AddToReminderSchedule( 20, reminderText, true )
+	end
 	Rested_restedState[Rested.realm][Rested.name].characterIndex = characterIndex
 	Rested_restedState[Rested.realm][Rested.name].isNextIndex = nil
 	Rested_restedState[Rested.realm][Rested.name].isNextReason = nil
