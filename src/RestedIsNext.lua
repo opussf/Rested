@@ -304,7 +304,6 @@ function Rested.isNextGWO(param)
 		if not c.isNextIndex
 				and c.garrisonShipments
 				and n~=Rested.name then
-
 			for buildingName, gs in pairs(c.garrisonShipments) do
 				local queue = true
 				for _, dur in ipairs(gs.shipments or {}) do
@@ -315,11 +314,9 @@ function Rested.isNextGWO(param)
 					c.isNextReason = ":gwo"
 				end
 			end
-
 		end
 	end, true)
 end
-
 Rested.isNextMacros = {
 	[":alpha"] = {
 		["help"] = {"", "Queue all toons alphabetically."},
