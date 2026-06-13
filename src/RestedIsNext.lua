@@ -87,28 +87,30 @@ function Rested.SetNextCharacters( param )
 				end
 				for r, _ in pairs( Rested_restedState ) do
 					for n, cs in pairs( Rested_restedState[r] ) do
-						local match = false
-						local reason = nil
-						if( string.find( string.lower(r), searchName ) or
-								string.find( string.lower(n), searchName ) ) then
-							match = true
-							reason = ">name="..searchName
-						else
-							for _, key in pairs( Rested.filterKeys ) do
-								if( cs[key] and string.find( string.lower( cs[key] ), searchName ) ) then
-									match = true
-									reason = ">"..key.."="..searchName
+						if not cs.ignore then
+							local match = false
+							local reason = nil
+							if( string.find( string.lower(r), searchName ) or
+									string.find( string.lower(n), searchName ) ) then
+								match = true
+								reason = ">name="..searchName
+							else
+								for _, key in pairs( Rested.filterKeys ) do
+									if( cs[key] and string.find( string.lower( cs[key] ), searchName ) ) then
+										match = true
+										reason = ">"..key.."="..searchName
+									end
 								end
 							end
-						end
-						if match then
-							if toRemove then
-								cs.isNextIndex = nil
-								cs.isNextReason = nil
-							else
-								currentIndex = currentIndex + 1
-								cs.isNextIndex = currentIndex
-								cs.isNextReason = reason
+							if match then
+								if toRemove then
+									cs.isNextIndex = nil
+									cs.isNextReason = nil
+								else
+									currentIndex = currentIndex + 1
+									cs.isNextIndex = currentIndex
+									cs.isNextReason = reason
+								end
 							end
 						end
 					end
