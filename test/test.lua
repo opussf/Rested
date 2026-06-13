@@ -2157,8 +2157,8 @@ function test.test_isNext_Report()
 	Rested.Command( "isnext" )
 
 	assertEquals( 3, #Rested.charList, "Resport should have 3 lines" )
-	assertEquals( "1 :: otherPlayer:otherRealm", Rested.charList[1][2] )
-	assertEquals( "2 :: frank:otherRealm (?)", Rested.charList[2][2] )
+	assertEquals( "1 :: otherPlayer:otherRealm|cffcfb52b ->name=otherplayer-|r", Rested.charList[1][2] )
+	assertEquals( "2 :: frank:otherRealm (?)|cffcfb52b ->name=fran-|r", Rested.charList[2][2] )
 end
 function test.test_isNext_RemoveToonFromList()
 	CVars.lastCharacterIndex = 42
