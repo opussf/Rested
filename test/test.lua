@@ -1947,7 +1947,7 @@ function test.test_gcache_otherPlayer_Full_fullCache_over_charIsStale()
 			{ ["lvlNow"] = 10, ["xpNow"] = 0, ["xpMax"] = 4000, ["isResting"] = false, ["restedPC"] = 0, ["updated"] = time()-864001,
 			["garrisonCache"] = time() - 864001, ["garrisonQuantity"] = 10000 } }
 	Rested.Command( "gcache" )
-	assertEquals( "500 : 10000 : 6 Day 12 Hr :: otherPlayer:otherRealm", Rested.charList[1][2] )
+	assertEquals( "500 : 10000 : 6 Day :: otherPlayer:otherRealm", Rested.charList[1][2] )
 end
 
 function test.test_gcache_otherPlayer_Full_fullCache_over_Stale()  -- should not show
