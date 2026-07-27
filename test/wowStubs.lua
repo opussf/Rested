@@ -1,7 +1,7 @@
 -----------------------------------------
 -- Author  :  Opussf
--- Date    :  April 22 2026
--- Revision:  9.7.1-14-g216a6b7
+-- Date    :  July 24 2026
+-- Revision:  9.7.1-15-g6904026
 -----------------------------------------
 -- These are functions from wow that have been needed by addons so far
 -- Not a complete list of the functions.
@@ -2455,7 +2455,6 @@ function C_Map.GetPlayerMapPosition(mapID, player)
 	end
 end
 
-
 ----------
 -- ItemLocation
 ----------
@@ -2500,12 +2499,6 @@ end
 function C_EncodingUtil.DecompressString( strIn, method )
 	-- decompresses.  Return the same string, for testing.
 	return strIn
-end
-
---------
--- 12.0.0 stubs
-function issecretvalue( value )
-	return false  -- default to false for now.
 end
 
 --------
@@ -2555,6 +2548,11 @@ function C_Garrison.GetPendingShipmentInfo( index )
 	return "herbs", 263455, 1, 238763, "nil", 14400, C_Garrison.testData[C_Garrison.plotID].shipments[index]
 end
 
+--------
+-- 12.0.0 stubs
+function issecretvalue( value )
+	return false  -- default to false for now.
+end
 
 -----------------------------------------
 -- A SAX parser takes a content handler, which provides these methods:

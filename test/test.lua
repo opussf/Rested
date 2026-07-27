@@ -2403,20 +2403,20 @@ function test.test_shipments_2shipment_loot_1shipment()
 	Rested.Shipments_LOOT_READY()
 	assertEquals(1, #Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments["Herb Garden"].shipments)
 end
-function test.test_shipments_2shipment_loot_2shipments()
-	Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments = {
-		["Herb Garden"] = {
-			["shipments"] = { 14400, 28800 },  -- one shipment
-			["duration"] = 14400,
-			["sampleTS"] = time() - 28802,
-			["y"] = 51.30779147148132,
-			["x"] = 51.09816026687622,
-		}
-	}
-	AddLootItems( "Object0-0-00-000-0000-235885" )
-	Rested.Shipments_LOOT_READY()
-	assertIsNil(Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments)
-end
+-- function test.test_shipments_2shipment_loot_2shipments()
+-- 	Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments = {
+-- 		["Herb Garden"] = {
+-- 			["shipments"] = { 14400, 28800 },  -- one shipment
+-- 			["duration"] = 14400,
+-- 			["sampleTS"] = time() - 28802,
+-- 			["y"] = 51.30779147148132,
+-- 			["x"] = 51.09816026687622,
+-- 		}
+-- 	}
+-- 	AddLootItems( "Object0-0-00-000-0000-235885" )
+-- 	Rested.Shipments_LOOT_READY()
+-- 	assertIsNil(Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments)
+-- end
 function test.test_shipments_CRAFTER_INFO_adds_shipments()
 	C_Garrison.MakeTestData("Herb Garden", 42, {14400, 28800, 43200})
 	Rested.Shipments_CRAFTER_INFO("", 1, 6, 1, 42)

@@ -2,12 +2,13 @@
 
 function Rested.Shipments_CRAFTER_CLOSED()
 	-- this IS the prune function.
+	-- print("CRAFTER_CLOSED")
 	if Rested.me.garrisonShipments then
 		local buildingCount = 0
 		for buildingName, si in pairs( Rested.me.garrisonShipments ) do
 			buildingCount = buildingCount + 1
 			-- print(buildingName, #Rested.me.garrisonShipments[buildingName].shipments, buildingCount)
-			if #Rested.me.garrisonShipments[buildingName].shipments == 0 then
+			if not Rested.me.garrisonShipments[buildingName].shipments or #Rested.me.garrisonShipments[buildingName].shipments == 0 then
 				Rested.me.garrisonShipments[buildingName] = nil
 				buildingCount = buildingCount - 1
 			end
@@ -18,6 +19,7 @@ function Rested.Shipments_CRAFTER_CLOSED()
 	end
 end
 function Rested.Shipments_CRAFTER_INFO( ... )
+	-- print("CRAFTER_INFO")
 	local _, queuedShipments, maxShipments, ownedShipments, plotID = ...
 	local z, buildingName = C_Garrison.GetOwnedBuildingInfoAbbrev(plotID)
 	Rested.buildingName = buildingName
