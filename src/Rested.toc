@@ -38,3 +38,5 @@ RestedRaid.lua
 RestedMiniMap.lua
 RestedMiniMap.xml
 RestedIsNext.lua
+
+RestedGarrisonShipments.lua
