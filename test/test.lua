@@ -2157,8 +2157,8 @@ function test.test_isNext_Report()
 	Rested.Command( "isnext" )
 
 	assertEquals( 3, #Rested.charList, "Resport should have 3 lines" )
-	assertEquals( "1 :: otherPlayer:otherRealm", Rested.charList[1][2] )
-	assertEquals( "2 :: frank:otherRealm (?)", Rested.charList[2][2] )
+	assertEquals( "1 :: otherPlayer:otherRealm|cffcfb52b ->name=otherplayer-|r", Rested.charList[1][2] )
+	assertEquals( "2 :: frank:otherRealm (?)|cffcfb52b ->name=fran-|r", Rested.charList[2][2] )
 end
 function test.test_isNext_RemoveToonFromList()
 	CVars.lastCharacterIndex = 42
@@ -2360,6 +2360,72 @@ function test.test_isNextMacros_vault()
 	}, }
 	Rested.Command("isnext :vault")
 	assertEquals( 101, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+end
+
+-- Garrison Shipments
+function test.test_shipments_1shipment_half_done()
+	-- Rested_restedState["Test Realm"] = { ["testPlayer"] =
+			-- { ["lvlNow"] = 2, ["xpNow"] = 200, ["xpMax"] = 1000}}
+	Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments = {
+		["Herb Garden"] = {
+			["shipments"] = { 7200 },  -- one shipment
+			["duration"] = 14400,
+			["sampleTS"] = time()
+		}
+	}
+	Rested.Command("gwo")
+	assertEquals(75, Rested.charList[1][1])
+	assertEquals("00/01 2 Hr 0 Min :: Herb Garden : |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2])
+end
+function test.test_shipments_2shipment_half_done()
+	Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments = {
+		["Herb Garden"] = {
+			["shipments"] = { 0, 14400 },  -- one shipment
+			["duration"] = 14400,
+			["sampleTS"] = time()
+		}
+	}
+	Rested.Command("gwo")
+	assertEquals(0,Rested.charList[1][1])
+	assertEquals("|cff00ff0001|r/02 4 Hr 0 Min :: Herb Garden : |cff00ff00testPlayer:Test Realm|r", Rested.charList[1][2])
+end
+function test.test_shipments_2shipment_loot_1shipment()
+	Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments = {
+		["Herb Garden"] = {
+			["shipments"] = { 0, 14400 },  -- one shipment
+			["duration"] = 14400,
+			["sampleTS"] = time() - 2,
+			["y"] = 51.30779147148132,
+			["x"] = 51.09816026687622,
+		}
+	}
+	AddLootItems( "Object0-0-00-000-0000-235885" )
+	Rested.Shipments_LOOT_READY()
+	assertEquals(1, #Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments["Herb Garden"].shipments)
+end
+-- function test.test_shipments_2shipment_loot_2shipments()
+-- 	Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments = {
+-- 		["Herb Garden"] = {
+-- 			["shipments"] = { 14400, 28800 },  -- one shipment
+-- 			["duration"] = 14400,
+-- 			["sampleTS"] = time() - 28802,
+-- 			["y"] = 51.30779147148132,
+-- 			["x"] = 51.09816026687622,
+-- 		}
+-- 	}
+-- 	AddLootItems( "Object0-0-00-000-0000-235885" )
+-- 	Rested.Shipments_LOOT_READY()
+-- 	assertIsNil(Rested_restedState["Test Realm"]["testPlayer"].garrisonShipments)
+-- end
+function test.test_shipments_CRAFTER_INFO_adds_shipments()
+	C_Garrison.MakeTestData("Herb Garden", 42, {14400, 28800, 43200})
+	Rested.Shipments_CRAFTER_INFO("", 1, 6, 1, 42)
+	-- test.dump(Rested_restedState)
+	local me = Rested_restedState["Test Realm"]["testPlayer"]
+	assertTrue(me.garrisonShipments, "garrisonShipments should be set.")
+	assertTrue(me.garrisonShipments["Herb Garden"])
+	assertEquals(14400, me.garrisonShipments["Herb Garden"].duration)
+	assertAlmostEquals(time(), me.garrisonShipments["Herb Garden"].sampleTS, nil, nil, 1)
 end
 
 
