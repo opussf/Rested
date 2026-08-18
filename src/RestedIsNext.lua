@@ -3,7 +3,7 @@ RESTED_SLUG, Rested  = ...
 
 function Rested.RegisterIsNext()
 	SLASH_ISNEXT1 = "/isnext"
-	SlashCmdList["ISNEXT"] = Rested.SetNextCharacters
+	SlashCmdList["ISNEXT"] = Rested.IsNext_Command
 end
 function Rested.GetCharacterIndex()
 	if Rested_misc.prevChar and Rested_misc.prevIndex and Rested_misc.prevChar == Rested.realm.."-"..Rested.name then
@@ -296,7 +296,7 @@ function Rested.isNextVault(param)
 				and n~=Rested.name then
 			return true, ":vault"
 		end
-	end)
+	end, nil, nil, nil, true)
 end
 function Rested.isNextGWO(param)
 	Rested.IsNext_ForAllChars(function(r,n,c)
