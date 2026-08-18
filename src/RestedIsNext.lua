@@ -40,7 +40,7 @@ function Rested.SetNextCharacterIndex()
 end
 
 function Rested.IsNext_GetMinMaxNext()
-	local isNextMin,isNextMax, isNextCharacterIndex = nil, nil, nil
+	local isNextMin, isNextMax, isNextCharacterIndex = nil, nil, nil
 	for r, _ in pairs( Rested_restedState ) do
 		for n, cs in pairs( Rested_restedState[r] ) do
 			if cs.isNextIndex then
@@ -124,6 +124,7 @@ function Rested.IsNext_Command( param )
 			end
 		end
 	end
+	_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
 end
 
 Rested.InitCallback(Rested.RegisterIsNext)
