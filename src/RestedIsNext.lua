@@ -70,59 +70,59 @@ function Rested.ShiftIsNextCharacterIndex()
 	end
 	return maxOut
 end
-function Rested.SetNextCharacters( param )
-	Rested.reportName = "Play Next"
-	Rested.UIShowReport( Rested.NextCharsReport, true )
-	if( param and strlen( param ) > 0 ) then
-		local currentIndex= Rested.ShiftIsNextCharacterIndex() or 0
-		for searchName in string.gmatch( param, "([^ ]+)" ) do
-			searchName = string.lower(searchName)
-			if Rested.isNextMacros[searchName] and Rested.isNextMacros[searchName].func then
-				Rested.isNextMacros[searchName].func(param)
-				break  -- @TODO:  Remove this
-			else
-				local toRemove = ( string.sub( searchName, 1, 1 ) == "-" )
-				if toRemove then
-					searchName = string.sub( searchName, 2 )
-				end
-				for r, _ in Rested.SortedPairs( Rested_restedState ) do
-					for n, cs in Rested.SortedPairs( Rested_restedState[r] ) do
-						local match = false
-						local reason = nil
-						if cs.ignore then
-							if searchName == "ignore" then
-								match = true
-								reason = ">ignore"
-							end
-						else
-							if( string.find( string.lower(r), searchName ) or
-									string.find( string.lower(n), searchName ) ) then
-								match = true
-								reason = ">name="..searchName
-							else
-								for _, key in pairs( Rested.filterKeys ) do
-									if( cs[key] and string.find( string.lower( cs[key] ), searchName ) ) then
-										match = true
-										reason = ">"..key.."="..searchName
-									end
-								end
-							end
-						end
-						if match then
-							if toRemove then
-								cs.isNextIndex = nil
-								cs.isNextReason = nil
-							else
-								currentIndex = currentIndex + 1
-								cs.isNextIndex = currentIndex
-								cs.isNextReason = reason
-							end
-						end
+function Rested.IsNext_NormalMatch( r, n, cs, searchTerm )
+	-- print("Rested.IsNext_NormalMatch(", r, ",", n, ",", cs, ",", searchTerm, ")")
+	if ( string.find( string.lower(r), searchTerm ) or
+			string.find( string.lower(n), searchTerm ) ) then
+		return true, ">name="..searchTerm
+	else
+		for _, key in pairs( Rested.filterKeys ) do
+			if ( cs[key] and string.find( string.lower( cs[key] ), searchTerm ) ) then
+				return true, ">"..key.."="..searchTerm
+			end
+		end
+	end
+end
+function Rested.IsNext_ForAllChars( testFunction, searchTerm, toRemove, offset, overrideIgnore )
+	-- print("IsNext_ForAllChars( ",testFunction, ",", searchTerm, ",", toRemove, ",", offset, ",", overrideIgnore, " )")
+	offset = offset or 0
+	local currentIndex = Rested.ShiftIsNextCharacterIndex() or 0
+	for r, _ in Rested.SortedPairs( Rested_restedState ) do
+		for n, cs in Rested.SortedPairs( Rested_restedState[r] ) do
+			if not cs.ignore or overrideIgnore then
+				local match, reason = testFunction( r, n, cs, searchTerm )
+				if match then
+					if toRemove then
+						cs.isNextIndex = nil
+						cs.isNextReason = nil
+					else
+						currentIndex = currentIndex + 1
+						cs.isNextIndex = currentIndex
+						cs.isNextReason = reason
 					end
 				end
 			end
 		end
-		_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
+	end
+end
+function Rested.IsNext_Command( param )
+	Rested.reportName = "Is Next"
+	Rested.UIShowReport( Rested.NextCharsReport, true )
+	-- print("IsNext_Command( "..param.." )")
+	if ( param and strlen( param ) > 0 ) then
+		param = string.lower(param)
+		for searchTerm in string.gmatch( param, "([^ ]+)" ) do
+			if Rested.isNextMacros[searchTerm] and Rested.isNextMacros[searchTerm].func then
+				Rested.isNextMacros[searchTerm].func(param)
+				break  -- @TODO: Probably don't need
+			else
+				local toRemove = ( string.sub( searchTerm, 1, 1 ) == "-" )
+				if toRemove then
+					searchTerm = string.sub( searchTerm, 2 )
+				end
+				Rested.IsNext_ForAllChars( Rested.IsNext_NormalMatch, searchTerm, toRemove )
+			end
+		end
 	end
 end
 
@@ -130,11 +130,11 @@ Rested.InitCallback(Rested.RegisterIsNext)
 Rested.EventCallback("PLAYER_ENTERING_WORLD", function() C_Timer.After(5, Rested.GetCharacterIndex) end)
 Rested.EventCallback("PLAYER_LOGOUT", Rested.SetNextCharacterIndex)
 
-Rested.reportShowIgnored["Play Next"] = true
+Rested.reportShowIgnored["Is Next"] = true
 Rested.dropDownMenuTable["IsNext"] = "isnext"
 Rested.commandList["isnext"] = {
 	["help"] = {"space seperated character list", "Add the next characters to visit."},
-	["func"] = Rested.SetNextCharacters,
+	["func"] = Rested.IsNext_Command,
 }
 table.insert( Rested.CSVFields, {"CharacterIndex", "characterIndex"} )
 
@@ -216,7 +216,7 @@ function Rested.isNextFarm(param)
 	-- print( "mod:", mod )
 	-- print( "offset:", offset )
 
-	Rested.ForAllChars(function(r, n, c)
+	Rested.IsNext_ForAllChars(function(r, n, c)
 		-- print(r,n,c.characterIndex, c.characterIndex%mod, date("%w")%mod, c.farm)
 		-- print("not c.isNextIndex", not c.isNextIndex)
 		if not c.isNextIndex
@@ -226,26 +226,22 @@ function Rested.isNextFarm(param)
 				and c.characterIndex
 				and c.characterIndex%mod==date("%j")%mod
 				and n~=Rested.name then
-			c.isNextIndex = c.characterIndex+offset
-			c.isNextReason = ":farm"
+			return true, ":farm"
 		end
-	end, false)
+	end)
 end
 function Rested.isNextProfCooldowns(param)
-	local offset = 100
-	Rested.ForAllChars(function(r, n, c)
+	Rested.IsNext_ForAllChars(function(r, n, c)
 		if not c.isNextIndex
 				and c.tradeCD
 				and n~=Rested.name then
 			for id,t in pairs(c.tradeCD) do
 				if t.cdTS and t.cdTS<time() then
-					c.isNextIndex=(c.characterIndex or 0)+offset
-					c.isNextReason = ":cooldowns"
-					return
+					return true, ":cooldowns"
 				end
 			end
 		end
-	end, false)
+	end)
 end
 -- function Rested.isNextConcentration(param)
 -- 	local offset = string.match(param, "(%d+)") or 0
@@ -269,49 +265,41 @@ end
 -- 	end, true)
 -- end
 function Rested.isNextGarrisonCache(param)
-	local offset = 100
-	Rested.ForAllChars(function(r, n, c)
+	Rested.IsNext_ForAllChars(function(r, n, c)
 		if not c.isNextIndex
 				and c.garrisonQuantity
 				and c.garrisonQuantity<10000
 				and c.garrisonCache
 				and c.garrisonCache<time()-216000
 				and n~=Rested.name then
-			c.isNextIndex = (c.characterIndex or 0)+offset
-			c.isNextReason = ":gcache"
+			return true, ":gcache"
 		end
-	end, false)
+	end)
 end
 function Rested.isNextAuctions(param)
-	local offset = 100
-	Rested.ForAllChars(function(r,n,c)
+	Rested.IsNext_ForAllChars(function(r,n,c)
 		if not c.isNextIndex
 				and c.Auctions
 				and n~=Rested.name then
 			for id, a in pairs(c.Auctions) do
 				if a.created <= time() - a.duration then
-					c.isNextIndex = (c.characterIndex or 0) + offset
-					c.isNextReason = ":auctions"
-					return
+					return true, ":auctions"
 				end
 			end
 		end
-	end, false)
+	end)
 end
 function Rested.isNextVault(param)
-	local offset = 100
-	Rested.ForAllChars(function(r,n,c)
+	Rested.IsNext_ForAllChars(function(r,n,c)
 		if not c.isNextIndex
 				and c.weeklyRewards
 				and n~=Rested.name then
-			c.isNextIndex = (c.characterIndex or 0)+offset
-			c.isNextReason = ":vault"
+			return true, ":vault"
 		end
-	end, true)
+	end)
 end
 function Rested.isNextGWO(param)
-	local offset = 100
-	Rested.ForAllChars(function(r,n,c)
+	Rested.IsNext_ForAllChars(function(r,n,c)
 		if not c.isNextIndex
 				and c.garrisonShipments
 				and n~=Rested.name then
@@ -321,12 +309,11 @@ function Rested.isNextGWO(param)
 					queue = queue and (gs.sampleTS + dur < time())
 				end
 				if queue then
-					c.isNextIndex = (c.characterIndex or 0)+offset
-					c.isNextReason = ":gwo"
+					return true, ":gwo"
 				end
 			end
 		end
-	end, true)
+	end)
 end
 Rested.isNextMacros = {
 	[":alpha"] = {

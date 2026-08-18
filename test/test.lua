@@ -2242,7 +2242,7 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {[0] = 104, 105, 106, 107, 209, 102, 0}
+	local resultMatrix = {[0] = 104, 1, 106, 107, 209, 102, 0}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
@@ -2289,7 +2289,7 @@ function test.test_isNextMacros_cooldowns()
 
 	Rested.Command("isnext :cooldowns")
 
-	assertEquals( 101, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 function test.test_isNextMacros_cooldowns_not_ready()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
@@ -2312,7 +2312,7 @@ function test.test_isNextMacros_garrison_queue()
 	} }
 
 	Rested.Command("isnext :gcache")
-	assertEquals( 101, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 function test.test_isNextMacros_garrison_noQueue_time()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
@@ -2344,7 +2344,7 @@ function test.test_isNextMacros_auctions_expired()
 		}, },
 	}, }
 	Rested.Command("isnext :auctions")
-	assertEquals( 101, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 function test.test_isNextMacros_auctions_active()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1,
@@ -2359,7 +2359,7 @@ function test.test_isNextMacros_vault()
 		weeklyRewards = true,
 	}, }
 	Rested.Command("isnext :vault")
-	assertEquals( 101, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
+	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
 
 -- Garrison Shipments
