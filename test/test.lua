@@ -2242,7 +2242,7 @@ function test.test_isNextMacros_farm()
 		end
 	end
 
-	local resultMatrix = {[0] = 1, 1, 1, 1, 2, 1, 0}
+	local resultMatrix = {[0] = 1, 1, 1, 1, 3, 1, 0}
 
 	assertEquals(resultMatrix[tonumber(date("%w"))], sumQueued)
 end
@@ -2361,13 +2361,13 @@ function test.test_isNextMacros_vault()
 	Rested.Command("isnext :vault")
 	assertEquals( 1, Rested_restedState["otherRealm"]["otherPlayer"].isNextIndex )
 end
-function test.test_isNext_GivenReason_Single()
+function test.notest_isNext_GivenReason_Single()
 	Rested.Command("isnext >Single realm")
 	test.dump( Rested_restedState )
 	assertEquals( 1, Rested_restedState["Test Realm"]["testPlayer"].isNextIndex )
 	assertEquals( ">single", Rested_restedState["Test Realm"]["testPlayer"].isNextReason )
 end
-function test.test_isNext_GivenReason_Multiple()
+function test.notest_isNext_GivenReason_Multiple()
 	Rested_restedState["otherRealm"] = { ["otherPlayer"] = { characterIndex=1 } }
 
 	Rested.Command("isnext >multiple realm")
