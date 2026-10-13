@@ -20,6 +20,7 @@ function Rested.GetCharacterIndex()
 		end
 	end
 
+	Rested_misc.isNextReason = Rested_restedState[Rested.realm][Rested.name].isNextReason or Rested_misc.isNextReason
 	if Rested_restedState[Rested.realm][Rested.name].isNextReason then
 		local reminderText = string.format( "You were on the IsNext queue for %s -%s-%s", COLOR_GOLD, Rested_restedState[Rested.realm][Rested.name].isNextReason, COLOR_END)
 		Rested.AddToReminderSchedule( 5, reminderText, true)
@@ -32,6 +33,7 @@ function Rested.GetCharacterIndex()
 	_, _, Rested.nextCharacterIndex = Rested.IsNext_GetMinMaxNext()
 end
 function Rested.SetNextCharacterIndex()
+	Rested_misc.isNextReason = nil
 	Rested_misc.prevChar = Rested.realm.."-"..Rested.name
 	Rested_misc.prevIndex = Rested_restedState[Rested.realm][Rested.name].characterIndex
 	if Rested.nextCharacterIndex then
@@ -83,7 +85,7 @@ function Rested.IsNext_NormalMatch( r, n, cs, searchTerm )
 		end
 	end
 end
-function Rested.IsNext_ForAllChars( testFunction, searchTerm, toRemove, offset, overrideIgnore )
+function Rested.IsNext_ForAllChars( testFunction, searchTerm, toRemove, reasonIn, offset, overrideIgnore )
 	-- print("IsNext_ForAllChars( ",testFunction, ",", searchTerm, ",", toRemove, ",", offset, ",", overrideIgnore, " )")
 	offset = offset or 0
 	local currentIndex = Rested.ShiftIsNextCharacterIndex() or 0
@@ -106,7 +108,7 @@ function Rested.IsNext_ForAllChars( testFunction, searchTerm, toRemove, offset, 
 	end
 end
 function Rested.IsNext_Command( param )
-	Rested.reportName = "Is Next"
+	Rested.reportName = "Is Next"..(Rested_misc.isNextReason and " ("..Rested_misc.isNextReason..")" or "")
 	Rested.UIShowReport( Rested.NextCharsReport, true )
 	-- print("IsNext_Command( "..param.." )")
 	if ( param and strlen( param ) > 0 ) then

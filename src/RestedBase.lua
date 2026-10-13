@@ -79,6 +79,7 @@ Rested.reportShowIgnored["Ignored"] = true
 Rested.commandList["ignore"] = { ["func"] = Rested.SetIgnore, ["help"] = {"<search> [ignore Duration]", "Ignore matched chars, or show ignored." } }
 Rested.EventCallback( "PLAYER_ENTERING_WORLD", function() Rested.ForAllChars( Rested.UpdateIgnore, true ); end )
 Rested.dropDownMenuTable["Ignore"] = "ignore"
+Rested.reportReverseSort["Ignored"] = true
 
 
 function Rested.SaveRestedState()
@@ -521,7 +522,8 @@ function Rested.BirthdayReminderValues( realm, name, struct )
 	bday = time( bday )
 	if (bday > now ) and ((bday - now) < 604800) then
 		returnStruct[now+30] = returnStruct[now+30] or {}
-		table.insert( returnStruct[now+30], string.format( "%s-%s has a birthday in the next week.", name, realm ) )
+		table.insert( returnStruct[now+30], string.format( "%s has a birthday in the next week.", Rested.FormatName( realm, name ) ) )
+
 	end
 
 	return returnStruct
